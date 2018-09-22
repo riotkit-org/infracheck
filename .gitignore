@@ -1,0 +1,4 @@
+/app/configured/*
+!/app/configured/.gitkeep
+/.idea
+*.pyc
