@@ -6,4 +6,4 @@ ADD ./app/ /app
 # tests
 RUN set -x && cd /app && ./test.sh
 
-ENTRYPOINT ["/bin/bash", "-c", "python3 /app/infracheck/bin.py --server --server-port 8000 --directory /app"]
+ENTRYPOINT ["/bin/bash", "-c", "cd /app && python3 ./infracheck/bin.py --server --server-port 8000"]
