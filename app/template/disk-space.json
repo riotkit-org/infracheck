@@ -1,0 +1,7 @@
+{
+    "type": "disk-space",
+    "input": {
+        "dir": "/",
+        "min_req_space": "4"
+    }
+}

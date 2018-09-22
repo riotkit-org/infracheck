@@ -1,0 +1,17 @@
+#!/bin/bash
+
+if [[ ! ${DIR} ]] || [[ ! ${MIN_REQ_SPACE} ]]; then
+    echo "Missing one of parameters: DIR, MIN_REQ_SPACE"
+    exit 1
+fi
+
+space=$(df -h ${DIR} | perl -ane 'print substr $F[3],0,-1 if $.==2')
+
+if [[ ${space} -lt ${MIN_REQ_SPACE} ]]; then
+    echo "Failed asserting that ${space}GB is at least ${MIN_REQ_SPACE}GB at '${DIR}' mountpoint"
+    exit 1
+fi
+
+echo "There is ${space}GB disk space at '${DIR}', nothing to worry about, defined minimum is ${MIN_REQ_SPACE}GB"
+
+exit 0

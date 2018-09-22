@@ -1,0 +1,34 @@
+#!/bin/sh
+
+#
+# Author: Krzysztof Wesołowski
+# Website: https://iwa-ait.org
+#
+
+if [[ ! ${URL} ]]; then
+    echo "Missing URL parameter"
+    exit 1
+fi
+
+out=$(curl -v -s ${URL})
+exit_code=$?
+
+if [[ ${EXPECT_KEYWORD} ]]; then
+    if [[ ! ${out} == *"${EXPECT_KEYWORD}"* ]]; then
+        echo "Failed asserting that '${EXPECT_KEYWORD}' will be present on the page"
+        exit 1
+    else
+        echo "Keyword ${EXPECT_KEYWORD} is present"
+    fi
+fi
+
+if [[ ${NOT_EXPECT_KEYWORD} ]]; then
+    if [[ ${out} == *"${NOT_EXPECT_KEYWORD}"* ]]; then
+        echo "Failed asserting that '${NOT_EXPECT_KEYWORD}' will be not present on the page"
+        exit 1
+    else
+        echo "Keyword '${NOT_EXPECT_KEYWORD}' is not present"
+    fi
+fi
+
+exit ${exit_code}

@@ -1,0 +1,8 @@
+{
+    "type": "http",
+    "input": {
+        "url": "http://iwa-ait.org",
+        "expect_keyword": "iwa",
+        "not_expect_keyword": "Server error"
+    }
+}
