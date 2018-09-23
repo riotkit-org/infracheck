@@ -22,14 +22,16 @@ class MainHandler(tornado.web.RequestHandler):
 class HttpServer:
     app = None
     port = 7422
+    path_prefix = ''
 
-    def __init__(self, app, port: int):
+    def __init__(self, app, port: int, server_path_prefix: str):
         self.app = app
         self.port = port
+        self.path_prefix = server_path_prefix
 
     def run(self):
         MainHandler.app = self.app
 
-        srv = tornado.web.Application([(r"/", MainHandler)])
+        srv = tornado.web.Application([(r"" + self.path_prefix + "/", MainHandler)])
         srv.listen(self.port)
         tornado.ioloop.IOLoop.current().start()

@@ -12,12 +12,12 @@ class Controller:
     config_loader = None  # type: ConfigLoader
     server = None         # type: HttpServer
 
-    def __init__(self, project_dir: str, server_port: int):
+    def __init__(self, project_dir: str, server_port: int, server_path_prefix: str):
         self.project_dirs = self._combine_project_dirs(project_dir)
         self.runner = Runner(self.project_dirs)
         self.config_loader = ConfigLoader(self.project_dirs)
         self.repository = Repository(self.project_dirs)
-        self.server = HttpServer(self, server_port)
+        self.server = HttpServer(self, server_port, server_path_prefix)
 
     def list_enabled_configs(self):
         return self.repository.get_configured_checks(with_disabled=False)

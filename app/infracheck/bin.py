@@ -50,12 +50,19 @@ if __name__ == "__main__":
         help='Server port, default is 7422',
         default=7422
     )
+    parser.add_argument(
+        '--server-path-prefix',
+        help='Optional path prefix to the routing, eg. /this-is-a-secret will make urls looking like: '
+             'http://localhost:8000/this-is-a-secret/',
+        default=''
+    )
 
     parsed = parser.parse_args()
     project_dir = parsed.directory if parsed.directory else os.getcwd()
     server_port = int(parsed.server_port if parsed.server_port else 7422)
+    server_path_prefix = parsed.server_path_prefix if parsed.server_path_prefix else ''
 
-    app = Controller(project_dir, server_port)
+    app = Controller(project_dir, server_port, server_path_prefix)
 
     if parsed.server:
         app.spawn_server()
