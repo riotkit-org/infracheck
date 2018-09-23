@@ -1,0 +1,8 @@
+{
+    "type": "port-open",
+    "input": {
+        "po_port": "80",
+        "po_host": "google.com",
+        "po_timeout": "1"
+    }
+}

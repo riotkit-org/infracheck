@@ -1,0 +1,8 @@
+{
+    "type": "http",
+    "input": {
+        "url": "https://duckduckgo.com",
+        "expect_keyword": "duck",
+        "not_expect_keyword": "Server error"
+    }
+}

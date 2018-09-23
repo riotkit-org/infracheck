@@ -1,0 +1,6 @@
+{
+    "type": "hello",
+    "input": {
+        "word": "Hi there, Im a passed parameter"
+    }
+}

@@ -1,0 +1,21 @@
+#!/bin/sh
+
+#
+# Directory presence check
+#
+# @author Krzysztof Wesołowski
+# @url https://iwa-ait.org
+#
+
+if [[ ! ${DIR} ]]; then
+    echo "DIR parameter is missing"
+    exit 1
+fi
+
+if [[ ! -d ${DIR} ]]; then
+    echo "Failed asserting that directory at '${DIR}' is present"
+    exit 1
+fi
+
+echo "'${DIR}' directory is present"
+exit 0

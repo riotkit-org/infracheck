@@ -1,0 +1,7 @@
+#!/bin/bash
+
+echo "Hello! This is an example check, you can write your own 'check' scripts that takes parameters from JSON and environment variables"
+echo "The word is: ${WORD}"
+env
+
+exit 0

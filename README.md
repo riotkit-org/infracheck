@@ -23,7 +23,30 @@ How it works?
 Running
 -------
 
+See a working example in the `./example` directory.
+
 ```bash
 # from this directory
 python ./infracheck/bin.py --help
+```
+
+Docker-compose:
+
+```yaml
+version: '2'
+services:
+    healthcheck:
+        image: wolnosciowiec/infracheck
+        command: " --directory=/data --server-path-prefix=/some-prefix"
+        volumes:
+            # place your health checks structure at ./healthchecks
+            - "./healthchecks:/data"
+            - "/var/run/docker.sock:/var/run/docker.sock:ro"
+        ports:
+            - "8000:8000"
+        #labels:
+        #    - "traefik.frontend.rule=Host: health.localhost; PathPrefix: /some-prefix"
+        #    - "traefik.enable=true"
+        #    - "traefik.basic.protocol=${PROTO}"
+        #    - "traefik.port=8000"
 ```

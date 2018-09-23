@@ -1,0 +1,8 @@
+{
+    "type": "port-open",
+    "input": {
+        "po_port": "80",
+        "po_host": "iwa-ait.org",
+        "po_timeout": "1"
+    }
+}

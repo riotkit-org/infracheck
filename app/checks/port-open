@@ -1,0 +1,21 @@
+#!/bin/sh
+
+#
+# File presence check
+#
+# @author Krzysztof Wesołowski
+# @url https://iwa-ait.org
+#
+
+if [[ ! ${PO_HOST} ]] || [[ ! ${PO_PORT} ]] || [[ ! ${PO_TIMEOUT} ]]; then
+    echo "PO_HOST, PO_PORT or PO_TIMEOUT parameter is missing"
+    exit 1
+fi
+
+if ! nc -z -v -w${PO_TIMEOUT} ${PO_HOST} ${PO_PORT}; then
+    echo "Port ${PO_PORT} at ${PO_HOST} seems to be not active"
+    exit 1
+fi
+
+echo "Port ${PO_PORT} at ${PO_HOST} looks OK"
+exit 0

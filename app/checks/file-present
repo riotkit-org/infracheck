@@ -1,0 +1,21 @@
+#!/bin/sh
+
+#
+# File presence check
+#
+# @author Krzysztof Wesołowski
+# @url https://iwa-ait.org
+#
+
+if [[ ! ${FILE_PATH} ]]; then
+    echo "FILE_PATH parameter is missing"
+    exit 1
+fi
+
+if [[ ! -f ${FILE_PATH} ]]; then
+    echo "Failed asserting that file at '${FILE_PATH}' is present"
+    exit 1
+fi
+
+echo "'${FILE_PATH}' file is present"
+exit 0

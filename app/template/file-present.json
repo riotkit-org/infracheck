@@ -1,0 +1,6 @@
+{
+    "type": "file-present",
+    "input": {
+        "file_path": "/usr/bin/env"
+    }
+}

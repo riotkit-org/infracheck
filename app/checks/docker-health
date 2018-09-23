@@ -1,0 +1,25 @@
+#!/bin/sh
+
+#
+# Docker services status check
+#
+# @author Krzysztof Wesołowski
+# @url https://iwa-ait.org
+#
+
+if ! command -v docker > /dev/null; then
+    echo "Docker command is not available, cannot perform a check without it"
+    exit 1
+fi
+
+output=$(docker ps --filter "name=${DOCKER_ENV_NAME}" --filter "health=unhealthy" 2>&1|grep "unhealthy")
+exit_code=$?
+
+if [[ ${exit_code} == 0 ]]; then
+    echo "There seems to be at least one unhealthy service at '${DOCKER_ENV_NAME}' space"
+    docker ps --filter "name=${DOCKER_ENV_NAME}" --filter "health=unhealthy"
+    exit 1
+fi
+
+echo "Docker daemon reports that there is no 'unhealthy' service running in '${DOCKER_ENV_NAME}' space"
+exit 0

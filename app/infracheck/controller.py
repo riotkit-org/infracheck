@@ -4,6 +4,8 @@ from .repository import Repository
 from .config import ConfigLoader
 from .server import HttpServer
 
+import os
+
 
 class Controller:
     project_dirs = None   # type: list
@@ -56,4 +58,18 @@ class Controller:
 
     @staticmethod
     def _combine_project_dirs(project_dir: str) -> list:
-        return [project_dir]
+        paths = [
+            # directory specified by eg. the "--directory" commandline parameter
+            project_dir,
+
+            # standalone application running from cloned repository
+            os.path.dirname(os.path.realpath(__file__)) + '/../',
+
+            # official docker container
+            '/app',
+
+            # current directory
+            os.getcwd(),
+        ]
+
+        return list(filter(lambda path: os.path.isdir(path), paths))

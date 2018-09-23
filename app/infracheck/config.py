@@ -33,7 +33,7 @@ class ConfigLoader:
 
     def _assert_has_valid_type(self, type_name: str):
         if not self._find_file_path('/checks/', type_name, ''):
-            raise Exception('Invalid check type "' + type_name + '"')
+            raise Exception('Invalid check type "' + type_name + '", was looking in: ' + str(self.paths))
 
         return
 

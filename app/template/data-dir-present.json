@@ -1,0 +1,6 @@
+{
+    "type": "dir-present",
+    "input": {
+        "dir": "/data"
+    }
+}
