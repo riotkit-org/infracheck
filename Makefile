@@ -1,7 +1,10 @@
-all: build run
+all: build build_arm run
 
 build:
 	sudo docker build . -t wolnosciowiec/infracheck
+
+build_arm:
+	sudo docker build -f ./armhf.Dockerfile . -t wolnosciowiec/infracheck:armhf
 
 run:
 	sudo docker kill infracheck || true
