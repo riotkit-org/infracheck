@@ -1,4 +1,4 @@
-FROM balenalib/armv7hf-alpine:3.9
+FROM balenalib/armv7hf-alpine:3.8
 
 ADD ./app/ /app
 ADD ./entrypoint.sh /entrypoint.sh
