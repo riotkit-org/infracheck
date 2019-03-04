@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 #
 # Directory presence check
@@ -7,12 +7,12 @@
 # @url https://iwa-ait.org
 #
 
-if [[ ! ${DIR} ]]; then
+if [[ ! "${DIR}" ]]; then
     echo "DIR parameter is missing"
     exit 1
 fi
 
-if [[ ! -d ${DIR} ]]; then
+if [[ ! -d "${DIR}" ]]; then
     echo "Failed asserting that directory at '${DIR}' is present"
     exit 1
 fi

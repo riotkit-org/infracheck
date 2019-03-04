@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 #
 # Docker services status check
@@ -15,7 +15,7 @@ fi
 output=$(docker ps --filter "name=${DOCKER_ENV_NAME}" --filter "health=unhealthy" 2>&1|grep "unhealthy")
 exit_code=$?
 
-if [[ ${exit_code} == 0 ]]; then
+if [[ "${exit_code}" == "0" ]]; then
     echo "There seems to be at least one unhealthy service at '${DOCKER_ENV_NAME}' space"
     docker ps --filter "name=${DOCKER_ENV_NAME}" --filter "health=unhealthy"
     exit 1

@@ -1,11 +1,16 @@
-FROM balenalib/armv7hf-alpine:3.8
+FROM balenalib/armv7hf-debian:buster
 
 ADD ./app/ /app
+ADD ./requirements.txt /app/
 ADD ./entrypoint.sh /entrypoint.sh
 
 RUN [ "cross-build-start" ]
 
-RUN apk --update add python3 py3-tornado py3-argparse bash perl curl wget grep sed docker sudo \
+RUN apt-get update \
+    && apt-get install python3 python3-pip bash perl curl wget grep sed docker sudo mariadb-client netcat ca-certificates openssl \
+    && apt-get clean \
+    && pip3 install setuptools wheel --upgrade \
+    && pip3 install -r /app/requirements.txt \
     && chmod +x /entrypoint.sh
 
 # tests

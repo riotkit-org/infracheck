@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 #
 # File presence check
@@ -7,12 +7,12 @@
 # @url https://iwa-ait.org
 #
 
-if [[ ! ${FILE_PATH} ]]; then
+if [[ ! "${FILE_PATH}" ]]; then
     echo "FILE_PATH parameter is missing"
     exit 1
 fi
 
-if [[ ! -f ${FILE_PATH} ]]; then
+if [[ ! -f "${FILE_PATH}" ]]; then
     echo "Failed asserting that file at '${FILE_PATH}' is present"
     exit 1
 fi
