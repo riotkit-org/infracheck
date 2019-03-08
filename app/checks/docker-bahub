@@ -1,0 +1,25 @@
+#!/bin/bash
+
+#
+# Bahub container check
+#
+# @author Krzysztof Wesołowski
+# @url https://iwa-ait.org
+#
+
+if [[ ! "${CONTAINER}" ]]; then
+    echo "Missing parameter: CONTAINER"
+    exit 1
+fi
+
+output=$(docker logs ${CONTAINER} 2> /dev/null)
+
+if [[ "${output}" == *"Traceback (most recent call last)"* ]]; \
+    [[ "${output}" == *"bahub.bahubapp.exceptions"* ]]; \
+    [[ "${output}" == *'"error_code":40'* ]]; then
+    echo "Bahub recently probably failed at least one time. ${output}"
+    exit 1
+fi
+
+echo "Bahub seems to be working without failure"
+exit 0
