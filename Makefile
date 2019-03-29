@@ -42,6 +42,7 @@ build_package:
 
 ## Install
 install: build_package
+	${PIP} install -r ./requirements.txt
 	${SUDO} ${PY_BIN} ./setup.py install
 	which infracheck
 	make clean

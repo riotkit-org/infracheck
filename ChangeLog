@@ -1,6 +1,8 @@
 CHANGES
 =======
 
+* Adjusting travis build
+* Added a few tests, updated travis config, set up setuptools using pbr
 * Added File Repository's Bahub check
 * Fixed floats support in disk-space healthcheck
 * Corrected docker package name
