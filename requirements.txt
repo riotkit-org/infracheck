@@ -1,2 +1,4 @@
 setuptools
 tornado>=5
+unittest-data-provider
+coverage

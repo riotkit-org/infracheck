@@ -3,5 +3,13 @@
     "input": {
         "dir": "/",
         "min_req_space": "6"
+    },
+    "hooks": {
+        "on_each_up": [
+            "rm -f /tmp/maintenance.html"
+        ],
+        "on_each_down": [
+            "echo \"Site under maintenance\" > /tmp/maintenance.html"
+        ]
     }
 }

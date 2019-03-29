@@ -1,0 +1,6 @@
+{
+    "type": "docker-health",
+    "input": {
+        "docker_env_name": ""
+    }
+}

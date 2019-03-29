@@ -4,7 +4,7 @@ import tornado.web
 import json
 
 
-class MainHandler(tornado.web.RequestHandler):
+class MainHandler(tornado.web.RequestHandler):  # pragma: no cover
     app = None
 
     def get(self):

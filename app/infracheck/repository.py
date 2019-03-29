@@ -1,5 +1,4 @@
 
-# import json
 import os
 import posix
 
@@ -17,6 +16,9 @@ class Repository:
         found = []
 
         for path in self.configured_dirs:
+            if not os.path.isdir(path):
+                continue
+
             configurations = os.scandir(path)
 
             for entry in configurations:
@@ -25,7 +27,7 @@ class Repository:
                 elif with_disabled and not (entry.name.endswith('.disabled') or entry.name.endswith('.json')):
                     continue
 
-                found.append(entry.name[:-5])
+                found.append(os.path.splitext(entry.name)[0].replace('.json', ''))
 
         return list(set(found))
 

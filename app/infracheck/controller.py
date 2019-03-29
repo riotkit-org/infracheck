@@ -40,11 +40,12 @@ class Controller:
 
         for config_name in configs:
             config = self.config_loader.load(config_name)
-            result = self.runner.run(config['type'], config['input'])
+            result = self.runner.run(config['type'], config['input'], config.get('hooks', {}))
 
             results[config_name] = {
                 'status': result[1],
                 'output': result[0],
+                'hooks_output': result[2],
                 'ident': config_name + '=' + str(result[1])
             }
 

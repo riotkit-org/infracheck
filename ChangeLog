@@ -1,0 +1,21 @@
+CHANGES
+=======
+
+* Added File Repository's Bahub check
+* Fixed floats support in disk-space healthcheck
+* Corrected docker package name
+* Switched ARM build to Debian, CURL is now ignoring certificate problems (like it is on healthcheck services), there should be a separate check for certificate expiration and validity
+* Switched to Alpine 3.8 for ARM image
+* Added ARM build
+
+v0.1.1
+------
+
+* Fixed docker entrypoint, added more checks, added example
+* Added support for "CMD" in docker
+* Added support for path prefixing
+* Fixed possibility to add custom checks
+* Clean up
+* Moved README.md to proper directory
+* Added travis integration
+* Added to git
