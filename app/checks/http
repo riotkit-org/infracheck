@@ -10,7 +10,7 @@ if [[ ! "${URL}" ]]; then
     exit 1
 fi
 
-out=$(curl -v -k -s "${URL}" 2>&1)
+out=$(curl -v -f -k -L -s "${URL}" 2>&1)
 exit_code=$?
 
 if [[ "${EXPECT_KEYWORD}" ]]; then
