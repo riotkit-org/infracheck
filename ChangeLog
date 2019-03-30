@@ -1,6 +1,8 @@
 CHANGES
 =======
 
+* Fixed travis build
+* Fixed travis build
 * Adjusting travis build
 * Added a few tests, updated travis config, set up setuptools using pbr
 * Added File Repository's Bahub check
