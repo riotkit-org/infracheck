@@ -28,7 +28,9 @@ See a working example in the `./example` directory.
 
 ```bash
 # from this directory
-python ./infracheck/bin.py --help
+make install
+
+infracheck --help
 ```
 
 docker or docker-compose:
