@@ -1,0 +1,26 @@
+#!/bin/bash
+
+#
+# MySQL replication check
+#
+# @author Krzysztof Wesołowski
+# @url https://riotkit.org
+#
+
+if [[ ! "${CONTAINER}" || ! "${MYSQL_ROOT_PASSWORD}" ]]; then
+    echo " >> Missing CONTAINER or MYSQL_ROOT_PASSWORD"
+    exit 1
+fi
+
+if ! mysql -u root -p${MYSQL_ROOT_PASSWORD} -h "${CONTAINER}" -e 'SHOW SLAVE STATUS\G' | grep "Slave_IO_Running: Yes" > /dev/null; then
+    echo "Replication Slave_IO_Running check failure"
+    exit 1
+fi
+
+if ! mysql -u root -p${MYSQL_ROOT_PASSWORD} -h "${CONTAINER}" -e 'SHOW SLAVE STATUS\G' | grep "Slave_SQL_Running: Yes" > /dev/null; then
+    echo "Replication Slave_SQL_Running check failure"
+    exit 1
+fi
+
+echo "Replica seems to be in a good state"
+exit 0
