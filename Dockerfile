@@ -1,6 +1,6 @@
 FROM alpine:3.8
 
-RUN apk --update add python3 py3-tornado py3-argparse bash perl curl wget grep sed docker sudo
+RUN apk --update add python3 py3-tornado py3-argparse bash perl curl wget grep sed docker sudo mysql-client postgresql-client
 ADD ./app/ /app
 ADD ./entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
