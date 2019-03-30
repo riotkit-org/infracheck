@@ -68,6 +68,7 @@ class Controller:
 
             # official docker container
             '/app',
+            '/data',
 
             # current directory
             os.getcwd(),

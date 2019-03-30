@@ -1,6 +1,15 @@
 CHANGES
 =======
 
+* Added coverage submission
+* Added MySQL replication check
+* Added MySQL and PostgreSQL clients to the container
+* Better tests coverage for controller and checkers
+* Travis: Clean up, not supporting Python 3.4 anymore
+* Fixed: Paths with non-project structure were also marked as valid
+* Properly marking now the global status, so it would be possible to check it by the monitoring
+* Improved "http" check, so it is now following redirections and extra failing on non 200 pages
+* Playing with travis build
 * Fixed travis build
 * Fixed travis build
 * Adjusting travis build

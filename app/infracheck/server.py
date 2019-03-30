@@ -9,7 +9,7 @@ class MainHandler(tornado.web.RequestHandler):  # pragma: no cover
 
     def get(self):
         result = self.app.perform_checks()
-        self.set_status(500 if not result['status'] else 200)
+        self.set_status(500 if not result['global_status'] else 200)
         self.add_header('Content-Type', 'application/json')
         self.write(
             json.dumps(result, sort_keys=True, indent=4, separators=(',', ': '))

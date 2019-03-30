@@ -1,6 +1,9 @@
 InfraCheck
 ==========
 
+[![Build Status](https://travis-ci.org/riotkit-org/infracheck.svg?branch=master)](https://travis-ci.org/riotkit-org/infracheck)
+[![codecov](https://codecov.io/gh/riotkit-org/infracheck/branch/master/graph/badge.svg)](https://codecov.io/gh/riotkit-org/infracheck)
+
 Health check system designed to be easy to extend by not enforcing the programming language.
 A single health check unit (let we call it later just 'check') can be written even in BASH.
 
@@ -8,17 +11,14 @@ A single health check unit (let we call it later just 'check') can be written ev
 Dictionary
 ----------
 
-- `check` - a script that is checking something
-- `configuration` - your definition how to use a `check` eg. "type": http + params what is the URL, you can define multiple configurations for single check
-- `template` - working example of `configuration`
+- `script` - a script that is checking something
+- `check` - your definition (input arguments) how to use a `check` eg. "type": http + params what is the URL, you can define multiple configurations for single check
 
 
-How it works?
--------------
-1. Write a `check` in any programming language, take environment variables as input.
-2. Create a json `template` that will contain a working configuration example for your `check`.
-3. You can skip 1 and 2 if you want to use already created checks
-4. Create a `configuration` to use a `check` in *specified context
+Guide to "check" creation
+-------------------------
+1. Write a `script` in any programming language, take environment variables as input (skip this step if you want to use existing pre-defined scripts)
+2. Create a json `check` that will contain a working configuration example for your `script`.
 
 Running
 -------
@@ -30,7 +30,7 @@ See a working example in the `./example` directory.
 python ./infracheck/bin.py --help
 ```
 
-Docker-compose:
+docker or docker-compose:
 
 ```yaml
 version: '2'

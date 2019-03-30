@@ -1,21 +1,26 @@
 FROM balenalib/armv7hf-debian:buster
 
-ADD ./app/ /app
-ADD ./requirements.txt /app/
-ADD ./entrypoint.sh /entrypoint.sh
-
 RUN [ "cross-build-start" ]
-
 RUN apt-get update \
-    && apt-get install python3 python3-pip bash perl curl wget grep sed docker.io sudo mariadb-client netcat ca-certificates openssl \
-    && apt-get clean \
-    && pip3 install setuptools wheel --upgrade \
-    && pip3 install -r /app/requirements.txt \
-    && chmod +x /entrypoint.sh
-
-# tests
-RUN set -x && cd /app && ./test.sh
-
+    && apt-get -y install python3 python3-pip bash perl curl wget grep sed docker.io \
+                          sudo mariadb-client postgresql-client netcat ca-certificates \
+                          git openssl make python3-setuptools \
+    && apt-get clean
 RUN [ "cross-build-end" ]
 
-ENTRYPOINT ["/entrypoint.sh"]
+ADD . /infracheck
+ADD .git /infracheck/
+
+RUN [ "cross-build-start" ]
+RUN cd /infracheck \
+    && git remote remove origin || true \
+    && git remote add origin https://github.com/riotkit-org/infracheck.git \
+    && make install \
+    && make unit_test \
+    && set -x && cd /infracheck/app && ./functional-test.sh \
+    && rm -rf /infracheck/.git /infracheck/example /infracheck/tests \
+    && rm -rf /var/cache/apk/* \
+    && chmod +x /infracheck/entrypoint.sh
+RUN [ "cross-build-end" ]
+
+ENTRYPOINT ["/infracheck/entrypoint.sh"]

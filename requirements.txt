@@ -1,5 +1,6 @@
 setuptools
 tornado>=5
+setuptools
 unittest-data-provider
 coverage
 mock
