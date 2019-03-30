@@ -54,7 +54,7 @@ class Controller:
 
         return {
             'checks': results,
-            'status': global_status
+            'global_status': global_status
         }
 
     @staticmethod
