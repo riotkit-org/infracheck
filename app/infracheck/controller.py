@@ -73,4 +73,4 @@ class Controller:
             os.getcwd(),
         ]
 
-        return list(filter(lambda path: os.path.isdir(path), paths))
+        return list(filter(lambda path: os.path.isdir(path + '/configured'), paths))
