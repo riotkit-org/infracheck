@@ -1,16 +1,19 @@
 language: python
 python:
-  - "3.5"
-  - "3.6"
-  - "pypy3"
+    - "3.5"
+    - "3.6"
+    - "pypy3"
 sudo: false
 
 before_script:
-  - make install PY_BIN="python" PIP="pip"
+    - make install PY_BIN="python" PIP="pip"
 
 script:
-  - cd app && ./test.sh
-  - cd ../ && make unit_test
+    - cd app && ./test.sh
+    - cd ../ && make unit_test coverage
+
+after_success:
+    - bash <(curl -s https://codecov.io/bash) -cF python
 
 deploy:
     skip_cleanup: true

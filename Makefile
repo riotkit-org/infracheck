@@ -57,4 +57,4 @@ unit_test:
 
 ## Generate code coverage
 coverage:
-	coverage run --source . -m unittest discover -s ./tests/unit
+	coverage run --source . -m unittest discover -s ./tests
