@@ -12,6 +12,7 @@ RUN cd /infracheck \
     && set -x && cd /infracheck/app && ./functional-test.sh \
     && rm -rf /infracheck/.git /infracheck/example /infracheck/tests \
     && rm -rf /var/cache/apk/* \
-    && chmod +x /infracheck/entrypoint.sh
+    && chmod +x /infracheck/entrypoint.sh \
+    && infracheck --help
 
 ENTRYPOINT ["/infracheck/entrypoint.sh"]
