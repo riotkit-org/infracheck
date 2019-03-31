@@ -94,7 +94,7 @@ if parsed.list_enabled_configurations:
 result = app.perform_checks()
 print(json.dumps(result, sort_keys=True, indent=4, separators=(',', ': ')))
 
-if not result['status']:
+if not result['global_status']:
     sys.exit(1)
 
 sys.exit(0)
