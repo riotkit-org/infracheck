@@ -72,6 +72,10 @@ The image will by default expose a HTTP endpoint.
     # now test it
     curl http://localhost:8000
 
+List of supported environment variables:
+
+- CHECK_INTERVAL="*/1 * * * *"
+
 **Without Docker**
 
 .. code:: bash
