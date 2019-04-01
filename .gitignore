@@ -2,3 +2,4 @@
 !/app/configured/.gitkeep
 /.idea
 *.pyc
+/.coverage

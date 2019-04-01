@@ -4,7 +4,7 @@ RUN [ "cross-build-start" ]
 RUN apt-get update \
     && apt-get -y install python3 python3-pip bash perl curl wget grep sed docker.io \
                           sudo mariadb-client postgresql-client netcat ca-certificates \
-                          git openssl make python3-setuptools \
+                          git openssl make python3-setuptools supervisor \
     && apt-get clean
 RUN [ "cross-build-end" ]
 

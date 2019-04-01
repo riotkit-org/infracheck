@@ -1,6 +1,11 @@
 CHANGES
 =======
 
+* Added additional checks to the docker images
+* Updated readme
+* Resolved a problem on CI
+* Added a docs badge
+* Added docs, fixed ARM build
 * Added coverage submission
 * Added MySQL replication check
 * Added MySQL and PostgreSQL clients to the container
