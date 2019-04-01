@@ -1,0 +1,12 @@
+[run]
+branch = True
+
+[report]
+exclude_lines =
+    pragma: no cover
+
+omit =
+    ./app/infracheck/bin.py
+    ./app/infracheck/server.py
+    ./app/infracheck/__init__.py
+    ./app/__init__.py

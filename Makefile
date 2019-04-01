@@ -64,4 +64,4 @@ unit_test:
 
 ## Generate code coverage
 coverage:
-	coverage run --source . -m unittest discover -s ./tests
+	coverage run --rcfile=.coveragerc --source . -m unittest discover -s ./tests
