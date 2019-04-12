@@ -20,7 +20,7 @@ deploy:
     provider: pypi
     distributions: sdist bdist_wheel
     on:
-        tags: true
+        #tags: true
         branch:
             - master
             - "/v?(\\d+\\.)?(\\d+\\.)?(\\*|\\d+)$/"
