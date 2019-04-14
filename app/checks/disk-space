@@ -11,7 +11,7 @@ if [[ "${MOCK_DF_OUTPUT}" ]]; then
     df_output="${MOCK_DF_OUTPUT}"
 fi
 
-space=$(echo ${df_output} | tail -n 1 | tr -d "[:space:]")
+space=$(echo ${df_output} | tail -n 1 | tr -d "[:space:]" | tr -dc '0-9\.')
 space=${space//,/.}
 
 if [[ $(echo "${space}<${MIN_REQ_SPACE}" | bc -l) == "1" ]]; then
