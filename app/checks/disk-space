@@ -5,7 +5,14 @@ if [[ ! "${DIR}" ]] || [[ ! "${MIN_REQ_SPACE}" ]]; then
     exit 1
 fi
 
-space=$(df -h ${DIR} | perl -ane 'print substr $F[3],0,-1 if $.==2')
+df_output=$(df -h ${DIR} --output=size)
+
+if [[ "${MOCK_DF_OUTPUT}" ]]; then
+    df_output="${MOCK_DF_OUTPUT}"
+fi
+
+space=$(echo ${df_output} | tail -n 1 | tr -d "[:space:]")
+space=${space//,/.}
 
 if [[ $(echo "${space}<${MIN_REQ_SPACE}" | bc -l) == "1" ]]; then
     echo "Failed asserting that ${space}GB is at least ${MIN_REQ_SPACE}GB at '${DIR}' mountpoint"
