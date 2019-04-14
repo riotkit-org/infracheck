@@ -14,7 +14,7 @@ fi
 space=$(echo ${df_output} | tail -n 1 | tr -d "[:space:]" | tr -dc '0-9\.')
 space=${space//,/.}
 
-if [[ $(echo "${space}<${MIN_REQ_SPACE}" | bc -l) == "1" ]]; then
+if [[ $(python -c "print(${space}<${MIN_REQ_SPACE})") == "False" ]]; then
     echo "Failed asserting that ${space}GB is at least ${MIN_REQ_SPACE}GB at '${DIR}' mountpoint"
     exit 1
 fi
