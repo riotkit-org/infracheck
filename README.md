@@ -3,6 +3,7 @@ InfraCheck
 
 [![Documentation Status](https://readthedocs.org/projects/infracheck/badge/?version=latest)](https://infracheck.docs.riotkit.org/en/latest/?badge=latest)
 [![Build Status](https://travis-ci.org/riotkit-org/infracheck.svg?branch=master)](https://travis-ci.org/riotkit-org/infracheck)
+![Docker Build Status](https://img.shields.io/docker/build/wolnosciowiec/infracheck.svg)
 ![GitHub release](https://img.shields.io/github/release/riotkit-org/infracheck.svg?style=popout)
 ![PyPI](https://img.shields.io/pypi/v/infracheck.svg?style=popout)
 ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/infracheck.svg)
