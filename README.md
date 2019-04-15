@@ -4,6 +4,8 @@ InfraCheck
 [![Build Status](https://travis-ci.org/riotkit-org/infracheck.svg?branch=master)](https://travis-ci.org/riotkit-org/infracheck)
 [![codecov](https://codecov.io/gh/riotkit-org/infracheck/branch/master/graph/badge.svg)](https://codecov.io/gh/riotkit-org/infracheck)
 [![Documentation Status](https://readthedocs.org/projects/infracheck/badge/?version=latest)](https://infracheck.docs.riotkit.org/en/latest/?badge=latest)
+![GitHub release](https://img.shields.io/github/release/riotkit-org/infracheck.svg?style=popout)
+![PyPI](https://img.shields.io/pypi/v/infracheck.svg?style=popout)
 
 Health check system designed to be easy to extend by not enforcing the programming language.
 A single health check unit (let we call it later just 'check') can be written even in BASH.
