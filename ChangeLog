@@ -1,7 +1,31 @@
 CHANGES
 =======
 
+* Deleted support for Python 3.7 as on Travis it does not work
+* Replaced call to "bc", as it works differently on different operating systems. The floats support in bash is not so good
+* Switched from sh to bash
+* CI: Added Python 3.7 to the build
+* Stripped out characters different than numbers and dots for compatiblity reasons
+* Reverted last CI change
+* Added Mattermost notification to notify riotkit collective
+* Resolved #2: Disk space is now properly recognized
+* Travis-CI: Release to PYPI conditions
+* Building not only on tags
+* Updated credentials
+* Added information about the docker container variables
+
+v1.0.1
+------
+
+* Fixed crontab on Debian / armhf
+* Added coverage ignore for server and argument parsing
+* Added supervisor and scheduled job support using cron
+* Fixed regression after change of name of global status from "status" to "global\_status" - so it could be easily checked with an external monitoring software
 * Added additional checks to the docker images
+
+v1.0
+----
+
 * Updated readme
 * Resolved a problem on CI
 * Added a docs badge
