@@ -2,18 +2,18 @@
 
 """
 This script checks if there is enough free space on a mountpoint. Usage:
-./disk-space.py DIR MIN_REQ_SPACE[kMGT]
-accepted units are kibibytes - k, mebibytes - M etc. up to tebibytes. leave blank for plain byte value.
+./disk-space.py DIR MIN_REQ_SPACE[bkMGT]
+accepted units are kibibytes - k, mebibytes - M etc. up to tebibytes. leave blank for value in gibibytes.
 """
 import os
 from sys import argv,stderr
-if len(argv) != 3:
-    print("Too many or too few arguments.\nUsage: ./disk-space.py DIR MIN_REQ_SPACE[kMGT]", file=stderr)
+if "DIR" not in os.environ or "MIN_REQ_SPACE" not in os.environ:
+    print("Missing one of parameters.\nUsage: ./disk-space.py, env. variables are: DIR MIN_REQ_SPACE[bkMGT]", file=stderr)
     exit(127)
 
 def check(mntpoint, req_space):
-    unit="b"
-    if req_space[-1] in "kMGT":
+    unit="G"
+    if req_space[-1] in "bkMGT":
         unit = req_space[-1]
         req_space = int(req_space[:-1])
     else:
@@ -37,4 +37,4 @@ def check(mntpoint, req_space):
         print("Failed asserting that {0:.1f}{1} is at least {2}{1} at {3}".format(free_space, unit, req_space, mntpoint))
         return 1
 
-exit(check(argv[1], argv[2]))
+exit(check(os.environ["DIR"], os.environ["MIN_REQ_SPACE"]))
