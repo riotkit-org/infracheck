@@ -1,24 +1,40 @@
-#!/bin/bash
+#!/usr/bin/python3
 
-if [[ ! "${DIR}" ]] || [[ ! "${MIN_REQ_SPACE}" ]]; then
-    echo "Missing one of parameters: DIR, MIN_REQ_SPACE"
-    exit 1
-fi
+"""
+This script checks if there is enough free space on a mountpoint. Usage:
+./disk-space.py DIR MIN_REQ_SPACE[kMGT]
+accepted units are kibibytes - k, mebibytes - M etc. up to tebibytes. leave blank for plain byte value.
+"""
+import os
+from sys import argv,stderr
+if len(argv) != 3:
+    print("Too many or too few arguments.\nUsage: ./disk-space.py DIR MIN_REQ_SPACE[kMGT]", file=stderr)
+    exit(127)
 
-df_output=$(df -h ${DIR} --output=size)
+def check(mntpoint, req_space):
+    unit="b"
+    if req_space[-1] in "kMGT":
+        unit = req_space[-1]
+        req_space = int(req_space[:-1])
+    else:
+        req_space = int(req_space)
 
-if [[ "${MOCK_DF_OUTPUT}" ]]; then
-    df_output="${MOCK_DF_OUTPUT}"
-fi
+    statvfs = os.statvfs(mntpoint)
+    free_space = statvfs.f_frsize * statvfs.f_bavail # block size * avail blocks
+    if unit == "k":
+        free_space /= 1024.
+    elif unit == "M":
+        free_space /= 1024. ** 2
+    elif unit == "G":
+        free_space /= 1024. ** 3
+    elif unit == "T":
+        free_space /= 1024. ** 4
 
-space=$(echo ${df_output} | tail -n 1 | tr -d "[:space:]" | tr -dc '0-9\.')
-space=${space//,/.}
+    if free_space >= req_space:
+        print("There is {0:.1f}{1} disk space at {2}, nothing to worry about, defined minimum is {3}{1}".format(free_space, unit, mntpoint, req_space))
+        return 0
+    else:
+        print("Failed asserting that {0:.1f}{1} is at least {2}{1} at {3}".format(free_space, unit, req_space, mntpoint))
+        return 1
 
-if [[ $(python -c "print(${space}<${MIN_REQ_SPACE})") == "False" ]]; then
-    echo "Failed asserting that ${space}GB is at least ${MIN_REQ_SPACE}GB at '${DIR}' mountpoint"
-    exit 1
-fi
-
-echo "There is ${space}GB disk space at '${DIR}', nothing to worry about, defined minimum is ${MIN_REQ_SPACE}GB"
-
-exit 0
+exit(check(argv[1], argv[2]))
