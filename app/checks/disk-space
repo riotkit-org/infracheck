@@ -15,12 +15,15 @@ def check(mntpoint, req_space):
     unit="G"
     if req_space[-1] in "bkMGT":
         unit = req_space[-1]
-        req_space = int(req_space[:-1])
+        req_space = float(req_space[:-1])
     else:
-        req_space = int(req_space)
+        req_space = float(req_space)
 
     statvfs = os.statvfs(mntpoint)
-    free_space = statvfs.f_frsize * statvfs.f_bavail # block size * avail blocks
+    if "MOCK_FREE_SPACE" in os.environ:         # check if we have mock data
+        free_space = float(os.environ["MOCK_FREE_SPACE"]) * 1024**3 # mock data is in GiB
+    else:
+        free_space = statvfs.f_frsize * statvfs.f_bavail # block size * avail blocks
     if unit == "k":
         free_space /= 1024.
     elif unit == "M":
