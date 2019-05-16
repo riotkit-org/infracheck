@@ -4,8 +4,8 @@ import re
 from os import environ
 from sys import stderr
 
-if 'RAMPERCENT' not in environ:
-    print("Missing RAMPERCENT parameter.\nUsage ./free_ram.py env variables are RAMPERCENT, [MOCK_FREE_RAM] (in MiB)", file=stderr)
+if 'MAX_RAM_PERCENTAGE' not in environ:
+    print("Missing MAX_RAM_PERCENTAGE parameter.\nUsage ./free_ram.py.", file=stderr)
     exit(127)
 
 def check_ram(meminfopath, maxPercent):
@@ -26,4 +26,4 @@ def check_ram(meminfopath, maxPercent):
     return 0
 
 
-exit(check_ram("/proc/meminfo", float(environ["RAMPERCENT"])))
+exit(check_ram("/proc/meminfo", float(environ["MAX_RAM_PERCENTAGE"])))

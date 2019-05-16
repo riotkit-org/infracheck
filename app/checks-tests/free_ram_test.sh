@@ -14,3 +14,5 @@ echo " >> Assert that 5/10GB used is ok when max usage is 60%"
 MOCK_FREE_RAM=5000 MOCK_TOTAL_RAM=10000 RAMPERCENT=60 ../checks/free_ram.py
 [[ $? == 1 ]] && echo " .. Test failed." && exit 1
 [[ $? == 127 ]] && echo " .. Test lacking a parameter." && exit 127
+
+exit 0
