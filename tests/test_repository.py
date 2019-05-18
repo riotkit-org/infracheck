@@ -19,7 +19,9 @@ class RepositoryTest(unittest.TestCase):
         repository = Repository([path + '/../example/healthchecks', path])
 
         self.assertEqual(
-            sorted(['is_dd_accessible', 'docker-health', 'some_port_is_open', 'disk-space', 'hello-test-custom-check-example']),
+            sorted([
+                'is_dd_accessible', 'docker-health', 'some_port_is_open',
+                'disk-space', 'hello-test-custom-check-example', 'ram']),
             sorted(repository.get_configured_checks(with_disabled=False))
         )
 
