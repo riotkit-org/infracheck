@@ -86,6 +86,14 @@ Parameters:
 - min_req_space (in gigabytes)
 - dir (path)
 
+free-ram
+--------
+
+Monitors RAM memory usage to notify that a maximum percent of memory was used.
+
+Parameters:
+- max_ram_percentage (in percents eg. 80)
+
 replication-running
 -------------------
 
