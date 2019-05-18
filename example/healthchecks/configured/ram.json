@@ -1,0 +1,6 @@
+{
+    "type": "free-ram",
+    "input": {
+        "max_ram_percentage": "85"
+    }
+}
