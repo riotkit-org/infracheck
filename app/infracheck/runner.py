@@ -31,7 +31,7 @@ class Runner:
         output_data = {}
 
         for key, value in input_data.items():
-            output_data[key.upper()] = value
+            output_data[key.upper()] = str(value)
 
         return output_data
 
