@@ -1,6 +1,34 @@
 CHANGES
 =======
 
+* Fixed invalid types casting - when the value in checks parameters was an integer, then there was an exception
+* Update LICENSE
+* Create LICENSE
+* Resolved test after changes done on purpose
+* Added example free-ram usage
+* Applied PEP-8 rules to the free-ram file
+* Added missing documentation
+* Changed names to fit into the existing naming convention
+* fix the test
+* fix free\_ram.py and free\_ram\_test.sh according to code review
+* Add a check to watch for available RAM and a test for this check
+
+v1.1.1
+------
+
+* update disk-space-test.sh to run check with proper name
+* fix disk-space-test.sh and add a mock value for checks/disk-space
+* Change app/checks/disk-space so that it uses environmental variablesw
+* Rewrite app/checks/disk-space to python, change the syntax
+* Updated changelog, changed min. Python version to 3.5
+
+v1.1
+----
+
+* Update README.md
+* Update README.md
+* Reordered badges (commited from github)
+* Added badges (commited in github)
 * Deleted support for Python 3.7 as on Travis it does not work
 * Replaced call to "bc", as it works differently on different operating systems. The floats support in bash is not so good
 * Switched from sh to bash
