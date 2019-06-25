@@ -1,6 +1,7 @@
 setuptools
-tornado>=5
+tornado>=5<7
 setuptools
 unittest-data-provider
 coverage
 mock
+whois>=0.7<2
