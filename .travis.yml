@@ -6,6 +6,7 @@ python:
 sudo: true
 
 before_script:
+    - sudo apt-get update -y
     - sudo apt-get install -y whois
     - make install PY_BIN="python" PIP="pip"
 
