@@ -41,7 +41,7 @@ run:
 
 ## Build
 build_package:
-	${PY_BIN} ./setup.py build
+	${SUDO} ${PY_BIN} ./setup.py build
 
 ## Build documentation
 build_docs:
