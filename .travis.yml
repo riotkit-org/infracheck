@@ -9,7 +9,7 @@ before_script:
     - make install PY_BIN="python" PIP="pip"
 
 script:
-    - cd app && ./functional-test.sh
+    - cd infracheck && ./functional-test.sh
     - cd ../ && make unit_test coverage
 
 after_success:
