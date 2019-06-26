@@ -8,6 +8,7 @@ sudo: true
 allow_failures:
     - "nightly"
     - "pypy3"
+    - "3.8"
 
 before_script:
     - sudo apt-get update -y
