@@ -92,6 +92,7 @@ free-ram
 Monitors RAM memory usage to notify that a maximum percent of memory was used.
 
 Parameters:
+
 - max_ram_percentage (in percents eg. 80)
 
 domain-expiration
@@ -100,6 +101,7 @@ domain-expiration
 Check if the domain is close to expiration date or if it is already expired.
 
 Parameters:
+
 - domain (domain name)
 - alert_days_before (number of days before expiration date to start alerting)
 
