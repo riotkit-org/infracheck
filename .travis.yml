@@ -3,9 +3,10 @@ python:
     - "3.5"
     - "3.6"
     - "pypy3"
-sudo: false
+sudo: true
 
 before_script:
+    - sudo apt-get install -y whois
     - make install PY_BIN="python" PIP="pip"
 
 script:
