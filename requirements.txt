@@ -5,3 +5,4 @@ unittest-data-provider
 coverage
 mock
 whois>=0.7<2
+pytz>=2019.1

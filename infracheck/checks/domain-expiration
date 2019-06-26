@@ -14,16 +14,21 @@ import sys
 class DomainCheck:
     _domain: str
     _alert_days_before: int
+    whois: whois
 
     def __init__(self, domain: str, alert_days_before: int):
         self._domain = domain
         self._alert_days_before = alert_days_before
+        self.whois = whois
 
         if not self._domain or self._domain == '':
             raise Exception('Domain must be specified')
 
     def perform_check(self) -> tuple:
-        domain_check = whois.query(self._domain)
+        domain_check = self.whois.query(self._domain)
+
+        if domain_check is None or domain_check.expiration_date is None:
+            return False, "Domain seems to be not registered"
 
         try:
             exp_date = pytz.utc.localize(domain_check.expiration_date)
@@ -35,10 +40,9 @@ class DomainCheck:
         delta = exp_date - now
 
         if now >= exp_date:
-            return False, "Domain {} expired at {}!".format(self._domain, exp_date.strftime('%Y-%M-%D'))
+            return False, "Domain {} expired at {}!".format(self._domain, exp_date.strftime('%Y-%m-%d'))
 
         if now >= alert_begins:
-
             return False, "The domain will expire soon in {} days".format(delta.days)
 
         return True, "Domain {} is not expired. {} days left".format(self._domain, delta.days)

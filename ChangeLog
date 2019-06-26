@@ -1,6 +1,9 @@
 CHANGES
 =======
 
+* Renamed check to fit the convention
+* Added domain-expiration check
+* Corrected package name
 * Fixed invalid types casting - when the value in checks parameters was an integer, then there was an exception
 * Update LICENSE
 * Create LICENSE

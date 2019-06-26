@@ -1,0 +1,7 @@
+{
+    "type": "domain-expiration",
+    "input": {
+        "domain": "zsp.net.pl",
+        "alert_days_before": 25
+    }
+}

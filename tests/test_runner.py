@@ -4,13 +4,13 @@ import os
 import inspect
 from unittest_data_provider import data_provider
 
-path = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe()))) + '/../app'
+path = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe()))) + '/../'
 sys.path.append(path)
-from infracheck.runner import Runner
 
-# for static analysis
-if False:
-    from ..app.infracheck.runner import Runner
+try:
+    from ..infracheck.infracheck.runner import Runner
+except ImportError as e:
+    from infracheck.infracheck.runner import Runner
 
 
 class RunnerTest(unittest.TestCase):

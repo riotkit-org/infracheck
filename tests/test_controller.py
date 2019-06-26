@@ -5,13 +5,13 @@ import inspect
 import mock
 from unittest_data_provider import data_provider
 
-path = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe()))) + '/../app/'
+path = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe()))) + '/../'
 sys.path.append(path)
-from infracheck.controller import Controller
 
-# for static analysis
-if False:
-    from ..app.infracheck.controller import Controller
+try:
+    from ..infracheck.infracheck.controller import Controller
+except ImportError as e:
+    from infracheck.infracheck.controller import Controller
 
 
 class ControllerTest(unittest.TestCase):
