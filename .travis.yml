@@ -1,9 +1,13 @@
 language: python
 python:
-    - "3.5"
     - "3.6"
+    - "3.7"
+    - "nightly"
     - "pypy3"
 sudo: true
+allow_failures:
+    - "nightly"
+    - "pypy3"
 
 before_script:
     - sudo apt-get update -y
