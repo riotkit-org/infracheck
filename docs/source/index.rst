@@ -47,6 +47,7 @@ Simple, easy to setup, easy to understand. Works perfectly with Docker.
    hooks
    reference
    custom-scripts
+   cache
 
 From authors
 ============

@@ -90,6 +90,9 @@ List of supported environment variables:
     # run a webserver
     infracheck --directory=/your-project-directory-path-there --server --server-port=7422
 
+    # set up a scheduled checking
+    echo "*/1 * * * * infracheck --directory=/your-project-directory-path-there --force" >> /etc/crontabs/root
+
 **Using PIP**
 
 .. code:: bash
@@ -101,3 +104,7 @@ List of supported environment variables:
 
     # run a webserver
     infracheck --directory=/your-project-directory-path-there --server --server-port=7422
+
+    # set up a scheduled checking
+    echo "*/1 * * * * infracheck --directory=/your-project-directory-path-there --force" >> /etc/crontabs/root
+
