@@ -1,5 +1,8 @@
 FROM balenalib/armv7hf-debian:buster
 
+ENV CHECK_INTERVAL="*/1 * * * *" \
+    WAIT_TIME=0
+
 RUN [ "cross-build-start" ]
 RUN apt-get update \
     && apt-get -y install python3 python3-pip bash perl curl wget grep sed docker.io \
@@ -17,7 +20,7 @@ RUN cd /infracheck \
     && git remote add origin https://github.com/riotkit-org/infracheck.git \
     && make install \
     && make unit_test \
-    && set -x && cd /infracheck/app && ./functional-test.sh \
+    && set -x && cd /infracheck/infracheck && ./functional-test.sh \
     && rm -rf /infracheck/.git /infracheck/example /infracheck/tests \
     && rm -rf /var/cache/apk/* \
     && chmod +x /infracheck/entrypoint.sh \

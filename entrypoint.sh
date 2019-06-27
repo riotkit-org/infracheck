@@ -4,7 +4,7 @@
 echo "#!/bin/bash" > /entrypoint.cron.sh
 
 # check interval can be configured using environment variables
-echo "${CHECK_INTERVAL} infracheck --force" > /etc/crontabs/root
+echo "${CHECK_INTERVAL} infracheck --force --wait=${WAIT_TIME}" > /etc/crontabs/root
 
 # different base images are for x86_64 and for armv7
 if which crond > /dev/null; then

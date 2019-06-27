@@ -5,6 +5,7 @@ from .config import ConfigLoader
 from .server import HttpServer
 
 import os
+import time
 
 
 class Controller:
@@ -33,7 +34,7 @@ class Controller:
     def spawn_server(self):
         return self.server.run()
 
-    def perform_checks(self, force: bool):
+    def perform_checks(self, force: bool, wait_time: int = 0):
         configs = self.list_enabled_configs()
         results = {}
         global_status = True
@@ -64,6 +65,9 @@ class Controller:
 
             if not result[1]:
                 global_status = False
+
+            if force and wait_time > 0:
+                time.sleep(wait_time)
 
         return {
             'checks': results,

@@ -75,6 +75,7 @@ The image will by default expose a HTTP endpoint.
 List of supported environment variables:
 
 - CHECK_INTERVAL="*/1 * * * *"
+- WAIT_TIME=0
 
 **Without Docker**
 

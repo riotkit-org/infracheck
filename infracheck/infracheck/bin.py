@@ -66,6 +66,11 @@ def main():
         action='store_true'
     )
     parser.add_argument(
+        '--wait',
+        help='Seconds between doing checks (works only in --force mode)',
+        default=0
+    )
+    parser.add_argument(
         '--server-path-prefix',
         help='Optional path prefix to the routing, eg. /this-is-a-secret will make urls looking like: '
              'http://localhost:8000/this-is-a-secret/',
@@ -105,7 +110,7 @@ def main():
         sys.exit(0)
 
     # action: perform health checking
-    result = app.perform_checks(force=parsed.force)
+    result = app.perform_checks(force=parsed.force, wait_time=parsed.wait)
     print(json.dumps(result, sort_keys=True, indent=4, separators=(',', ': ')))
 
     if not result['global_status']:

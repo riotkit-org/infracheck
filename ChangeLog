@@ -1,6 +1,10 @@
 CHANGES
 =======
 
+* Added docs, clean up
+* Resolved unit tests
+* Resolved "rate limit exceeded" in domain-expiration check, by adding waits
+* Added caching mechanism, so the HTTP endpoint will not execute all checks each time. Now the background process triggered by crontab will be updating status cache, and the HTTP endpoint will read it
 * Fixed documentation syntax
 * Fixed link to the documentation
 * Travis: Setting correct Python versions

@@ -34,12 +34,12 @@ class DomainCheck:
             try:
                 return self.whois.query(self._domain)
             except Exception as e:
+                retries += 1
+
+                if retries > max_retries:
+                    raise e
+
                 if "request limit exceeded" in str(e):
-                    retries += 1
-
-                    if retries > max_retries:
-                        raise e
-
                     time.sleep(5)
 
     def perform_check(self) -> tuple:

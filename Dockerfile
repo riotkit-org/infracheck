@@ -4,7 +4,8 @@ RUN apk --update add python3 bash perl curl wget grep sed docker sudo mysql-clie
 ADD . /infracheck
 ADD .git /infracheck/
 
-ENV CHECK_INTERVAL="*/1 * * * *"
+ENV CHECK_INTERVAL="*/1 * * * *" \
+    WAIT_TIME=0
 
 RUN cd /infracheck \
     && git remote remove origin || true \

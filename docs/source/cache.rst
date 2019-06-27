@@ -22,3 +22,5 @@ Limits
 
 Some checks could call external APIs, those can have limits. A good example is a *domain-expiration* check which is using whois.
 It is recommended to run a separate infracheck instance with less frequent checking, eg. once a day - see CHECK_INTERVAL in docker, and crontab in standalone installation.
+
+You can also use `--wait` switch to set waiting in seconds between single checks (in docker it is `WAIT_TIME` variable)
