@@ -15,9 +15,15 @@ fi
 
 chmod +x /entrypoint.cron.sh
 
+ARGS=""
+
+if [[ ${LAZY} == "true"  ]] || ${LAZY} == "1" ]]; then
+    ARGS="${ARGS} --lazy "
+fi
+
 # allow to pass custom arguments from docker run command
 echo "#!/bin/bash" > /entrypoint.cmd.sh
-echo "infracheck --server --server-port 8000 $@" >> /entrypoint.cmd.sh
+echo "infracheck --server --server-port 8000 ${ARGS} $@" >> /entrypoint.cmd.sh
 chmod +x /entrypoint.cmd.sh
 
 exec supervisord -c /infracheck/supervisord.conf

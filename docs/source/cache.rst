@@ -5,7 +5,7 @@ It can be harmful to the server to run all checks on each HTTP endpoint call, so
 
 How often really the checks are performing depends on your configuration, how often you execute **infracheck --force**
 
---force
+`--force`
 -------
 
 The *--force* parameter means that the application will write checks results to a cache.
@@ -24,3 +24,10 @@ Some checks could call external APIs, those can have limits. A good example is a
 It is recommended to run a separate infracheck instance with less frequent checking, eg. once a day - see CHECK_INTERVAL in docker, and crontab in standalone installation.
 
 You can also use `--wait` switch to set waiting in seconds between single checks (in docker it is `WAIT_TIME` variable)
+
+--lazy
+------
+
+When running a ex. HTTP endpoint without `--force`, then application is only reading results of previously executed checks that are usually executed in background using cron.
+**Without lazy** the checks that were not executed yet will be showing "Not ready yet" and a **status equals to false**.
+If you really need to avoid such case, **then you can allow running a check on-demand by enabling** `--lazy` **flag** (LAZY=true in docker).

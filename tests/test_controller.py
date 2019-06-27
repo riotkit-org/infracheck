@@ -157,7 +157,7 @@ class ControllerTest(unittest.TestCase):
         controller.config_loader.load = mock.Mock()
 
         with mock.patch.object(controller.config_loader, 'load', return_value=config):
-            performed = controller.perform_checks(force=True)
+            performed = controller.perform_checks(force=True, lazy=True)
 
         self.assertEqual(expected_result, performed['checks']['example-check']['status'])
 

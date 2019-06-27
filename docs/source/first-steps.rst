@@ -76,6 +76,7 @@ List of supported environment variables:
 
 - CHECK_INTERVAL="*/1 * * * *"
 - WAIT_TIME=0
+- LAZY=false
 
 **Without Docker**
 
@@ -89,7 +90,7 @@ List of supported environment variables:
     infracheck --directory=/your-project-directory-path-there
 
     # run a webserver
-    infracheck --directory=/your-project-directory-path-there --server --server-port=7422
+    infracheck --directory=/your-project-directory-path-there --server --server-port=7422 --lazy
 
     # set up a scheduled checking
     echo "*/1 * * * * infracheck --directory=/your-project-directory-path-there --force" >> /etc/crontabs/root

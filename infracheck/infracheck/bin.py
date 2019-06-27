@@ -71,6 +71,13 @@ def main():
         default=0
     )
     parser.add_argument(
+        '--lazy',
+        help='If check result is not ready, then the ' +
+             'check result will be populated on-demand, even if --force is not active',
+        default=False,
+        action='store_true'
+    )
+    parser.add_argument(
         '--server-path-prefix',
         help='Optional path prefix to the routing, eg. /this-is-a-secret will make urls looking like: '
              'http://localhost:8000/this-is-a-secret/',
@@ -110,7 +117,7 @@ def main():
         sys.exit(0)
 
     # action: perform health checking
-    result = app.perform_checks(force=parsed.force, wait_time=parsed.wait)
+    result = app.perform_checks(force=parsed.force, wait_time=parsed.wait, lazy=parsed.lazy)
     print(json.dumps(result, sort_keys=True, indent=4, separators=(',', ': ')))
 
     if not result['global_status']:

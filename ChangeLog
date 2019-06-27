@@ -1,6 +1,7 @@
 CHANGES
 =======
 
+* Added --wait / WAIT\_TIME, secured \`domain-expiration\` check against CPU overload
 * Added docs, clean up
 * Resolved unit tests
 * Resolved "rate limit exceeded" in domain-expiration check, by adding waits

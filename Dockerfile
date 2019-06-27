@@ -5,7 +5,8 @@ ADD . /infracheck
 ADD .git /infracheck/
 
 ENV CHECK_INTERVAL="*/1 * * * *" \
-    WAIT_TIME=0
+    WAIT_TIME=0\
+    LAZY=false
 
 RUN cd /infracheck \
     && git remote remove origin || true \

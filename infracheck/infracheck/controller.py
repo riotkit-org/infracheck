@@ -34,7 +34,14 @@ class Controller:
     def spawn_server(self):
         return self.server.run()
 
-    def perform_checks(self, force: bool, wait_time: int = 0):
+    def perform_checks(self, force: bool, wait_time: int = 0, lazy=False):
+        """
+        :param force: Perform checks and write results
+        :param wait_time: After each check wait (in seconds)
+        :param lazy: If force not specified, and there is no result, then allow to perform a check on-demand
+        :return:
+        """
+
         configs = self.list_enabled_configs()
         results = {}
         global_status = True
@@ -51,7 +58,8 @@ class Controller:
             config = self.config_loader.load(config_name)
 
             if not result:
-                result = self.runner.run(config['type'], config['input'], config.get('hooks', {}))
+                result = self.runner.run(config['type'], config['input'], config.get('hooks', {})) \
+                    if lazy else ["Check not ready", False, ""]
 
             # store in the cache
             self.repository.push_to_cache(config_name, result)
