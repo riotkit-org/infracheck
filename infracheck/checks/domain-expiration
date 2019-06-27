@@ -9,6 +9,7 @@ import datetime
 import pytz
 import os
 import sys
+import time
 
 
 class DomainCheck:
@@ -24,8 +25,25 @@ class DomainCheck:
         if not self._domain or self._domain == '':
             raise Exception('Domain must be specified')
 
+    def _check_with_wait(self):
+        time.sleep(1)
+        max_retries = 10
+        retries = 0
+
+        while True:
+            try:
+                return self.whois.query(self._domain)
+            except Exception as e:
+                if "request limit exceeded" in str(e):
+                    retries += 1
+
+                    if retries > max_retries:
+                        raise e
+
+                    time.sleep(5)
+
     def perform_check(self) -> tuple:
-        domain_check = self.whois.query(self._domain)
+        domain_check = self._check_with_wait()
 
         if domain_check is None or domain_check.expiration_date is None:
             return False, "Domain seems to be not registered"
