@@ -55,6 +55,17 @@ def main():
         default=7422
     )
     parser.add_argument(
+        '--db-path',
+        help='Database path',
+        default='~/.infracheck.sqlite3'
+    )
+    parser.add_argument(
+        '--force',
+        help='Set write mode on cache, so all health checks are always executed',
+        default=False,
+        action='store_true'
+    )
+    parser.add_argument(
         '--server-path-prefix',
         help='Optional path prefix to the routing, eg. /this-is-a-secret will make urls looking like: '
              'http://localhost:8000/this-is-a-secret/',
@@ -66,7 +77,7 @@ def main():
     server_port = int(parsed.server_port if parsed.server_port else 7422)
     server_path_prefix = parsed.server_path_prefix if parsed.server_path_prefix else ''
 
-    app = Controller(project_dir, server_port, server_path_prefix)
+    app = Controller(project_dir, server_port, server_path_prefix, parsed.db_path)
 
     if parsed.server:
         app.spawn_server()
@@ -94,7 +105,7 @@ def main():
         sys.exit(0)
 
     # action: perform health checking
-    result = app.perform_checks()
+    result = app.perform_checks(force=parsed.force)
     print(json.dumps(result, sort_keys=True, indent=4, separators=(',', ': ')))
 
     if not result['global_status']:

@@ -3,6 +3,10 @@
 # depending on operating system, create an entrypoint for cron
 echo "#!/bin/bash" > /entrypoint.cron.sh
 
+# check interval can be configured using environment variables
+echo "${CHECK_INTERVAL} infracheck --force" > /etc/crontabs/root
+
+# different base images are for x86_64 and for armv7
 if which crond > /dev/null; then
     echo "crond -d 2 -f" >> /entrypoint.cron.sh
 else

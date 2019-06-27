@@ -1,6 +1,20 @@
 CHANGES
 =======
 
+* Fixed documentation syntax
+* Fixed link to the documentation
+* Travis: Setting correct Python versions
+* Travis: Setting correct Python versions
+* Travis: Setting correct Python versions
+* Fixed mistake in path
+* Changed description format for PyPI, allowing failures on travis nightly and pypi3
+* Changed to mime of description to text/markdown for PyPI
+* Trying to fix the travis build
+* Trying to fix the travis build
+* Fixed travis build after path change
+* Switched to Alpine 3.9, fixed incorrect path after recent changes
+* Resolved permissions problem
+* Added tests for domain-expiration check, updated documentation, dependencies list
 * Renamed check to fit the convention
 * Added domain-expiration check
 * Corrected package name
