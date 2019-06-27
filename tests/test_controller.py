@@ -148,7 +148,8 @@ class ControllerTest(unittest.TestCase):
         controller = Controller(
             project_dir=path,
             server_port=8000,
-            server_path_prefix=''
+            server_path_prefix='',
+            db_path='/tmp/.infracheck.sqlite3'
         )
 
         # mocks
@@ -156,7 +157,7 @@ class ControllerTest(unittest.TestCase):
         controller.config_loader.load = mock.Mock()
 
         with mock.patch.object(controller.config_loader, 'load', return_value=config):
-            performed = controller.perform_checks()
+            performed = controller.perform_checks(force=True)
 
         self.assertEqual(expected_result, performed['checks']['example-check']['status'])
 

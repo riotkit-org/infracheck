@@ -15,7 +15,7 @@ except ImportError as e:
 class RepositoryTest(unittest.TestCase):
 
     def test_returns_all_checks(self):
-        repository = Repository([path + '/example/healthchecks', path])
+        repository = Repository([path + '/example/healthchecks', path], '/tmp/.infracheck.sqlite3')
 
         self.assertEqual(
             sorted([

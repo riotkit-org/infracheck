@@ -11,7 +11,7 @@ class Repository:
     configured_dirs: list
     db: sqlite3.Connection
 
-    def __init__(self, project_dirs: list, db_path: str):
+    def __init__(self, project_dirs: list, db_path: str = '~/.infracheck.sqlite3'):
         self.checks_dirs = []
         self.configured_dirs = []
         self._connect_to_db(db_path)
