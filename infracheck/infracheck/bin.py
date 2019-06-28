@@ -88,9 +88,10 @@ def main():
     project_dir = parsed.directory if parsed.directory else os.getcwd()
     server_port = int(parsed.server_port if parsed.server_port else 7422)
     server_path_prefix = parsed.server_path_prefix if parsed.server_path_prefix else ''
+    wait_time = int(parsed.wait_time)
 
     app = Controller(project_dir, server_port, server_path_prefix,
-                     parsed.db_path, parsed.wait, parsed.lazy, parsed.force)
+                     parsed.db_path, wait_time, parsed.lazy, parsed.force)
 
     if parsed.server:
         app.spawn_server()
@@ -118,7 +119,7 @@ def main():
         sys.exit(0)
 
     # action: perform health checking
-    result = app.perform_checks(force=parsed.force, wait_time=parsed.wait, lazy=parsed.lazy)
+    result = app.perform_checks(force=parsed.force, wait_time=wait_time, lazy=parsed.lazy)
     print(json.dumps(result, sort_keys=True, indent=4, separators=(',', ': ')))
 
     if not result['global_status']:
