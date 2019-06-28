@@ -149,7 +149,10 @@ class ControllerTest(unittest.TestCase):
             project_dir=path,
             server_port=8000,
             server_path_prefix='',
-            db_path='/tmp/.infracheck.sqlite3'
+            db_path='/tmp/.infracheck.sqlite3',
+            wait_time=0,
+            lazy=True,
+            force=True
         )
 
         # mocks

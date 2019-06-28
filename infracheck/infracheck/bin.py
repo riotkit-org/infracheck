@@ -89,7 +89,8 @@ def main():
     server_port = int(parsed.server_port if parsed.server_port else 7422)
     server_path_prefix = parsed.server_path_prefix if parsed.server_path_prefix else ''
 
-    app = Controller(project_dir, server_port, server_path_prefix, parsed.db_path)
+    app = Controller(project_dir, server_port, server_path_prefix,
+                     parsed.db_path, parsed.wait, parsed.lazy, parsed.force)
 
     if parsed.server:
         app.spawn_server()

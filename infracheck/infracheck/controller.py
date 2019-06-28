@@ -15,12 +15,14 @@ class Controller:
     config_loader = None  # type: ConfigLoader
     server = None         # type: HttpServer
 
-    def __init__(self, project_dir: str, server_port: int, server_path_prefix: str, db_path: str):
+    def __init__(self, project_dir: str, server_port: int, server_path_prefix: str,
+                 db_path: str, wait_time: int, lazy: bool, force: bool):
+
         self.project_dirs = self._combine_project_dirs(project_dir)
         self.runner = Runner(self.project_dirs)
         self.config_loader = ConfigLoader(self.project_dirs)
         self.repository = Repository(self.project_dirs, db_path)
-        self.server = HttpServer(self, server_port, server_path_prefix)
+        self.server = HttpServer(self, server_port, server_path_prefix, wait_time, lazy, force)
 
     def list_enabled_configs(self):
         return self.repository.get_configured_checks(with_disabled=False)
@@ -58,11 +60,11 @@ class Controller:
             config = self.config_loader.load(config_name)
 
             if not result:
-                result = self.runner.run(config['type'], config['input'], config.get('hooks', {})) \
-                    if lazy else ["Check not ready", False, ""]
-
-            # store in the cache
-            self.repository.push_to_cache(config_name, result)
+                if lazy:
+                    result = self.runner.run(config['type'], config['input'], config.get('hooks', {}))
+                    self.repository.push_to_cache(config_name, result)
+                else:
+                    result = ["Check not ready", False, ""]
 
             results[config_name] = {
                 'status': result[1],

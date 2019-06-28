@@ -1,6 +1,8 @@
 CHANGES
 =======
 
+* Updated suggestion in reference in docs
+* Added --lazy flag
 * Added --wait / WAIT\_TIME, secured \`domain-expiration\` check against CPU overload
 * Added docs, clean up
 * Resolved unit tests
