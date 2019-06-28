@@ -1,6 +1,7 @@
 CHANGES
 =======
 
+* Fixed types casting in arguments passing from CLI
 * Hotfix: Fixed 503 on HTTP caused by missing new params
 * Updated suggestion in reference in docs
 * Added --lazy flag

@@ -88,7 +88,7 @@ def main():
     project_dir = parsed.directory if parsed.directory else os.getcwd()
     server_port = int(parsed.server_port if parsed.server_port else 7422)
     server_path_prefix = parsed.server_path_prefix if parsed.server_path_prefix else ''
-    wait_time = int(parsed.wait_time)
+    wait_time = int(parsed.wait)
 
     app = Controller(project_dir, server_port, server_path_prefix,
                      parsed.db_path, wait_time, parsed.lazy, parsed.force)
