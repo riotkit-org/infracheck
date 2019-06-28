@@ -60,7 +60,7 @@ class Controller:
             config = self.config_loader.load(config_name)
 
             if not result:
-                if lazy:
+                if lazy or force:
                     result = self.runner.run(config['type'], config['input'], config.get('hooks', {}))
                     self.repository.push_to_cache(config_name, result)
                 else:
