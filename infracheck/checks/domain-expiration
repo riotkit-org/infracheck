@@ -5,11 +5,19 @@
 """
 
 import whois
+from whois._3_adjust import str_to_date
+
 import datetime
 import pytz
 import os
 import sys
+import re
 import time
+import subprocess
+from collections import namedtuple
+
+
+ManualCheck = namedtuple('ManualCheck', 'expiration_date')
 
 
 class DomainCheck:
@@ -19,7 +27,7 @@ class DomainCheck:
 
     def __init__(self, domain: str, alert_days_before: int):
         self._domain = domain
-        self._alert_days_before = alert_days_before
+        self._alert_days_before = int(alert_days_before)
         self.whois = whois
 
         if not self._domain or self._domain == '':
@@ -32,7 +40,12 @@ class DomainCheck:
 
         while True:
             try:
-                return self.whois.query(self._domain)
+                query = self.whois.query(self._domain)
+
+                if not query.expiration_date:
+                    return self._parse_shell_whois(self._domain)
+
+                return query
             except Exception as e:
                 retries += 1
 
@@ -41,6 +54,16 @@ class DomainCheck:
 
                 if "request limit exceeded" in str(e):
                     time.sleep(5)
+
+    def _parse_shell_whois(self, domain: str):
+        output = subprocess.check_output('whois %s' % domain, shell=True)
+        match = re.search(r'Expiry Date: ([0-9-T:]+)Z', output.decode('utf-8'), re.IGNORECASE)
+
+        if match:
+            return ManualCheck(expiration_date=str_to_date(match.group(1)))
+
+        return ''
+
 
     def perform_check(self) -> tuple:
         domain_check = self._check_with_wait()
