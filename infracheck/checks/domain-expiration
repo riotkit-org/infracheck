@@ -42,7 +42,7 @@ class DomainCheck:
             try:
                 query = self.whois.query(self._domain)
 
-                if not query.expiration_date:
+                if not query or not query.expiration_date:
                     return self._parse_shell_whois(self._domain)
 
                 return query
@@ -62,7 +62,7 @@ class DomainCheck:
         if match:
             return ManualCheck(expiration_date=str_to_date(match.group(1)))
 
-        return ''
+        return ManualCheck(expiration_date=None)
 
 
     def perform_check(self) -> tuple:
