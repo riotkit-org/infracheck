@@ -1,6 +1,7 @@
 CHANGES
 =======
 
+* Fixed: --force flag was not considered, --lazy needed to be also specified
 * Fixed types casting in arguments passing from CLI
 * Fixed types casting in arguments passing from CLI
 * Hotfix: Fixed 503 on HTTP caused by missing new params

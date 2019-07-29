@@ -19,7 +19,7 @@ class Runner:
             exit_status = True
 
         except subprocess.CalledProcessError as e:
-            output = e.output
+            output = e.output + e.stderr
             exit_status = False
 
         hooks_out = self._notify_hooks(hooks, exit_status)
