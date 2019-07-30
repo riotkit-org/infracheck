@@ -1,11 +1,16 @@
 version: '2'
+
+volumes:
+    infradb:
+
 services:
     healthcheck:
-        image: wolnosciowiec/infracheck
-        command: " --directory=/data --server-path-prefix=/some-prefix"
+        image: quay.io/riotkit/infracheck
+        command: " --server-path-prefix=/some-prefix"
         volumes:
             # place your health checks structure at ./healthchecks
             - "./healthchecks:/data"
+            - "infradb:/database"
             - "/var/run/docker.sock:/var/run/docker.sock:ro"
         ports:
             - "8000:8000"
