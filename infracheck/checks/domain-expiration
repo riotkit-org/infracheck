@@ -56,14 +56,17 @@ class DomainCheck:
                     time.sleep(5)
 
     def _parse_shell_whois(self, domain: str):
-        output = subprocess.check_output('whois %s' % domain, shell=True)
-        match = re.search(r'Expiry Date: ([0-9-T:]+)Z', output.decode('utf-8'), re.IGNORECASE)
+        try:
+            output = subprocess.check_output('whois %s' % domain, shell=True)
+            match = re.search(r'Expiry Date: ([0-9-T:]+)Z', output.decode('utf-8'), re.IGNORECASE)
 
-        if match:
-            return ManualCheck(expiration_date=str_to_date(match.group(1)))
+            if match:
+                return ManualCheck(expiration_date=str_to_date(match.group(1)))
+            
+        except subprocess.CalledProcessError:
+            pass
 
         return ManualCheck(expiration_date=None)
-
 
     def perform_check(self) -> tuple:
         domain_check = self._check_with_wait()
