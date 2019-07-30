@@ -62,7 +62,7 @@ class DomainCheck:
 
             if match:
                 return ManualCheck(expiration_date=str_to_date(match.group(1)))
-            
+
         except subprocess.CalledProcessError:
             pass
 

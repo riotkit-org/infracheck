@@ -28,16 +28,20 @@ all: build build_arm install unit_test run
 
 ## Build docker image
 build_image:
-	sudo docker build . -t wolnosciowiec/infracheck
+	sudo docker build . -t quay.io/riotkit/infracheck
 
 ## Build image for ARM/ARMHF
 build_image_arm:
 	sudo docker build -f ./armhf.Dockerfile . -t wolnosciowiec/infracheck:armhf
 
 ## Run (for testing)
-run:
+run_in_container:
 	sudo docker kill infracheck || true
 	sudo docker run --name infracheck -p 8000:8000 -t --rm wolnosciowiec/infracheck
+
+## Run (standalone)
+run_standalone:
+	infracheck --server --server-port 8000
 
 ## Build
 build_package:
