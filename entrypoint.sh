@@ -1,6 +1,6 @@
 #!/bin/bash
 
-CHECK_INTERVAL=$(echo ${CHECK_INTERVAL} | sed "s/\"//g")
+CHECK_INTERVAL=$(echo "${CHECK_INTERVAL}" | sed "s/\"//g")
 
 get_common_args () {
     echo " --directory=/data --db-path=/database/db.sqlite3 "
