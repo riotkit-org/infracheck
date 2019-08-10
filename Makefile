@@ -1,71 +1,48 @@
 .SILENT:
-
-## Colors
-COLOR_RESET   = \033[0m
-COLOR_INFO    = \033[32m
-COLOR_COMMENT = \033[33m
+.PHONY: help
 
 PIP = sudo pip3
 SUDO = sudo
 PY_BIN = python3
 
-## Help
 help:
-	printf "${COLOR_COMMENT}Usage:${COLOR_RESET}\n"
-	printf " make [target]\n\n"
-	printf "${COLOR_COMMENT}Available targets:${COLOR_RESET}\n"
-	awk '/^[a-zA-Z\-\_0-9\.@]+:/ { \
-		helpMessage = match(lastLine, /^## (.*)/); \
-		if (helpMessage) { \
-			helpCommand = substr($$1, 0, index($$1, ":")); \
-			helpMessage = substr(lastLine, RSTART + 3, RLENGTH); \
-			printf " ${COLOR_INFO}%-25s${COLOR_RESET} %s\n", helpCommand, helpMessage; \
-		} \
-	} \
-	{ lastLine = $$0 }' $(MAKEFILE_LIST)
+	@grep -E '^[a-zA-Z\-\_0-9\.@]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
 
-all: build build_arm install unit_test run
+all: build_package install unit_test
 
-## Build docker image
-build_image:
-	sudo docker build . -t quay.io/riotkit/infracheck
+build_image: ## Build docker image
+	sudo docker build . -f ./.infrastructure/Dockerfile -t quay.io/riotkit/infracheck
 
-## Build image for ARM/ARMHF
-build_image_arm:
-	sudo docker build -f ./armhf.Dockerfile . -t wolnosciowiec/infracheck:armhf
+build_image_arm: ## Build image for ARM/ARMHF
+	sudo docker build -f ./.infrastructure/armhf.Dockerfile . -t wolnosciowiec/infracheck:armhf
 
-## Run (for testing)
-run_in_container:
+run_in_container: ## Run (for testing)
 	sudo docker kill infracheck || true
 	sudo docker run --name infracheck -p 8000:8000 -t --rm wolnosciowiec/infracheck
 
-## Run (standalone)
-run_standalone:
+run_standalone_server: ## Run (standalone)
 	infracheck --server --server-port 8000
 
-## Build
-build_package:
+run_standalone: ## Run (standalone)
+	infracheck
+
+build_package: ## Build
 	${SUDO} ${PY_BIN} ./setup.py build
 
-## Build documentation
-build_docs:
+build_docs: ## Build documentation
 	cd ./docs && make html
 
-## Install
-install: build_package
+install: build_package ## Install
 	${PIP} install -r ./requirements.txt
 	${SUDO} ${PY_BIN} ./setup.py install
 	which infracheck
 	make clean
 
-## Clean up the local build directory
-clean:
+clean: ## Clean up the local build directory
 	${SUDO} rm -rf ./build ./infracheck.egg-info
 
-## Run unit tests
-unit_test:
+unit_test: ## Run unit tests
 	${PY_BIN} -m unittest discover -s ./tests
 
-## Generate code coverage
-coverage:
+coverage: ## Generate code coverage
 	coverage run --rcfile=.coveragerc --source . -m unittest discover -s ./tests

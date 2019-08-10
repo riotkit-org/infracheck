@@ -14,6 +14,9 @@ script:
 
 after_success:
     - bash <(curl -s https://codecov.io/bash) -cF python
+    - bash ./.infrastructure/notify.sh "${SLACK_URL}" " [OK] Infracheck tests were passed"
+after_failure:
+    - bash ./.infrastructure/notify.sh "${SLACK_URL}" " [FAILURE] Infracheck tests are failing!"
 
 deploy:
     skip_cleanup: true
