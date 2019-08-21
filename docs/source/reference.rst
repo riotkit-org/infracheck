@@ -65,6 +65,7 @@ Grab credentials at https://api.ovh.com/createToken/index.cgi
 **Required privileges on OVH API: "GET /vps*"**
 
 Parameters:
+
 - endpoint (ex. ovh-eu)
 - app_key
 - app_secret
