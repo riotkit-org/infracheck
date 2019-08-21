@@ -28,19 +28,29 @@ class OvhExpirationCheck:
             consumer_key=consumer_key
         )
 
+    def _get(self, path: str):
+        exc = None
+
+        for retry_num in range(0, 3):
+            try:
+                return self.client.get(path)
+            except Exception as e:
+                exc = e
+
+        raise exc
+
     def check_service_not_expiring_soon(self, service_name: str, days_to_expire: int, log: bool):
         try:
-            response = self.client.get('/vps/%s/serviceInfos' % service_name)
+            response = self._get('/vps/%s/serviceInfos' % service_name)
+
         except ovh.exceptions.ResourceNotFoundError as e:
             if log:
                 print(str(e) + ', possible services: %s' % str(self.get_available_vps()))
-
             return False
 
         except ovh.exceptions.InvalidKey as e:
             if log:
                 print(str(e) + ', invalid credentials')
-
             return False
 
         if "expiration" not in response:
