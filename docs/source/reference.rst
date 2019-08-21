@@ -56,6 +56,22 @@ Parameters:
 
 - container
 
+ovh-expiration
+--------------
+
+Checks if a VPS is not expired.
+Grab credentials at https://api.ovh.com/createToken/index.cgi
+
+**Required privileges on OVH API: "GET /vps*"**
+
+Parameters:
+- endpoint (ex. ovh-eu)
+- app_key
+- app_secret
+- app_consumer_key
+- service_name (ex. somevps.ovh.net)
+- days_to_alert (ex. 30 for 30 days)
+
 docker-health
 -------------
 

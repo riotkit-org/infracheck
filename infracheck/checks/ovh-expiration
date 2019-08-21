@@ -1,0 +1,81 @@
+#!/usr/bin/env python3
+
+"""
+    OVH VPS expiration checker
+    ==========================
+
+    Generate access codes at https://api.ovh.com/createToken/index.cgi
+    Requires access to path "GET /vps*"
+"""
+
+
+import ovh
+import sys
+import os
+from datetime import timedelta, datetime
+from whois._3_adjust import str_to_date
+
+
+class OvhExpirationCheck:
+    client: ovh.Client
+    post_data: dict
+
+    def __init__(self, endpoint: str, app_key: str, app_secret: str, consumer_key: str):
+        self.client = ovh.Client(
+            endpoint=endpoint,
+            application_key=app_key,
+            application_secret=app_secret,
+            consumer_key=consumer_key
+        )
+
+    def check_service_not_expiring_soon(self, service_name: str, days_to_expire: int, log: bool):
+        try:
+            response = self.client.get('/vps/%s/serviceInfos' % service_name)
+        except ovh.exceptions.ResourceNotFoundError as e:
+            if log:
+                print(str(e) + ', possible services: %s' % str(self.get_available_vps()))
+
+            return False
+
+        except ovh.exceptions.InvalidKey as e:
+            if log:
+                print(str(e) + ', invalid credentials')
+
+            return False
+
+        if "expiration" not in response:
+            raise Exception('Expiration date not found in the response for service "%s". ' +
+                            'Check if credentials are ok and that the OVH API has no maintenance break' % service_name)
+
+        expiration = str_to_date(response['expiration'])
+        expiration_warning_day = expiration - timedelta(days=days_to_expire)
+        days_left = expiration - datetime.now()
+
+        if datetime.now() >= expiration_warning_day:
+            if log:
+                print('"%s" on OVH expires soon at %s (in %i days)' % (service_name, str(expiration), days_left.days))
+
+            return False
+
+        if log:
+            print('Don\'t worry, "%s" on OVH expires at %s (in %i days)' % (service_name, str(expiration), days_left.days))
+
+        return True
+
+    def get_available_vps(self) -> list:
+        return self.client.get('/vps')
+
+
+if __name__ == '__main__':
+    check = OvhExpirationCheck(
+        endpoint=os.getenv('ENDPOINT', 'ovh-eu'),
+        app_key=os.getenv('APP_KEY', ''),
+        app_secret=os.getenv('APP_SECRET', ''),
+        consumer_key=os.getenv('APP_CONSUMER_KEY', '')
+    )
+
+    sys.exit(0 if check.check_service_not_expiring_soon(
+        os.getenv('SERVICE_NAME', 'example'),
+        int(os.getenv('DAYS_TO_ALERT', 30)),
+        log=True
+    ) else 1)
