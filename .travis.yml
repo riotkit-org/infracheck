@@ -36,7 +36,7 @@ jobs:
 
 
     - stage: Build recent x86_64 image
-      script: make build ARCH=x86_64 GIT_TAG=${TRAVIS_TAG} PUSH=true
+      script: make build_image ARCH=x86_64 GIT_TAG=${TRAVIS_TAG} PUSH=true
 
     - stage: Build recent ARM image
-      script: make build ARCH=arm GIT_TAG=${TRAVIS_TAG} PUSH=true
+      script: make build_image ARCH=arm GIT_TAG=${TRAVIS_TAG} PUSH=true
