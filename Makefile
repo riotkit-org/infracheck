@@ -4,23 +4,34 @@
 PIP = sudo pip3
 SUDO = sudo
 PY_BIN = python3
+QUAY_REPO=quay.io/riotkit/infracheck
+PUSH=true
 
 help:
 	@grep -E '^[a-zA-Z\-\_0-9\.@]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
 
 all: build_package install unit_test
 
-build_image: ## Build docker image
-	sudo docker build . -f ./.infrastructure/Dockerfile -t quay.io/riotkit/infracheck
+build_image: ## Build and push (args: PUSH, ARCH, GIT_TAG)
+	set -e; DOCKER_TAG="latest-dev-${ARCH}"; \
+	\
+	if [[ "${GIT_TAG}" != '' ]]; then \
+		DOCKER_TAG=${GIT_TAG}-${ARCH}; \
+	fi; \
+	\
+	${SUDO} docker build . -f ./.infrastructure/${ARCH}.Dockerfile -t ${QUAY_REPO}:$${DOCKER_TAG}; \
+	${SUDO} docker tag ${QUAY_REPO}:$${DOCKER_TAG} ${QUAY_REPO}:$${DOCKER_TAG}-$$(date '+%Y-%m-%d'); \
+	\
+	if [[ "${PUSH}" == "true" ]]; then \
+		${SUDO} docker push ${QUAY_REPO}:$${DOCKER_TAG}-$$(date '+%Y-%m-%d'); \
+		${SUDO} docker push ${QUAY_REPO}:$${DOCKER_TAG}; \
+	fi
 
-build_image_arm: ## Build image for ARM/ARMHF
-	sudo docker build -f ./.infrastructure/armhf.Dockerfile . -t wolnosciowiec/infracheck:armhf
-
-run_in_container: ## Run (for testing)
+run_in_container: ## Run server in container (for testing)
 	sudo docker kill infracheck || true
-	sudo docker run --name infracheck -p 8000:8000 -t --rm wolnosciowiec/infracheck
+	sudo docker run --name infracheck -p 8000:8000 -t --rm quay.io/riotkit/infracheck:latest-dev-x86_64
 
-run_standalone_server: ## Run (standalone)
+run_standalone_server: ## Run server (standalone)
 	infracheck --server --server-port 8000
 
 run_standalone: ## Run (standalone)

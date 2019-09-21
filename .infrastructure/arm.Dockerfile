@@ -5,7 +5,7 @@ ENV CHECK_INTERVAL="*/1 * * * *" \
 
 RUN [ "cross-build-start" ]
 RUN apt-get update \
-    && apt-get -y install python3 python3-pip bash perl curl wget grep sed docker.io \
+    && apt-get -y install python3 python3-pip bash perl curl wget grep sed docker.io whois \
                           sudo mariadb-client postgresql-client netcat ca-certificates \
                           git openssl make python3-setuptools supervisor cron \
     && apt-get clean
