@@ -20,6 +20,7 @@ RUN cd /infracheck \
     && git remote add origin https://github.com/riotkit-org/infracheck.git \
     && make install \
     && make unit_test \
+    && cp -pr /infracheck/supervisord.conf /etc/supervisord.conf \
     && set -x && cd /infracheck/infracheck && ./functional-test.sh \
     && rm -rf /infracheck/.git /infracheck/example /infracheck/tests \
     && rm -rf /var/cache/apk/* \
