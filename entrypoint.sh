@@ -19,16 +19,10 @@ prepare_data_directory () {
 prepare_crontab () {
     # depending on operating system, create an entrypoint for cron
     echo "#!/bin/bash" > /entrypoint.cron.sh
+    echo "crond -d 2 -f" >> /entrypoint.cron.sh
 
     # check interval can be configured using environment variables
     echo "${CHECK_INTERVAL} root infracheck --force --wait=${WAIT_TIME} $(get_common_args) " > /etc/cron.d/infracheck
-
-    # different base images are for x86_64 and for armv7
-    if which crond > /dev/null; then
-        echo "crond -d 2 -f" >> /entrypoint.cron.sh
-    else
-        echo "cron -f" >> /entrypoint.cron.sh
-    fi
 
     chmod +x /entrypoint.cron.sh
 }
