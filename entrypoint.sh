@@ -21,7 +21,7 @@ prepare_crontab () {
     echo "#!/bin/bash" > /entrypoint.cron.sh
 
     # check interval can be configured using environment variables
-    echo "${CHECK_INTERVAL} infracheck --force --wait=${WAIT_TIME} $(get_common_args) " > /etc/crontabs/root
+    echo "${CHECK_INTERVAL} root infracheck --force --wait=${WAIT_TIME} $(get_common_args) " > /etc/cron.d/infracheck
 
     # different base images are for x86_64 and for armv7
     if which crond > /dev/null; then
