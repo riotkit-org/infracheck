@@ -1,31 +1,38 @@
-FROM balenalib/armv7hf-debian:buster
-
-ENV CHECK_INTERVAL="*/1 * * * *" \
-    WAIT_TIME=0
+FROM balenalib/armv7hf-alpine:3.9
 
 RUN [ "cross-build-start" ]
-RUN apt-get update \
-    && apt-get -y install python3 python3-pip bash perl curl wget grep sed docker.io whois \
-                          sudo mariadb-client postgresql-client netcat ca-certificates \
-                          git openssl make python3-setuptools supervisor cron \
-    && apt-get clean
+RUN apk --update add python3 bash perl curl wget grep sed docker sudo mysql-client postgresql-client make git supervisor tzdata
 RUN [ "cross-build-end" ]
 
 ADD . /infracheck
 ADD .git /infracheck/
 
+ENV CHECK_INTERVAL="*/1 * * * *" \
+    WAIT_TIME=0\
+    LAZY=false
+
 RUN [ "cross-build-start" ]
 RUN cd /infracheck \
+    # install as a package
     && git remote remove origin || true \
     && git remote add origin https://github.com/riotkit-org/infracheck.git \
     && make install \
+    \
+    # execute unit tests and functional tests, to make sure the application works
     && make unit_test \
-    && cp -pr /infracheck/supervisord.conf /etc/supervisord.conf \
     && set -x && cd /infracheck/infracheck && ./functional-test.sh \
-    && rm -rf /infracheck/.git /infracheck/example /infracheck/tests \
-    && rm -rf /var/cache/apk/* \
-    && chmod +x /infracheck/entrypoint.sh \
+    \
+    # after installing as package extract infrastructural files
+    \
+    && cp -pr /infracheck/entrypoint.sh / \
+    && cp -pr /infracheck/supervisord.conf /etc/supervisord.conf \
+    && chmod +x /entrypoint.sh \
+    \
+    # delete the temporary directory after the application was installed via setuptools
+    && rm -rf /infracheck \
+    \
+    # simple check that application does not crash at the beginning (is correctly packaged)
     && infracheck --help
 RUN [ "cross-build-end" ]
 
-ENTRYPOINT ["/infracheck/entrypoint.sh"]
+ENTRYPOINT ["/entrypoint.sh"]
