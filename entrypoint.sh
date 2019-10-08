@@ -1,5 +1,6 @@
 #!/bin/bash
 
+# shellcheck disable=SC2001
 CHECK_INTERVAL=$(echo "${CHECK_INTERVAL}" | sed "s/\"//g")
 
 get_common_args () {
@@ -30,7 +31,7 @@ prepare_crontab () {
 prepare_entrypoint () {
     ARGS=""
 
-    if [[ ${LAZY} == "true"  ]] || ${LAZY} == "1" ]]; then
+    if [[ ${LAZY} == "true"  ]] || [[ ${LAZY} == "1" ]]; then
         ARGS="${ARGS} --lazy "
     fi
 
