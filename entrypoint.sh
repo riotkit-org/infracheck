@@ -22,7 +22,7 @@ prepare_crontab () {
     echo "crond -d 2 -f" >> /entrypoint.cron.sh
 
     # check interval can be configured using environment variables
-    echo "${CHECK_INTERVAL} root infracheck --force --wait=${WAIT_TIME} $(get_common_args) " > /etc/cron.d/infracheck
+    echo "${CHECK_INTERVAL} root infracheck --force --wait=${WAIT_TIME} $(get_common_args) " > /etc/crontabs/root
 
     chmod +x /entrypoint.cron.sh
 }
