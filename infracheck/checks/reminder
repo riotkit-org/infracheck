@@ -1,0 +1,82 @@
+#!/usr/bin/env python3
+
+import os
+import sys
+from dateutil import parser as date_parser
+from datetime import datetime, timedelta
+from dateutil.relativedelta import relativedelta
+
+
+class Reminder(object):
+    each: str  # values: week, month, year
+    ref_date: datetime
+    alert_days_before: int
+    iterations: int
+
+    def __init__(self, ref_date: str, each: str, alert_days_before: int):
+        self.ref_date = date_parser.parse(ref_date)
+        self.each = each
+        self.alert_days_before = alert_days_before
+        self.iterations = 0
+
+    def main(self):
+        date = self.calculate_closest_iteration()
+        alert_date = date - timedelta(days=self.alert_days_before)
+        diff_to_alert = alert_date - self.now
+        diff_to_deadline = date - self.now
+
+        if diff_to_deadline.days < 0:
+            self.error('The deadline already reached at %s (%i days)' % (date.isoformat(), diff_to_deadline.days))
+
+        if diff_to_alert.days == 0:
+            self.error('Its close to expiration date! %i days left to %s' % (abs(diff_to_deadline.days), date.isoformat()))
+        elif diff_to_alert.days < 0:
+            self.error('Its close to expiration date! %i days already after alert date, close to %s' % (
+                abs(diff_to_alert.days), date.isoformat()))
+
+        print('OK, %i days left to alert day at %s, the deadline day is at %s (%i days to alert)' % (
+            diff_to_alert.days, alert_date.isoformat(), date.isoformat(), self.alert_days_before
+        ))
+
+    def calculate_closest_iteration(self) -> datetime:
+        now = self.now
+        date = self.ref_date
+
+        if not self.each or date.strftime('%Y-%m-%d') == now.strftime('%Y-%m-%d'):
+            return date
+
+        while date < now:
+            self.iterations += 1
+            date = self.increment(date, self.each)
+
+        return date
+
+    def increment(self, date: datetime, each: str) -> datetime:
+        date_map = {
+            "week": {"weeks": 1},
+            "month": {"months": 1},
+            "year": {"years": 1}
+        }
+
+        if each not in date_map:
+            self.error('Invalid EACH parameters value. Allowed: week, month, year')
+
+        return date + relativedelta(**date_map[self.each])
+
+    @property
+    def now(self):
+        if os.getenv('NOW'):
+            return date_parser.parse(os.getenv('NOW'))
+
+        now = datetime.now()
+
+        return now.replace(minute=0, hour=0, second=0, microsecond=0)
+
+    @staticmethod
+    def error(msg: str):
+        print(msg)
+        sys.exit(1)
+
+
+if __name__ == '__main__':
+    sys.exit(Reminder(os.getenv('REF_DATE', ''), os.getenv('EACH', 'year'), int(os.getenv('ALERT_DAYS_BEFORE', 5))).main())
