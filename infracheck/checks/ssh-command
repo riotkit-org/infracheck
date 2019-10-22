@@ -1,0 +1,128 @@
+#!/usr/bin/env python3
+
+"""
+    ssh-command
+    -----------
+
+    Calls remote process using SSH and expects: exit code, keywords in the output
+
+    Parameters:
+
+    - USER (default: root)
+    - HOST
+    - PORT (default: 22)
+    - PRIVATE_KEY
+    - PASSWORD
+    - SSH_BIN (default: ssh)
+    - SSHPASS_BIN (default: sshpass)
+    - SSH_OPTS
+    - COMMAND (default: uname -a)
+    - TIMEOUT: (default: 15, unit: seconds)
+    - EXPECTED_KEYWORDS (Keywords expected to be in stdout/stderr. Separated by ";")
+    - UNEXPECTED_KEYWORDS (Keywords not expected to be present in stdout/stderr. Separated by ";")
+    - EXPECTED_EXIT_CODE (default: 0)
+"""
+
+from typing import List
+from os import getenv
+from sys import exit
+import subprocess
+
+
+class SshCommand:
+    user: str
+    port: int
+    host: str
+    ssh_opts: str
+    expected_keywords: List[str]
+    unexpected_keywords: List[str]
+    expected_exit_code: int
+    ssh_bin: str
+    command: str
+    timeout: int
+    sshpass_bin: str
+
+    def __init__(self, user: str, port: int, host: str, ssh_opts: str,
+                 expected_keywords: List[str], expected_exit_code: int,
+                 unexpected_keywords: List[str], private_key: str,
+                 ssh_bin: str, password: str, command: str, timeout: int,
+                 sshpass_bin: str):
+        self.user = user
+        self.port = port
+        self.host = host
+        self.ssh_opts = ssh_opts
+        self.expected_keywords = expected_keywords
+        self.expected_exit_code = expected_exit_code
+        self.unexpected_keywords = unexpected_keywords
+        self.ssh_bin = ssh_bin
+        self.password = password
+        self.command = command
+        self.timeout = timeout
+        self.sshpass_bin = sshpass_bin
+
+        if private_key:
+            self.ssh_opts += ' -i %s' % private_key
+
+    def main(self):
+        command = [self.ssh_bin]
+
+        if self.password:
+            command = [self.sshpass_bin, '-p', self.password] + command
+
+        if self.ssh_opts:
+            command += self.ssh_opts.split(' ')
+
+        command += [
+            '-p', str(self.port),
+            self.user + '@' + self.host,
+            self.command
+        ]
+
+        try:
+            out = subprocess.check_output(command, stderr=subprocess.STDOUT, timeout=self.timeout).decode('utf-8')
+            exit_code = 0
+        except subprocess.CalledProcessError as e:
+            out = e.output.decode('utf-8')
+            exit_code = e.returncode
+
+        truncated_output = (str(out)[-64:]).strip()
+
+        if int(exit_code) != self.expected_exit_code:
+            return False, "Unexpected exit code %i with output: %s" % (exit_code, truncated_output)
+
+        for keyword in self.expected_keywords:
+            if keyword and keyword not in out:
+                return False, "Expected keyword '%s' to be present in output. Got: %s" % (
+                    keyword, truncated_output
+                )
+
+        for keyword in self.unexpected_keywords:
+            if keyword and keyword in out:
+                return False, "Unexpected keyword '%s'. Should not be present in the output. Got: %s" % (
+                    keyword, truncated_output
+                )
+
+        return True, "OK"
+
+
+if __name__ == '__main__':
+    app = SshCommand(
+        user=getenv('USER', 'root'),
+        host=getenv('HOST'),
+        port=int(getenv('PORT', 22)),
+        password=getenv('PASSWORD', ''),
+        private_key=getenv('PRIVATE_KEY', ''),
+        ssh_bin=getenv('SSH_BIN', 'ssh'),
+        sshpass_bin=getenv('SSHPASS_BIN', 'sshpass'),
+        ssh_opts=getenv('SSH_OPTS', ''),
+        command=getenv('COMMAND', 'uname -a'),
+        timeout=getenv('TIMEOUT', 15),
+        expected_keywords=getenv('EXPECTED_KEYWORDS', '').split(';'),
+        expected_exit_code=getenv('EXPECTED_EXIT_CODE', 0),
+        unexpected_keywords=getenv('UNEXPECTED_KEYWORDS', '').split(';')
+    )
+
+    status, message = app.main()
+
+    print(message)
+    exit(status)
