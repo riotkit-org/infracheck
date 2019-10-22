@@ -1,0 +1,19 @@
+[[source]]
+name = "pypi"
+url = "https://pypi.org/simple"
+verify_ssl = true
+
+[dev-packages]
+coverage = "*"
+unittest-data-provider = "*"
+mock = "*"
+
+[packages]
+tornado = "*"
+pytz = "*"
+whois = "*"
+ovh = "*"
+dateutil = "*"
+
+[requires]
+python_version = "3.7"
