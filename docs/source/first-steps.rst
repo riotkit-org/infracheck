@@ -11,7 +11,23 @@ Infracheck can work as a HTTP endpoint responding with JSON, or as a console com
 .. image:: _static/quick-start.png
    :target: https://asciinema.org/a/237795
 
-1. Structure
+1. Requirements
+---------------
+
+You need to install all requirements manually if you decide not to use a docker container.
+
+Requirements:
+
+- Python 3.6+
+- OpenSSH Client
+- sshpass
+- mysql-client
+- postgresql-client
+- docker client
+- curl
+
+
+2. Structure
 ------------
 
 You need to create a **project structure** from following template:
@@ -33,7 +49,7 @@ For simpler cases you may not need to define any scripts, just configure pre-def
 
 **configured** should contain your actual use cases, for example "duckduckgo_http" from above example could use "http" check with url "https://duckduckgo.com" as a parameter.
 
-2. Configuring a first check
+3. Configuring a first check
 ----------------------------
 
 Let's assume that we need to check if a page contains given keyword, and does not contain another defined one.
@@ -57,7 +73,7 @@ Test cases:
         }
     }
 
-3. Running checks
+4. Running checks
 -----------------
 
 **With Docker**

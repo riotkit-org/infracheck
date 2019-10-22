@@ -1,4 +1,3 @@
-setuptools
 tornado>=5<7
 setuptools
 unittest-data-provider
