@@ -85,7 +85,7 @@ class SshCommand:
             out = e.output.decode('utf-8')
             exit_code = e.returncode
 
-        truncated_output = (str(out)[-64:]).strip()
+        truncated_output = (str(out)[-256:]).strip()
 
         if int(exit_code) != self.expected_exit_code:
             return False, "Unexpected exit code %i with output: %s" % (exit_code, truncated_output)
@@ -106,6 +106,10 @@ class SshCommand:
 
 
 if __name__ == '__main__':
+    if not getenv('HOST'):
+        print("HOST is mandatory")
+        exit(1)
+
     app = SshCommand(
         user=getenv('USER', 'root'),
         host=getenv('HOST'),
@@ -125,4 +129,4 @@ if __name__ == '__main__':
     status, message = app.main()
 
     print(message)
-    exit(status)
+    exit(0 if status else 1)

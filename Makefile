@@ -54,7 +54,7 @@ clean: ## Clean up the local build directory
 	${SUDO} rm -rf ./build ./infracheck.egg-info
 
 unit_test: ## Run unit tests
-	${PY_BIN} -m unittest discover -s ./tests
+	${PY_BIN} -m unittest discover -s tests
 
 coverage: ## Generate code coverage
 	coverage run --rcfile=.coveragerc --source . -m unittest discover -s ./tests

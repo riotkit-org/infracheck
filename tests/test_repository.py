@@ -7,7 +7,7 @@ path = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
 sys.path.append(path)
 
 try:
-    from ..infracheck.infracheck.repository import Repository
+    from .infracheck.infracheck.repository import Repository
 except ImportError as e:
     from infracheck.infracheck.repository import Repository
 

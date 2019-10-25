@@ -8,7 +8,7 @@ path = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
 sys.path.append(path)
 
 try:
-    from ..infracheck.infracheck.runner import Runner
+    from .infracheck.infracheck.runner import Runner
 except ImportError as e:
     from infracheck.infracheck.runner import Runner
 

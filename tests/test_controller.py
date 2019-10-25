@@ -9,7 +9,7 @@ path = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
 sys.path.append(path)
 
 try:
-    from ..infracheck.infracheck.controller import Controller
+    from .infracheck.infracheck.controller import Controller
 except ImportError as e:
     from infracheck.infracheck.controller import Controller
 
