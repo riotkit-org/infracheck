@@ -56,7 +56,7 @@ clean: ## Clean up the local build directory
 	${SUDO} rm -rf ./build ./infracheck.egg-info
 
 setup_venv: ## Setup virtual environment
-	${SUDO} pipenv sync
+	${SUDO} pipenv sync -d
 
 unit_test: setup_venv ## Run unit tests
 	${SUDO} pipenv run ${PY_BIN} -m unittest discover -s .
