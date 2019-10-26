@@ -10,7 +10,7 @@ mock = "*"
 docker = "*"
 
 [packages]
-tornado = "*"
+tornado = ">=5.1,<6.0"
 pytz = "*"
 whois = "*"
 ovh = "*"
