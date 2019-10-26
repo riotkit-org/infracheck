@@ -17,11 +17,6 @@ RUN cd /infracheck \
     && git remote remove origin || true \
     && git remote add origin https://github.com/riotkit-org/infracheck.git \
     && make install \
-    \
-    # execute unit tests and functional tests, to make sure the application works
-    && make unit_test \
-    && set -x && cd /infracheck/infracheck && ./functional-test.sh \
-    \
     # after installing as package extract infrastructural files
     \
     && cp -pr /infracheck/entrypoint.sh / \

@@ -47,6 +47,7 @@ build_docs: ## Build documentation
 install: build_package ## Install as a package
 	${PIP} install pipenv
 	test -f ./requirements.txt || ./.infrastructure/generate-requirements-txt.py
+	${SUDO} ${PIP} install -r ./requirements.txt
 	${SUDO} ${PY_BIN} ./setup.py install
 	which infracheck
 	make clean
