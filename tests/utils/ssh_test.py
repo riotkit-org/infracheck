@@ -33,14 +33,16 @@ class TestThatRequiresSshServer:
 
     @staticmethod
     def _wait_for_ssh_to_be_ready():
-        for i in range(1, 30):
-            try:
-                out = subprocess.check_output('echo "ttttt\n\n" | nc -w 1 "localhost" "3222"',
-                                              shell=True, stderr=subprocess.STDOUT)
+        out = ''
 
-                if "SSH-2.0-OpenSSH" in str(out):
+        for i in range(1, 60):
+            try:
+                out += str(subprocess.check_output('echo "ttttt\n\n" | nc -w 1 "localhost" "3222"',
+                                                   shell=True, stderr=subprocess.STDOUT))
+
+                if "SSH-2.0-OpenSSH" in out:
                     return
             except subprocess.CalledProcessError:
                 time.sleep(0.5)
 
-        raise Exception('SSH container did not get up properly')
+        raise Exception('SSH container did not get up properly. Output: ' + out)
