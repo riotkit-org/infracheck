@@ -16,7 +16,7 @@ jobs:
       dist: bionic
       script:
           - pip install setuptools
-          - make install
+          - make install SUDO="" PY_BIN="python" PIP="pip"
 
     - stage: Functional tests
       before_script:
@@ -37,7 +37,7 @@ jobs:
           - sudo apt-get install -y whois openssh-client sshpass
           - pip install pipenv
       script:
-          - make coverage
+          - make coverage SUDO=""
       after_success:
           - bash <(curl -s https://codecov.io/bash) -cF python
           - bash ./.infrastructure/notify.sh "${SLACK_URL}" " [OK] Infracheck unit tests were passed"

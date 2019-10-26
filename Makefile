@@ -62,4 +62,4 @@ unit_test: setup_venv ## Run unit tests
 	${SUDO} pipenv run ${PY_BIN} -m unittest discover -s .
 
 coverage: setup_venv ## Generate code coverage
-	${SUDO} pipenv run coverage run --rcfile=.coveragerc --source . -m unittest discover -s .
+	${SUDO} PIPENV_IGNORE_VIRTUALENVS=1 pipenv run coverage run --rcfile=.coveragerc --source . -m unittest discover -s .
