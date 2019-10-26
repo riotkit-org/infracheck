@@ -5,7 +5,7 @@ It can be harmful to the server to run all checks on each HTTP endpoint call, so
 
 How often really the checks are performing depends on your configuration, how often you execute **infracheck --force**
 
-`--force`
+--force
 -------
 
 The *--force* parameter means that the application will write checks results to a cache.

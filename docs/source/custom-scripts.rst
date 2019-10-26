@@ -16,10 +16,10 @@ That's all!
 
 A few examples:
 
-.. literalinclude:: ../../app/checks/dir-present
+.. literalinclude:: ../../infracheck/checks/dir-present
    :language: bash
    :linenos:
 
-.. literalinclude:: ../../app/checks/replication-running
+.. literalinclude:: ../../infracheck/checks/replication-running
    :language: bash
    :linenos:
