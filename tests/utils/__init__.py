@@ -13,5 +13,5 @@ except ImportError as e:
 
 
 def run_check(check_type: str, input_data: dict, hooks: dict):
-    runner = Runner([path + '/../example/healthchecks', path])
+    runner = Runner([path + '/../../example/healthchecks', path + '/../infracheck/'])
     return runner.run(check_type, input_data, hooks)
