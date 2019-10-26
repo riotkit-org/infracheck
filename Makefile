@@ -44,8 +44,9 @@ build_package: ## Build
 build_docs: ## Build documentation
 	cd ./docs && make html
 
-install: build_package ## Install
-	${PIP} install -r ./requirements.txt
+install: build_package ## Install as a package
+	${PIP} install pipenv
+	test -f ./requirements.txt || ./.infrastructure/generate-requirements-txt.py
 	${SUDO} ${PY_BIN} ./setup.py install
 	which infracheck
 	make clean
@@ -53,8 +54,11 @@ install: build_package ## Install
 clean: ## Clean up the local build directory
 	${SUDO} rm -rf ./build ./infracheck.egg-info
 
-unit_test: ## Run unit tests
-	${PY_BIN} -m unittest discover -s tests
+setup_venv: ## Setup virtual environment
+	${SUDO} pipenv sync
 
-coverage: ## Generate code coverage
-	coverage run --rcfile=.coveragerc --source . -m unittest discover -s ./tests
+unit_test: setup_venv ## Run unit tests
+	${SUDO} pipenv run ${PY_BIN} -m unittest discover -s .
+
+coverage: setup_venv ## Generate code coverage
+	${SUDO} pipenv run coverage run --rcfile=.coveragerc --source . -m unittest discover -s .

@@ -1,13 +1,82 @@
 CHANGES
 =======
 
+* Enabled docker in travis builds as it is required for testing
+* Covered "ssh-command" with tests and fixed all spotted bugs
+* Preparation for the Pipenv support
+* Updated documentation for requirements
+* Added documentation for "reminder" check
+* Added ssh-command
+* Added "reminder" check that should remind about upcoming dates
+* Docker: Fixed typo in entrypoint
+
+v1.6.1
+------
+
+* Cleared username from cron entry
+* Restored /etc/crontabs/root as it was previously working
+* Unified docker images to base on same OS - Alpine 3.9: Do not have to support two cron types
+* Unified docker images to base on same OS - Alpine 3.9
+* Correct crontab support to be compatible with multiple cron systems
+* Corrected ARM dockerfile by adding supervisord config file
+
+v1.6
+----
+
+* Makefile: Switched shell to bash
+* CI: Fixed typo
+* Moving to Travis
+* Fixed documentation styling for new check
+* Added retry support
+* Added ovh-expiration check
+* Refactored - moved infrastructural things to separate directory, added Slack notifications
+
+v1.5.2
+------
+
+* Bugfix: The CHECK\_INTERVAL expression was evaluated, but it should not
+
+v1.5.1
+------
+
+* Fixed possibly not executing crontab due to syntax error (double quote remained from docker environment variables)
+
+v1.5.0
+------
+
+* Simplified docs
+* Docker: Cleaned up the container, now we can be sure that the installed version of infracheck is used, the database have it's constant place at "/database/db.sqlite3", the crontab endpoint have explict arguments same as server
+* domain-expiration: Shell whois checking method got exception handling
+
+v1.4.3
+------
+
+* domain-expiration: Properly handling not registered domains
+
+v1.4.2
+------
+
+* Domain Expiration is now properly handling ".info" domains
+* Runner: Now contains the stderr
+
+v1.4.1
+------
+
 * Fixed: --force flag was not considered, --lazy needed to be also specified
 * Fixed types casting in arguments passing from CLI
 * Fixed types casting in arguments passing from CLI
 * Hotfix: Fixed 503 on HTTP caused by missing new params
 * Updated suggestion in reference in docs
+
+1.4.0
+-----
+
 * Added --lazy flag
 * Added --wait / WAIT\_TIME, secured \`domain-expiration\` check against CPU overload
+
+v1.3.0
+------
+
 * Added docs, clean up
 * Resolved unit tests
 * Resolved "rate limit exceeded" in domain-expiration check, by adding waits
@@ -29,6 +98,10 @@ CHANGES
 * Renamed check to fit the convention
 * Added domain-expiration check
 * Corrected package name
+
+v1.1.2
+------
+
 * Fixed invalid types casting - when the value in checks parameters was an integer, then there was an exception
 * Update LICENSE
 * Create LICENSE
