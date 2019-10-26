@@ -9,7 +9,7 @@ import json
 t = sys.argv[0].replace(os.path.basename(sys.argv[0]), "") + "/../"
 
 if os.path.isdir(t):
-    sys.path.append(t)
+    sys.path.insert(0, t)
 
 
 from .controller import Controller

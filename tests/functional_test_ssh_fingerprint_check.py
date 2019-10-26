@@ -18,7 +18,7 @@ class SshFingerprintTest(TestThatRequiresSshServer, unittest.TestCase):
         stdout, result, hooks_output = run_check('ssh-fingerprint', {
             'HOST': 'localhost',
             'PORT': 3222,
-            'EXPECTED_FINGERPRINT': current_expected_fingerprint.decode('utf-8')
+            'EXPECTED_FINGERPRINT': current_expected_fingerprint
         }, {})
 
         self.assertEqual('Fingerprint is OK', stdout.strip())

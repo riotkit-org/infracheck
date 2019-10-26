@@ -4,12 +4,9 @@ import sys
 import os
 
 path = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe()))) + '/../'
-sys.path.append(path)
+sys.path.insert(0, path)
 
-try:
-    from .infracheck.infracheck.runner import Runner
-except ImportError as e:
-    from infracheck.infracheck.runner import Runner
+from infracheck.infracheck.runner import Runner
 
 
 def run_check(check_type: str, input_data: dict, hooks: dict):

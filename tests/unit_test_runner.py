@@ -5,7 +5,7 @@ import inspect
 from unittest_data_provider import data_provider
 
 path = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe()))) + '/../'
-sys.path.append(path)
+sys.path.insert(0, path)
 
 try:
     from .infracheck.infracheck.runner import Runner
