@@ -15,6 +15,7 @@ jobs:
       python: 3.7
       dist: bionic
       script:
+          - pip install setuptools
           - make install
 
     - stage: Functional tests
