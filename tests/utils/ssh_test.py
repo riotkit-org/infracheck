@@ -18,6 +18,7 @@ class TestThatRequiresSshServer:
     @classmethod
     def tearDownClass(cls) -> None:
         TestThatRequiresSshServer._remove_ssh_container()
+        TestThatRequiresSshServer.docker_client.close()
 
     @staticmethod
     def _remove_ssh_container():
@@ -33,6 +34,12 @@ class TestThatRequiresSshServer:
 
         except docker.errors.NotFound:
             pass
+
+    @staticmethod
+    def get_current_ssh_server_fingerprint():
+        return subprocess.check_output(
+            'ssh-keyscan -t rsa -p 3222 localhost', stderr=subprocess.DEVNULL, shell=True
+        ).decode('utf-8')
 
     @staticmethod
     def _wait_for_ssh_to_be_ready():
