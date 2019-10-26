@@ -12,13 +12,15 @@ if [[ ! "${CONTAINER}" || ! "${MYSQL_ROOT_PASSWORD}" ]]; then
     exit 1
 fi
 
-if ! mysql -u root -p${MYSQL_ROOT_PASSWORD} -h "${CONTAINER}" -e 'SHOW SLAVE STATUS\G' | grep "Slave_IO_Running: Yes" > /dev/null; then
-    echo "Replication Slave_IO_Running check failure"
+status=$(mysql -u root -p${MYSQL_ROOT_PASSWORD} -h "${CONTAINER}" -e 'SHOW SLAVE STATUS\G')
+
+if [[ "${status}" != *"Slave_IO_Running: Yes"* ]]; then
+    echo "Replication Slave_IO_Running check failure: ${status}"
     exit 1
 fi
 
-if ! mysql -u root -p${MYSQL_ROOT_PASSWORD} -h "${CONTAINER}" -e 'SHOW SLAVE STATUS\G' | grep "Slave_SQL_Running: Yes" > /dev/null; then
-    echo "Replication Slave_SQL_Running check failure"
+if [[ "${status}" != *"Slave_SQL_Running: Yes"* ]]; then
+    echo "Replication Slave_SQL_Running check failure: ${status}"
     exit 1
 fi
 
