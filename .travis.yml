@@ -25,7 +25,6 @@ jobs:
           - pip install pipenv
           - make install PY_BIN="python" PIP="pip"
       script:
-          - cd infracheck && ./functional-test.sh
           - make functional_test SUDO=""
       after_success:
           - bash ./.infrastructure/notify.sh "${SLACK_URL}" " [OK] Infracheck functional tests were passed"
