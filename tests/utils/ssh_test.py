@@ -8,18 +8,21 @@ import time
 class TestThatRequiresSshServer:
     docker_client: docker.DockerClient
 
-    def setUp(self) -> None:
-        self.docker_client = docker.from_env()
-        self._remove_ssh_container()
-        self.docker_client.containers.run('sickp/alpine-sshd:7.5', name='ssh', ports={'22/tcp': 3222}, detach=True)
-        self._wait_for_ssh_to_be_ready()
+    @classmethod
+    def setUpClass(cls) -> None:
+        TestThatRequiresSshServer.docker_client = docker.from_env()
+        TestThatRequiresSshServer._remove_ssh_container()
+        TestThatRequiresSshServer.docker_client.containers.run('sickp/alpine-sshd:7.5', name='ssh', ports={'22/tcp': 3222}, detach=True)
+        TestThatRequiresSshServer._wait_for_ssh_to_be_ready()
 
-    def tearDown(self) -> None:
-        self._remove_ssh_container()
+    @classmethod
+    def tearDownClass(cls) -> None:
+        TestThatRequiresSshServer._remove_ssh_container()
 
-    def _remove_ssh_container(self):
+    @staticmethod
+    def _remove_ssh_container():
         try:
-            container = self.docker_client.containers.get('ssh')
+            container = TestThatRequiresSshServer.docker_client.containers.get('ssh')
 
             try:
                 container.kill()
