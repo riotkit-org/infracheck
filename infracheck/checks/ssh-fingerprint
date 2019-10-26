@@ -1,0 +1,56 @@
+#!/usr/bin/env python3
+
+"""
+    ssh-fingerprint
+    ---------------
+
+    Verifies if remote host fingerprint matches. Helps detecting man-in-the-middle and server takeover attacks.
+
+    Parameters:
+
+    - EXPECTED_FINGERPRINT (example: zsp.net.pl ssh-rsa SOMESOMESOMESOMESOMEKEYHERE)
+    - METHOD (default: rsa)
+    - HOST (example: zsp.net.pl)
+    - PORT (example: 22)
+"""
+
+import subprocess
+import os
+import sys
+
+
+class SshFingerprintScan:
+    def main(self, expected_fingerprint: str, method: str, domain: str, port: int) -> tuple:
+        if expected_fingerprint == '':
+            return 'You need to provide a EXPECTED_FINGERPRINT', False
+
+        if method == '':
+            return 'You need to provide a METHOD', False
+
+        if domain == '':
+            return 'You need to provide a HOST', False
+
+        fingerprint = self._get_fingerprint(domain, method, port)
+
+        if fingerprint.strip() == expected_fingerprint.strip():
+            return "Fingerprint is OK", True
+
+        return "Fingerprint does not match. Expected: %s, got: %s" % (expected_fingerprint, fingerprint), False
+
+    @staticmethod
+    def _get_fingerprint(domain: str, method: str, port: int) -> str:
+        out = subprocess.check_output(['ssh-keyscan', '-t', method, '-p', str(port), domain], stderr=subprocess.DEVNULL)
+        return out.decode('utf-8')
+
+
+if __name__ == '__main__':
+    app = SshFingerprintScan()
+    text, status = app.main(
+        expected_fingerprint=os.getenv('EXPECTED_FINGERPRINT', ''),
+        method=os.getenv('METHOD', 'rsa'),
+        domain=os.getenv('HOST', ''),
+        port=int(os.getenv('PORT', 22))
+    )
+
+    print(text)
+    sys.exit(0 if status else 1)
