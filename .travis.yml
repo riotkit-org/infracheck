@@ -34,6 +34,7 @@ jobs:
           # install dependencies
           - sudo apt-get update -y
           - sudo apt-get install -y whois openssh-client sshpass
+          - pip install pipenv
       script:
           - make coverage
       after_success:
