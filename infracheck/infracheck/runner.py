@@ -1,6 +1,7 @@
 
 import subprocess
 import os
+import json
 
 
 class Runner:
@@ -31,6 +32,9 @@ class Runner:
         output_data = {}
 
         for key, value in input_data.items():
+            if type(value) == dict or type(value) == list:
+                value = json.dumps(value)
+
             output_data[key.upper()] = str(value)
 
         return output_data
