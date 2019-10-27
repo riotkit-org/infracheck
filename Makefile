@@ -60,10 +60,10 @@ setup_venv: ## Setup virtual environment
 
 functional_test: ## Run functional tests
 	cd infracheck && ./functional-test.sh
-	${SUDO} pipenv run ${PY_BIN} -m unittest discover -s . -p 'functional_test*.py'
+	${SUDO} PIPENV_IGNORE_VIRTUALENVS=1  pipenv run ${PY_BIN} -m unittest discover -s . -p 'functional_test*.py'
 
 unit_test: setup_venv ## Run unit tests
-	${SUDO} pipenv run ${PY_BIN} -m unittest discover -s . -p 'unit_test*.py'
+	${SUDO} PIPENV_IGNORE_VIRTUALENVS=1  pipenv run ${PY_BIN} -m unittest discover -s . -p 'unit_test*.py'
 
 coverage: setup_venv ## Generate code coverage
 	${SUDO} PIPENV_IGNORE_VIRTUALENVS=1 pipenv run coverage run --rcfile=.coveragerc --source . -m unittest discover -s . -p 'unit_test*.py'
