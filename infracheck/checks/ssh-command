@@ -1,26 +1,28 @@
 #!/usr/bin/env python3
 
 """
-    ssh-command
-    -----------
+<sphinx>
+ssh-command
+-----------
 
-    Calls remote process using SSH and expects: exit code, keywords in the output
+Calls remote process using SSH and expects: exit code, keywords in the output
 
-    Parameters:
+Parameters:
 
-    - USER (default: root)
-    - HOST
-    - PORT (default: 22)
-    - PRIVATE_KEY
-    - PASSWORD
-    - SSH_BIN (default: ssh)
-    - SSHPASS_BIN (default: sshpass)
-    - SSH_OPTS
-    - COMMAND (default: uname -a)
-    - TIMEOUT: (default: 15, unit: seconds)
-    - EXPECTED_KEYWORDS (Keywords expected to be in stdout/stderr. Separated by ";")
-    - UNEXPECTED_KEYWORDS (Keywords not expected to be present in stdout/stderr. Separated by ";")
-    - EXPECTED_EXIT_CODE (default: 0)
+- user (default: root)
+- host
+- port (default: 22)
+- private_key
+- password
+- ssh_bin (default: ssh)
+- sshpass_bin (default: sshpass)
+- ssh_opts
+- command (default: uname -a)
+- timeout: (default: 15, unit: seconds)
+- expected_keywords (Keywords expected to be in stdout/stderr. Separated by ";")
+- unexpected_keywords (Keywords not expected to be present in stdout/stderr. Separated by ";")
+- expected_exit_code (default: 0)
+</sphinx>
 """
 
 

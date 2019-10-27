@@ -1,17 +1,19 @@
 #!/usr/bin/env python3
 
 """
-    reminder
-    --------
+<sphinx>
+reminder
+--------
 
-    Reminds about the recurring date. Example: To extend validity of your hosting account
+Reminds about the recurring date. Example: To extend validity of your hosting account
 
-    Parameters:
+Parameters:
 
-    - REF_DATE (example: 2019-05-01 for a 1th of May 2019)
-    - EACH (values: week; month; year, default: year)
-    - ALERT_DAYS_BEFORE (default: 5, the health check will be red when there will be 5 days before)
-    - NOW (development only, current date to mock/imitate for testing)
+- ref_date (example: 2019-05-01 for a 1th of May 2019)
+- each (values: week; month; year, default: year)
+- alert_days_before (default: 5, the health check will be red when there will be 5 days before)
+- now (development only, current date to mock/imitate for testing)
+</sphinx>
 """
 
 import os

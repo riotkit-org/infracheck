@@ -135,3 +135,19 @@ Parameters:
 
 - container
 - mysql_root_password
+
+.. include:: ../../infracheck/checks/ssh-fingerprint
+   :start-after: <sphinx>
+   :end-before: </sphinx>
+
+.. include:: ../../infracheck/checks/ssh-files-checksum
+   :start-after: <sphinx>
+   :end-before: </sphinx>
+
+.. include:: ../../infracheck/checks/ssh-command
+   :start-after: <sphinx>
+   :end-before: </sphinx>
+
+.. include:: ../../infracheck/checks/reminder
+   :start-after: <sphinx>
+   :end-before: </sphinx>

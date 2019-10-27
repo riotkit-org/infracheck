@@ -1,17 +1,21 @@
 #!/usr/bin/env python3
 
 """
-    ssh-fingerprint
-    ---------------
+<sphinx>
 
-    Verifies if remote host fingerprint matches. Helps detecting man-in-the-middle and server takeover attacks.
+ssh-fingerprint
+---------------
 
-    Parameters:
+Verifies if remote host fingerprint matches. Helps detecting man-in-the-middle and server takeover attacks.
 
-    - EXPECTED_FINGERPRINT (example: zsp.net.pl ssh-rsa SOMESOMESOMESOMESOMEKEYHERE)
-    - METHOD (default: rsa)
-    - HOST (example: zsp.net.pl)
-    - PORT (example: 22)
+Parameters:
+
+- expected_fingerprint (example: zsp.net.pl ssh-rsa SOMESOMESOMESOMESOMEKEYHERE)
+- method (default: rsa)
+- host (example: zsp.net.pl)
+- port (example: 22)
+
+</sphinx>
 """
 
 import subprocess

@@ -1,25 +1,27 @@
 #!/usr/bin/env python3
 
 """
-    ssh-files-checksum
-    ------------------
+<sphinx>
+ssh-files-checksum
+------------------
 
-    Calls remote process using SSH and expects: the listed files and checksums will be matching
+Calls remote process using SSH and expects: the listed files and checksums will be matching
 
-    Parameters:
+Parameters:
 
-    - USER (default: root)
-    - HOST
-    - PORT (default: 22)
-    - PRIVATE_KEY
-    - PASSWORD
-    - SSH_BIN (default: ssh)
-    - SSHPASS_BIN (default: sshpass)
-    - SSH_OPTS
-    - COMMAND (default: uname -a)
-    - TIMEOUT: (default: 15, unit: seconds)
-    - METHOD (default: sha256sum)
-    - EXPECTS (json dict, example: {"/usr/bin/bahub": "d6e85b50756a08e24c1d46f07b68e288c9e7e565fd662a15baca214f576c34be"})
+- user (default: root)
+- host
+- port (default: 22)
+- private_key
+- password
+- ssh_bin (default: ssh)
+- sshpass_bin (default: sshpass)
+- ssh_opts
+- command (default: uname -a)
+- timeout: (default: 15, unit: seconds)
+- method (default: sha256sum)
+- expects (json dict, example: {"/usr/bin/bahub": "d6e85b50756a08e24c1d46f07b68e288c9e7e565fd662a15baca214f576c34be"})
+</sphinx>
 """
 
 
