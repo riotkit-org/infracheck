@@ -45,7 +45,7 @@ class TestThatRequiresSshServer:
     def _wait_for_ssh_to_be_ready():
         out = ''
 
-        for i in range(1, 60):
+        for i in range(1, 120):
             try:
                 out += str(subprocess.check_output('echo "ttttt\n\n" | nc -w 1 "localhost" "3222"',
                                                    shell=True, stderr=subprocess.STDOUT))
