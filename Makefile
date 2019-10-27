@@ -59,7 +59,7 @@ setup_venv: ## Setup virtual environment
 	echo " >> Setting up virtual environment"
 	${SUDO} PIPENV_IGNORE_VIRTUALENVS=1 pipenv sync -d
 
-functional_test: ## Run functional tests
+functional_test: setup_venv ## Run functional tests
 	cd infracheck && ./functional-test.sh
 	${SUDO} PIPENV_IGNORE_VIRTUALENVS=1  pipenv run ${PY_BIN} -m unittest discover -s . -p 'functional_test*.py'
 
