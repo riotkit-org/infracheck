@@ -56,7 +56,7 @@ clean: ## Clean up the local build directory
 	${SUDO} rm -rf ./build ./infracheck.egg-info
 
 setup_venv: ## Setup virtual environment
-	${SUDO} pipenv sync -d
+	${SUDO} PIPENV_IGNORE_VIRTUALENVS=1 pipenv sync -d
 
 functional_test: ## Run functional tests
 	cd infracheck && ./functional-test.sh
