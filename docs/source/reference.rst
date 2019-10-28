@@ -151,3 +151,11 @@ Parameters:
 .. include:: ../../infracheck/checks/reminder
    :start-after: <sphinx>
    :end-before: </sphinx>
+
+.. include:: ../../infracheck/checks/load-average-auto
+   :start-after: <sphinx>
+   :end-before: </sphinx>
+
+.. include:: ../../infracheck/checks/load-average
+   :start-after: <sphinx>
+   :end-before: </sphinx>

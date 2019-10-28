@@ -20,6 +20,6 @@ A few examples:
    :language: bash
    :linenos:
 
-.. literalinclude:: ../../infracheck/checks/replication-running
-   :language: bash
+.. literalinclude:: ../../infracheck/checks/load-average
+   :language: python
    :linenos:

@@ -1,0 +1,98 @@
+#!/usr/bin/env python3
+
+"""
+<sphinx>
+load-average-auto
+-----------------
+
+Checks if the load average is not more than 100%
+
+Parameters:
+
+- maximum_above (unit: processor cores, default: 0.5 - half of a core)
+- timing (default: 15. The load average time: 1, 5, 15)
+</sphinx>
+"""
+
+import os
+import re
+import sys
+
+
+class LoadAverageAuto:
+    def main(self, timing: str, maximum_above: float):
+        current_load_average = self.get_load_average(timing)
+        cpu_count = self.available_cpu_count()
+        max_load = cpu_count + maximum_above
+
+        if current_load_average > max_load:
+            return False, "Load %f exceeds allowed max. load of %f" % (current_load_average, max_load)
+
+        return True, "Load at level of %f is ok" % current_load_average
+
+    @staticmethod
+    def get_load_average(timing: str) -> float:
+        if os.getenv('MOCK_LOAD_AVERAGE'):
+            return float(os.getenv('MOCK_LOAD_AVERAGE'))
+
+        if timing not in ['1', '5', '15']:
+            raise Exception('Invalid argument, expected type to be: 1, 5 or 15')
+
+        load = {'1': os.getloadavg()[0], '5': os.getloadavg()[1], '15': os.getloadavg()[2]}
+        return load[timing]
+
+    @staticmethod
+    def available_cpu_count() -> int:
+        """ Number of available virtual or physical CPUs on this system, i.e.
+        user/real as output by time(1) when called with an optimally scaling
+        userspace-only program
+
+        :url: https://stackoverflow.com/a/1006301/6782994
+        """
+
+        if os.getenv('MOCK_CPU_COUNT'):
+            return int(os.getenv('MOCK_CPU_COUNT'))
+
+        # cpuset
+        # cpuset may restrict the number of *available* processors
+        try:
+            with open('/proc/self/status') as f:
+                m = re.search(r'(?m)^Cpus_allowed:\s*(.*)$', f.read())
+
+                if m:
+                    res = bin(int(m.group(1).replace(',', ''), 16)).count('1')
+                    if res > 0:
+                        return int(res)
+        except IOError:
+            pass
+
+        # Python 2.6+
+        try:
+            import multiprocessing
+            return multiprocessing.cpu_count()
+        except (ImportError, NotImplementedError):
+            pass
+
+        # Linux
+        try:
+            with open('/proc/cpuinfo') as f:
+                res = f.read().count('processor\t:')
+
+                if res > 0:
+                    return int(res)
+        except IOError:
+            pass
+
+        raise Exception('Can not determine number of CPUs on this system')
+
+
+if __name__ == '__main__':
+    app = LoadAverageAuto()
+    status, message = app.main(
+        timing=os.getenv('TIMING', '15'),
+        maximum_above=float(os.getenv('MAXIMUM_ABOVE', 0.5))
+    )
+
+    print(message)
+    sys.exit(0 if status else 1)
+

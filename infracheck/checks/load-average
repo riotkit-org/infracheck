@@ -1,0 +1,51 @@
+#!/usr/bin/env python3
+
+"""
+<sphinx>
+load-average
+------------
+
+Checks if the load average is not below specified number
+
+Parameters:
+
+- max_load (unit: processor cores, example: 5.0, default: 1)
+- timing (default: 15. The load average time: 1, 5, 15)
+</sphinx>
+"""
+
+import os
+import sys
+
+
+class LoadAverageAuto:
+    def main(self, timing: str, max_load: float):
+        current_load_average = self.get_load_average(timing)
+
+        if current_load_average > max_load:
+            return False, "Load %f exceeds allowed max. load of %f" % (current_load_average, max_load)
+
+        return True, "Load at level of %f is ok" % current_load_average
+
+    @staticmethod
+    def get_load_average(timing: str) -> float:
+        if os.getenv('MOCK_LOAD_AVERAGE'):
+            return float(os.getenv('MOCK_LOAD_AVERAGE'))
+
+        if timing not in ['1', '5', '15']:
+            raise Exception('Invalid argument, expected type to be: 1, 5 or 15')
+
+        load = {'1': os.getloadavg()[0], '5': os.getloadavg()[1], '15': os.getloadavg()[2]}
+        return load[timing]
+
+
+if __name__ == '__main__':
+    app = LoadAverageAuto()
+    status, message = app.main(
+        timing=os.getenv('TIMING', '15'),
+        max_load=float(os.getenv('MAX_LOAD', 1))
+    )
+
+    print(message)
+    sys.exit(0 if status else 1)
+
