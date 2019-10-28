@@ -1,0 +1,46 @@
+#!/usr/bin/env python3
+
+"""
+<sphinx>
+
+swap-usage-max-percent
+----------------------
+
+Defines maximum percentage of allowed swap usage
+
+Parameters:
+
+- max_allowed_percentage (default: 0.0)
+
+</sphinx>
+"""
+
+
+import psutil
+import os
+import sys
+
+
+class SwapCheck:
+    def main(self, max_allowed_percentage: float):
+        used = self._get_used_swap_percentage()
+
+        if used > max_allowed_percentage:
+            return False, "Current swap usage of %f%% exceeds allowed usage of %f%%" % (used, max_allowed_percentage)
+
+        return True, "Current swap usage of %f%% is ok" % used
+
+    @staticmethod
+    def _get_used_swap_percentage() -> float:
+        if os.getenv('MOCK_SWAP_USAGE'):
+            return float(os.getenv('MOCK_SWAP_USAGE'))
+
+        return psutil.swap_memory().percent
+
+
+if __name__ == '__main__':
+    app = SwapCheck()
+    status, message = app.main(max_allowed_percentage=float(os.getenv('MAX_ALLOWED_PERCENTAGE', 0.0)))
+
+    print(message)
+    sys.exit(0 if status else 1)

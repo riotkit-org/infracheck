@@ -159,3 +159,7 @@ Parameters:
 .. include:: ../../infracheck/checks/load-average
    :start-after: <sphinx>
    :end-before: </sphinx>
+
+.. include:: ../../infracheck/checks/swap-usage-max-percent
+   :start-after: <sphinx>
+   :end-before: </sphinx>

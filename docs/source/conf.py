@@ -1,4 +1,4 @@
-project = 'Infra Check'
+project = 'InfraCheck'
 copyright = '2019, RiotKit Team'
 author = 'Wesolowski'
 
@@ -48,7 +48,7 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (master_doc, 'InfraCheck.tex', 'Infra Check Documentation',
+    (master_doc, 'InfraCheck.tex', 'InfraCheck Documentation',
      'Wolnosciowiec Team', 'manual'),
 ]
 
@@ -58,7 +58,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    (master_doc, 'infracheck', 'Infra Check Documentation',
+    (master_doc, 'infracheck', 'InfraCheck Documentation',
      [author], 1)
 ]
 
@@ -69,7 +69,7 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-    (master_doc, 'InfraCheck', 'Infra Check Documentation',
+    (master_doc, 'InfraCheck', 'InfraCheck Documentation',
      author, 'InfraCheck', 'One line description of project.',
      'Miscellaneous'),
 ]
