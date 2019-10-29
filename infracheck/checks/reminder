@@ -49,7 +49,7 @@ class Reminder(object):
             self.error('Its close to expiration date! %i days already after alert date, close to %s' % (
                 abs(diff_to_alert.days), date.isoformat()))
 
-        print('OK, %i days left to alert day at %s, the deadline day is at %s (%i days to alert)' % (
+        print('OK, %i days left to alert day at %s, the deadline day is at %s (%i days before the alert will start)' % (
             diff_to_alert.days, alert_date.isoformat(), date.isoformat(), self.alert_days_before
         ))
 
