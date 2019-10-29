@@ -1,7 +1,8 @@
 FROM balenalib/armv7hf-alpine:3.9
 
 RUN [ "cross-build-start" ]
-RUN apk --update add python3 bash perl curl wget grep sed docker sudo mysql-client postgresql-client make git supervisor tzdata
+RUN apk --update add python3 bash perl curl wget grep sed docker sudo mysql-client postgresql-client make git supervisor tzdata \
+                     sshpass openssh-client
 RUN [ "cross-build-end" ]
 
 ADD . /infracheck

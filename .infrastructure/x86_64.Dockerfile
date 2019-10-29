@@ -1,6 +1,7 @@
 FROM alpine:3.9
 
-RUN apk --update add python3 bash perl curl wget grep sed docker sudo mysql-client postgresql-client make git supervisor tzdata
+RUN apk --update add python3 bash perl curl wget grep sed docker sudo mysql-client postgresql-client make git supervisor tzdata \
+                     sshpass openssh-client
 ADD . /infracheck
 ADD .git /infracheck/
 
