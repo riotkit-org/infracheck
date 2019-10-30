@@ -16,27 +16,25 @@ Parameters:
 
 import os
 import sys
+import inspect
+
+path = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe()))) + '/../../'
+sys.path.insert(0, path)
+
+from infracheck.infracheck.checklib.loadavg import BaseLoadAverageCheck
 
 
-class LoadAverageAuto:
+class LoadAverageAuto(BaseLoadAverageCheck):
     def main(self, timing: str, max_load: float):
         current_load_average = self.get_load_average(timing)
 
         if current_load_average > max_load:
-            return False, "Load %f exceeds allowed max. load of %f" % (current_load_average, max_load)
+            return False, "Load {:.2f} exceeds allowed max. load of {:.2f}. Current load: {:s}".format(
+                current_load_average, max_load, self.get_complete_avg()
+            )
 
-        return True, "Load at level of %f is ok" % current_load_average
-
-    @staticmethod
-    def get_load_average(timing: str) -> float:
-        if os.getenv('MOCK_LOAD_AVERAGE'):
-            return float(os.getenv('MOCK_LOAD_AVERAGE'))
-
-        if timing not in ['1', '5', '15']:
-            raise Exception('Invalid argument, expected type to be: 1, 5 or 15')
-
-        load = {'1': os.getloadavg()[0], '5': os.getloadavg()[1], '15': os.getloadavg()[2]}
-        return load[timing]
+        return True, "Load at level of {:.2f} is ok, current load: {:s}".format(
+            current_load_average, self.get_complete_avg())
 
 
 if __name__ == '__main__':

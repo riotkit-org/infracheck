@@ -75,13 +75,13 @@ if __name__ == '__main__':
         ssh_bin=os.getenv('SSH_BIN', 'ssh'),
         sshpass_bin=os.getenv('SSHPASS_BIN', 'sshpass'),
         ssh_opts=os.getenv('SSH_OPTS', ''),
-        timeout=os.getenv('TIMEOUT', 15)
+        timeout=int(os.getenv('TIMEOUT', 15))
     )
 
     status, message = app.main(
         command=os.getenv('COMMAND', 'uname -a'),
         expected_keywords=os.getenv('EXPECTED_KEYWORDS', '').split(';'),
-        expected_exit_code=os.getenv('EXPECTED_EXIT_CODE', 0),
+        expected_exit_code=int(os.getenv('EXPECTED_EXIT_CODE', 0)),
         unexpected_keywords=os.getenv('UNEXPECTED_KEYWORDS', '').split(';')
     )
 
