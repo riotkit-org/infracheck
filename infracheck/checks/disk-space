@@ -6,13 +6,18 @@ This script checks if there is enough free space on a mountpoint. Usage:
 accepted units are kibibytes - k, mebibytes - M etc. up to tebibytes. leave blank for value in gibibytes.
 """
 import os
-from sys import argv,stderr
+from sys import stderr
+
+
 if "DIR" not in os.environ or "MIN_REQ_SPACE" not in os.environ:
-    print("Missing one of parameters.\nUsage: ./disk-space.py, env. variables are: DIR MIN_REQ_SPACE[bkMGT]", file=stderr)
+    print("Missing one of parameters.\nUsage: ./disk-space.py, env. variables are: DIR MIN_REQ_SPACE[bkMGT]",
+          file=stderr)
     exit(127)
 
+
 def check(mntpoint, req_space):
-    unit="G"
+    unit = "G"
+
     if req_space[-1] in "bkMGT":
         unit = req_space[-1]
         req_space = float(req_space[:-1])
@@ -34,10 +39,13 @@ def check(mntpoint, req_space):
         free_space /= 1024. ** 4
 
     if free_space >= req_space:
-        print("There is {0:.1f}{1} disk space at {2}, nothing to worry about, defined minimum is {3}{1}".format(free_space, unit, mntpoint, req_space))
+        print("There is {0:.1f}{1} disk space at {2}, nothing to worry about, defined minimum is {3}{1}".format(
+              free_space, unit, mntpoint, req_space))
         return 0
     else:
-        print("Failed asserting that {0:.1f}{1} is at least {2}{1} at {3}".format(free_space, unit, req_space, mntpoint))
+        print("Failed asserting that {0:.1f}{1} is at least {2}{1} at {3}".format(free_space, unit, req_space,
+                                                                                  mntpoint))
         return 1
+
 
 exit(check(os.environ["DIR"], os.environ["MIN_REQ_SPACE"]))
