@@ -64,6 +64,7 @@ class SSH:
 
     def _make_sure_host_is_known(self):
         pattern = self.host if self.port == 22 else '[' + self.host + ']:' + str(self.port)
+        os.system('mkdir -p $(dirname %s); touch %s' % (self.known_hosts_file, self.known_hosts_file))
 
         with open(self.known_hosts_file, 'rb') as f:
             current_content = f.read().decode('utf-8')
