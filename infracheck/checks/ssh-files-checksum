@@ -16,7 +16,8 @@ Parameters:
 - password
 - ssh_bin (default: ssh)
 - sshpass_bin (default: sshpass)
-- ssh_opts
+- ssh_opts (example: -o StrictHostKeyChecking=no)
+- known_hosts_file (default: ~/.ssh/known_hosts)
 - command (default: uname -a)
 - timeout: (default: 15, unit: seconds)
 - method (default: sha256sum)
@@ -91,7 +92,8 @@ if __name__ == '__main__':
         ssh_bin=os.getenv('SSH_BIN', 'ssh'),
         sshpass_bin=os.getenv('SSHPASS_BIN', 'sshpass'),
         ssh_opts=os.getenv('SSH_OPTS', ''),
-        timeout=os.getenv('TIMEOUT', 15)
+        timeout=os.getenv('TIMEOUT', 15),
+        known_hosts_file=os.getenv('KNOWN_HOSTS_FILE', os.path.expanduser('~/.ssh/known_hosts'))
     )
 
     status, message = app.main(

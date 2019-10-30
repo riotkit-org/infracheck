@@ -1,12 +1,33 @@
 import unittest
 import docker
+import os
 
+from tempfile import NamedTemporaryFile
 from .utils import run_check
 from .utils.ssh_test import TestThatRequiresSshServer
 
 
 class SshCommandCheckTest(TestThatRequiresSshServer, unittest.TestCase):
     docker_client: docker.DockerClient
+
+    def test_fingerprint_will_be_fetched_first_time(self):
+        stdout: str
+        result: int
+
+        known_hosts_file = NamedTemporaryFile(delete=False)
+
+        stdout, result, hooks_output = run_check('ssh-command', {
+            'HOST': 'localhost',
+            'PORT': 3222,
+            'USER': 'root',
+            'PASSWORD': 'root',
+            'KNOWN_HOSTS_FILE': known_hosts_file.name,
+            'SSH_OPTS': '',  # there is no StrictHostKeyChecking turned off
+            'COMMAND': 'ls -la'
+        }, {})
+
+        os.unlink(known_hosts_file.name)
+        self.assertTrue(result)
 
     def test_not_passed_host_raises_human_readable_message(self):
         stdout: str
