@@ -6,8 +6,11 @@ import json
 
 class Runner:
     paths = []
+    timeout: int
 
-    def __init__(self, dirs):
+    def __init__(self, dirs, timeout: int = 1800):
+        self.timeout = timeout
+
         for path in dirs:
             self.paths.append(path + '/checks')
 
@@ -16,7 +19,7 @@ class Runner:
 
         try:
             env = {**dict(os.environ), **self._prepare_data(input_data)}
-            output = subprocess.check_output(bin_path, env=env, stderr=subprocess.PIPE)
+            output = subprocess.check_output(bin_path, env=env, stderr=subprocess.PIPE, timeout=self.timeout)
             exit_status = True
 
         except subprocess.CalledProcessError as e:
