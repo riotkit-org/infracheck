@@ -73,6 +73,8 @@ Test cases:
         }
     }
 
+Hint: You can pass environment variables in parameters - see: :ref:`Templating` section.
+
 4. Running checks
 -----------------
 
@@ -90,7 +92,7 @@ The image will by default expose a HTTP endpoint.
 
 List of supported environment variables:
 
-- CHECK_INTERVAL="*/1 * * * *"
+- CHECK_INTERVAL="\*/1 \* \* \* \*"
 - WAIT_TIME=0
 - LAZY=false
 
