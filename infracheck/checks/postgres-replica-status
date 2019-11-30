@@ -1,0 +1,57 @@
+#!/usr/bin/env python3
+
+import inspect
+import os
+import sys
+
+"""
+<sphinx>
+postgres-replica-status
+-----------------------
+
+Checks if local PostgreSQL server acts as a replication server, by validating the list of active wal receivers.
+The SQL command that is validated: `select * from pg_stat_wal_receiver;`
+
+Parameters:
+
+- pg_host (hostname or socket path, defaults to "localhost" which will use local unix socket, use IP address eg. 127.0.0.1 to connect via tcp)
+- pg_port (port, defaults to 5432)
+- pg_db_name (database name to connect to, defaults to "postgres")
+- pg_user (username, defaults to "postgres")
+- pg_password
+- pg_conn_timeout (defaults to 15 which means 15 seconds)
+- expected_status (defaults to "streaming")
+- expected_replication_user: Expected user that will be used for replication connection (defaults to "replication")
+</sphinx>
+"""
+
+path = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe()))) + '/../../'
+sys.path.insert(0, path)
+
+
+from infracheck.infracheck.checklib.postgres import BasePostgreSQL
+
+
+class PostgresReplicaCheck(BasePostgreSQL):
+    def main(self, expected_status: str, expected_user: str) -> tuple:
+        return self.validate_replication_row_exists('SELECT status, conninfo FROM pg_stat_wal_receiver;',
+                                                    expected_status=expected_status, expected_user=expected_user)
+
+
+if __name__ == '__main__':
+    app = PostgresReplicaCheck(
+        host=os.getenv('PG_HOST', 'localhost'),
+        port=int(os.getenv('PG_PORT', 5432)),
+        dbname=os.getenv('PG_DB_NAME', 'postgres'),
+        username=os.getenv('PG_USER', 'postgres'),
+        password=os.getenv('PG_PASSWORD', ''),
+        connect_timeout=int(os.getenv('PG_CONN_TIMEOUT', 5))
+    )
+
+    status, message = app.main(
+        expected_status=os.getenv('EXPECTED_STATUS', 'streaming'),
+        expected_user=os.getenv('EXPECTED_REPLICATION_USER', 'replication')
+    )
+
+    print(message)
+    sys.exit(0 if status else 1)
