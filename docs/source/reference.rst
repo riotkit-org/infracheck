@@ -163,3 +163,11 @@ Parameters:
 .. include:: ../../infracheck/checks/swap-usage-max-percent
    :start-after: <sphinx>
    :end-before: </sphinx>
+
+.. include:: ../../infracheck/checks/postgres-primary-streaming-status
+   :start-after: <sphinx>
+   :end-before: </sphinx>
+
+.. include:: ../../infracheck/checks/postgres-replica-status
+   :start-after: <sphinx>
+   :end-before: </sphinx>
