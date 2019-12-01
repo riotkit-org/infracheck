@@ -1,3 +1,1 @@
-/Dockerfile
-/armhf.Dockerfile
-/.infrastructure
+/.infrastructure/*.Dockerfile
