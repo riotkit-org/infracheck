@@ -13,7 +13,7 @@ RUN cd /infracheck \
     # install as a package
     && git remote remove origin || true \
     && git remote add origin https://github.com/riotkit-org/infracheck.git \
-    && apk add --update gcc python3-dev musl-dev linux-headers \
+    && apk add --update gcc python3-dev musl-dev linux-headers postgresql-devel \
     && make install \
     # after installing as package extract infrastructural files
     \
@@ -27,6 +27,6 @@ RUN cd /infracheck \
     # simple check that application does not crash at the beginning (is correctly packaged)
     && infracheck --help \
     \
-    && apk del gcc python3-dev musl-dev linux-headers
+    && apk del gcc python3-dev musl-dev linux-headers postgresql-devel
 
 ENTRYPOINT ["/entrypoint.sh"]
