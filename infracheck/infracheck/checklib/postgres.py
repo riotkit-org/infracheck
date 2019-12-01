@@ -35,9 +35,14 @@ class BasePostgreSQL:
     def validate_replication_row_exists(self, sql: str, expected_status: str, expected_user: str):
         out = self.query(sql)
         active_replications = len(out)
+        has_no_access_to_at_least_one_row = False
 
         for row in out:
             status, conn_info = row
+
+            if conn_info is None:
+                has_no_access_to_at_least_one_row = True
+                continue
 
             if status != expected_status and expected_user in conn_info:
                 return False, 'Expected "%s" status for conn_info="%s", got "%s"' % (
@@ -50,6 +55,9 @@ class BasePostgreSQL:
                 )
 
         if active_replications == 0:
+            if has_no_access_to_at_least_one_row:
+                return False, "no replications active: possibly connection user has no permissions to view this data"
+
             return False, "no replications active"
 
         return False, "%i replications active, but none found for user '%s'" % (active_replications, expected_user)

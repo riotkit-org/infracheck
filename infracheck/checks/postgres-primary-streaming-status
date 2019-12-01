@@ -34,7 +34,7 @@ from infracheck.infracheck.checklib.postgres import BasePostgreSQL
 
 class PostgresReplicaCheck(BasePostgreSQL):
     def main(self, expected_status: str, expected_user: str) -> tuple:
-        return self.validate_replication_row_exists('SELECT state, username FROM pg_stat_replication;',
+        return self.validate_replication_row_exists('SELECT state, usename FROM pg_stat_replication;',
                                                     expected_status=expected_status, expected_user=expected_user)
 
 
