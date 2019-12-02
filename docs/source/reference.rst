@@ -164,6 +164,10 @@ Parameters:
    :start-after: <sphinx>
    :end-before: </sphinx>
 
+.. include:: ../../infracheck/checks/postgres
+   :start-after: <sphinx>
+   :end-before: </sphinx>
+
 .. include:: ../../infracheck/checks/postgres-primary-streaming-status
    :start-after: <sphinx>
    :end-before: </sphinx>
