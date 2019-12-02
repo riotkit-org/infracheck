@@ -1,0 +1,52 @@
+#!/usr/bin/env python3
+
+import os
+import sys
+import subprocess
+
+"""
+<sphinx>
+postgres
+--------
+
+Uses `pg_isready` tool to verify if PostgreSQL is up and ready to connect.
+
+Parameters:
+
+- pg_host (hostname or socket path, defaults to "localhost" which will use local unix socket, use IP address eg. 127.0.0.1 to connect via tcp)
+- pg_port (port, defaults to 5432)
+- pg_db_name (database name to connect to, defaults to "postgres")
+- pg_user (username, defaults to "postgres")
+- pg_conn_timeout (defaults to 15 which means 15 seconds)
+</sphinx>
+"""
+
+
+class PostgresCheck:
+    def main(self, host: str, port: int, dbname: str, username: str, conn_timeout: int) -> tuple:
+        command = ['pg_isready', '-h', host, '-p', str(port), '-U', username, '-t', str(conn_timeout)]
+
+        if dbname:
+            command += ['-d', dbname]
+
+        try:
+            out = subprocess.check_output(command).strip()
+            return True, out.decode('utf-8')
+
+        except subprocess.CalledProcessError as err:
+            return False, err.output.decode('utf-8').strip()
+
+
+if __name__ == '__main__':
+    app = PostgresCheck()
+
+    status, message = app.main(
+        host=os.getenv('PG_HOST', 'localhost'),
+        port=int(os.getenv('PG_PORT', 5432)),
+        dbname=os.getenv('PG_DB_NAME', 'postgres'),
+        username=os.getenv('PG_USER', 'postgres'),
+        conn_timeout=int(os.getenv('PG_CONN_TIMEOUT', 15))
+    )
+
+    print(message)
+    sys.exit(0 if status else 1)
