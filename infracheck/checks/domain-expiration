@@ -1,7 +1,21 @@
 #!/usr/bin/env python3
 
 """
-    Checks if the domain is close to expiration date or if already expired
+<sphinx>
+domain-expiration
+-----------------
+
+Check if the domain is close to expiration date or if it is already expired.
+
+**Notice: Multiple usage of this check can cause a "request limit exceeded" error to happen**
+
+*Suggestion: If you check multiple domains, then separate domains checking from regular health checks and set CHECK_INTERVAL (docker) to once a day, and WAIT_TIME=300 for non-docker installations - in crontab set a check with --force once a day*
+
+Parameters:
+
+- domain (domain name)
+- alert_days_before (number of days before expiration date to start alerting)
+</sphinx>
 """
 
 import whois

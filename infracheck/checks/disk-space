@@ -1,9 +1,17 @@
 #!/usr/bin/python3
 
 """
-This script checks if there is enough free space on a mountpoint. Usage:
-./disk-space.py DIR MIN_REQ_SPACE[bkMGT]
-accepted units are kibibytes - k, mebibytes - M etc. up to tebibytes. leave blank for value in gibibytes.
+<sphinx>
+disk-space
+----------
+
+Monitors disk space.
+
+Parameters:
+
+- min_req_space (in gigabytes)
+- dir (path)
+</sphinx>
 """
 import os
 from sys import stderr

@@ -1,5 +1,18 @@
 #!/usr/bin/env python3
 
+"""
+<sphinx>
+free-ram
+--------
+
+Monitors RAM memory usage to notify that a maximum percent of memory was used.
+
+Parameters:
+
+- max_ram_percentage (in percents eg. 80)
+</sphinx>
+"""
+
 import re
 from os import environ
 from sys import stderr
