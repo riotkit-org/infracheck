@@ -34,9 +34,11 @@ class Repository:
                     );
                 '''
             )
+        except sqlite3.OperationalError:
+            pass
 
+        try:
             self.db.execute('CREATE INDEX check_name_index ON checks_cache(check_name);')
-
         except sqlite3.OperationalError:
             pass
 
