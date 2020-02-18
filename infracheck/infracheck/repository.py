@@ -32,10 +32,11 @@ class Repository:
                         data TEXT, 
                         date_added TEXT
                     );
-                    
-                    CREATE INDEX check_name_index ON checks_cache(check_name);
                 '''
             )
+
+            self.db.execute('CREATE INDEX check_name_index ON checks_cache(check_name);')
+
         except sqlite3.OperationalError:
             pass
 
