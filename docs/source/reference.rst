@@ -47,15 +47,6 @@ Parameters:
 
 - file_path
 
-docker-bahub
-------------
-
-Monitors RiotKit's File Repository "Bahub" API client for errors.
-
-Parameters:
-
-- container
-
 docker-health
 -------------
 
