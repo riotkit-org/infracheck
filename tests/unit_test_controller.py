@@ -2,7 +2,7 @@ import unittest
 import sys
 import os
 import inspect
-import mock
+from unittest import mock
 from unittest_data_provider import data_provider
 
 path = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe()))) + '/../'
