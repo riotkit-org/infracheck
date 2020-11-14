@@ -59,9 +59,12 @@ tasks:
 
     :release:pypi:
         description: Release to PyPI
+        arguments:
+            "--token":
+                help: "PyPI token"
         steps:
             - "%RKD% :py:build"
-            - "%RKD% :py:publish --password=${PYPI_PASSWORD} --username=__token__ --skip-existing"
+            - "%RKD% :py:publish --password=${ARG_TOKEN} --username=__token__ --skip-existing"
 
     :release:docker:x86:
         description: Release into docker registry (x86 image)
