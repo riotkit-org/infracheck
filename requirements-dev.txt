@@ -1,1 +1,2 @@
-unittest_data_provider
+unittest_data_provider >= 1.0.1, < 2
+docker >= 4.3.1, < 5
