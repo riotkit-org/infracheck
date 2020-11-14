@@ -1,0 +1,81 @@
+version: org.riotkit.rkd/yaml/v1
+imports:
+    - rkd_python
+
+environment:
+    REPO: "quay.io/riotkit/infracheck"
+
+tasks:
+    :test:unit:
+        description: Run unit tests
+        steps:
+            - "%RKD% :py:unittest --src-dir=./ --tests-dir=tests --pattern='unit_test_*.py'"
+
+    :test:functional:
+        description: Run unit tests
+        steps:
+            - "python -m unittest discover -s . -p 'functional_test*.py'"
+            - "cd infracheck && ./functional-test.sh"
+
+    :install:
+        description: Install via setuptools
+        steps:
+            - python3 ./setup.py install
+
+    :image:
+        description: Build a docker image
+        arguments:
+            "--git-tag":
+                help: "Will tag the image considering this version"
+                required: False
+            "--push":
+                help: "Push or only build?"
+                action: store_true
+            "--arch":
+                help: "Architecture name"
+                default: "x86_64"
+        steps: |
+            #!python
+            tag = ctx.get_arg('--git-tag')
+            should_push = ctx.get_arg('--push')
+            arch = ctx.get_arg('--arch')
+            docker_tag = 'latest-dev-' + arch
+            repo = os.getenv('REPO')
+
+            if tag:
+                docker_tag = arch + '-' + tag
+
+            image_name = '{repo}:{tag}'.format(tag=docker_tag, repo=repo)
+
+            this.sh('docker build . -f ./.infrastructure/{docker_arch}.Dockerfile -t {image}'
+                    .format(docker_arch=arch, image=image_name))
+
+            this.sh('docker tag {image} {image}-$(date "+%Y-%m-%d")'.format(image=image_name))
+
+            if should_push:
+                this.sh('docker push {image}'.format(image=image_name))
+                this.sh('docker push {image}-$(date "+%Y-%m-%d")'.format(image=image_name))
+
+    :release:pypi:
+        description: Release to PyPI
+        steps:
+            - "%RKD% :py:build"
+            - "%RKD% :py:publish --password=${PYPI_PASSWORD} --username=__token__ --skip-existing"
+
+    :release:docker:x86:
+        description: Release into docker registry (x86 image)
+        arguments:
+            "--git-tag":
+                help: "Git tag name"
+                required: true
+        steps:
+            - "%RKD% :image --push --git-tag=${ARG_GIT_TAG} --arch=x86_64"
+
+    :release:docker:arm:
+        description: Release into docker registry (arm image)
+        arguments:
+            "--git-tag":
+                help: "Git tag name"
+                required: true
+        steps:
+            - "%RKD% :image --push --git-tag=${ARG_GIT_TAG} --arch=arm"

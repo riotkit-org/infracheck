@@ -3,7 +3,7 @@ RiotKit's Infracheck
 ====================
 
 HTTP healthcheck endpoint + shell healthcheck runner.
-Simple, easy to setup, easy to understand. Works perfectly with Docker.
+Simple, easy to setup, easy to understand. Works perfectly with Docker. A perfectly fitting universal brick in your monitoring.
 
 .. code:: json
 

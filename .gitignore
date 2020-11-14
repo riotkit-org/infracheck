@@ -3,3 +3,7 @@
 /.idea
 *.pyc
 /.coverage
+.rkd/logs
+*__pycache__*
+/.venv
+.venv-setup.log

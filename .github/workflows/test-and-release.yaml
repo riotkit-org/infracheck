@@ -1,0 +1,25 @@
+name: Test and release a package
+on: [push]
+
+jobs:
+    build:
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v2
+
+            - name: Setup Python
+              uses: actions/setup-python@v2
+              with:
+                  python-version: 3.8
+
+            - name: Install dependencies
+              run: pip install -r ./requirements.txt
+
+            - name: Install project via setuptools
+              run: "rkd :install"
+
+            - name: Run unit tests
+              run: "rkd :test:unit"
+
+            - name: Run functional tests
+              run: "rkd :test:functional"
