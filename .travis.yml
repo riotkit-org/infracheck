@@ -1,6 +1,6 @@
 language: python
 if: branch = master OR tag IS present
-python: "3.6"
+python: "3.7"
 sudo: true
 services:
     - docker
@@ -11,13 +11,6 @@ before_script:
 
 jobs:
   include:
-    - stage: Check compatibility with Python 3.7
-      python: 3.7
-      dist: bionic
-      script:
-          - pip install setuptools
-          - make install SUDO="" PY_BIN="python" PIP="pip"
-
     - stage: Functional tests
       before_script:
           - sudo apt-get update -y
