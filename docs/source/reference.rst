@@ -132,3 +132,7 @@ Parameters:
 .. include:: ../../infracheck/checks/postgres-replica-status
    :start-after: <sphinx>
    :end-before: </sphinx>
+
+.. include:: ../../infracheck/checks/docker-container-log
+   :start-after: <sphinx>
+   :end-before: </sphinx>

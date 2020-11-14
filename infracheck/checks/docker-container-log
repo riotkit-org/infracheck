@@ -1,0 +1,85 @@
+#!/usr/bin/env python3
+
+"""
+<sphinx>
+docker-container-log
+--------------------
+
+Searches docker container logs for matching given regular expression.
+
+Parameters:
+
+- container: Docker container name
+- regexp: Regular expression
+- max_lines: Number of last lines to check (defaults to 5)
+- since_seconds: Get only logs since this time (eg. last 5 minutes = 5 * 60 = 300) (defaults to 300)
+- present: Boolean, if the string should be present in the output or not
+</sphinx>
+"""
+
+import os
+import sys
+import re
+from subprocess import check_output
+from subprocess import CalledProcessError
+from subprocess import STDOUT
+
+
+def parse_bool(boolean: str) -> bool:
+    return bool(int(boolean.lower().replace('true', "1").replace('false', "0")))
+
+
+class DockerContainerLogCheck(object):
+    def _check_output(self, *args, **kwargs):
+        return check_output(*args, **kwargs)
+
+    def main(self, container: str, regexp: str, max_lines: int, since: int, should_be_present: bool):
+        opts = []
+
+        if since > 0:
+            opts.append('--since={}s'.format(since))
+
+        try:
+            out = self._check_output(
+                ['docker', 'logs', container, '--tail="{}"'.format(max_lines)] + opts, stderr=STDOUT).decode('utf-8')
+
+        except CalledProcessError as e:
+            out = e.output.decode('utf-8')
+
+        is_present_in_output = re.findall(regexp, out)
+
+        if should_be_present and is_present_in_output:
+            return True, "The container last {} lines of output has a match, as expected".format(max_lines)
+
+        if not should_be_present and is_present_in_output:
+            return False, "The container output is matching the pattern but should not, " \
+                          "looked at {} lines since {} in {}"\
+                .format(max_lines, str(since) + 's', container)
+
+        if should_be_present and not is_present_in_output:
+            return False, "The container last {} lines of output are not matching, expecting they were"\
+                .format(max_lines)
+
+        if not should_be_present and not is_present_in_output:
+            return True, "The container last {} lines of output are not matching, as expected".format(max_lines)
+
+        return False, "Unknown error"
+
+
+if __name__ == '__main__':
+    app = DockerContainerLogCheck()
+
+    try:
+        status, message = app.main(
+            container=os.environ['CONTAINER'],
+            regexp=os.environ['REGEXP'],
+            max_lines=int(os.getenv('MAX_LINES', '5')),
+            since=int(os.getenv('SINCE_SECONDS', '300')),
+            should_be_present=parse_bool(os.environ['PRESENT'])
+        )
+    except KeyError as attribute:
+        print('Missing environment variable: {}'.format(attribute))
+        sys.exit(1)
+
+    print(message)
+    sys.exit(0 if status else 1)
