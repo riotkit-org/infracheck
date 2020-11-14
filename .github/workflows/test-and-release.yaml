@@ -14,7 +14,7 @@ jobs:
                   python-version: 3.8
 
             - name: Install dependencies
-              run: "pip install -r ./requirements-dev.txt && sudo apt-get install whois"
+              run: "pip install -r ./requirements-dev.txt && sudo apt-get install whois sshpass"
 
             - name: Install project via setuptools
               run: "rkd :install"
