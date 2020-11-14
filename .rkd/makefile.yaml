@@ -20,6 +20,7 @@ tasks:
     :install:
         description: Install via setuptools
         steps:
+            - pip install -r ./requirements.txt
             - python3 ./setup.py install
 
     :image:

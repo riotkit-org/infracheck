@@ -28,7 +28,7 @@ From sources:
 
 ```bash
 # from this directory
-make install
+rkd :install
 
 infracheck --help
 ```
@@ -40,3 +40,9 @@ pip install infracheck
 
 infracheck --help
 ```
+
+External dependencies
+---------------------
+
+- **whois** commandline tool (`apt-get install whois`)
+- **sshpass** (`apt-get install sshpass`)
