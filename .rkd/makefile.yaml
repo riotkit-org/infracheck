@@ -57,6 +57,8 @@ tasks:
                 this.sh('docker push {image}'.format(image=image_name))
                 this.sh('docker push {image}-$(date "+%Y-%m-%d")'.format(image=image_name))
 
+            return True
+
     :release:pypi:
         description: Release to PyPI
         arguments:
