@@ -43,7 +43,12 @@ tasks:
             docker_tag = 'latest-dev-' + arch
             repo = os.getenv('REPO')
 
-            if tag:
+            if "refs" in tag:
+                if "refs/tags" in tag:
+                    docker_tag = tag[len('refs/tags/'):]
+                else:
+                    docker_tag = 'latest-dev-' + arch
+            elif tag:
                 docker_tag = arch + '-' + tag
 
             image_name = '{repo}:{tag}'.format(tag=docker_tag, repo=repo)
