@@ -32,6 +32,13 @@ jobs:
             - name: Checkout
               uses: actions/checkout@v2
 
+            - name: Parse version
+              id: branch_name
+              run: |
+                  echo ::set-output name=SOURCE_NAME::${GITHUB_REF#refs/*/}
+                  echo ::set-output name=SOURCE_BRANCH::${GITHUB_REF#refs/heads/}
+                  echo ::set-output name=SOURCE_TAG::${GITHUB_REF#refs/tags/}
+
             - name: "Login to quay"
               uses: docker/login-action@v1
               with:
@@ -48,10 +55,10 @@ jobs:
               run: "pip install -r ./requirements.txt && pip install -r ./requirements-dev.txt"
 
             - name: Release to docker registry (x86)
-              run: "RKD_COMPAT_SUBPROCESS=true rkd :release:docker:x86 --git-tag=${GITHUB_REF##*/}"
+              run: "RKD_COMPAT_SUBPROCESS=true rkd :release:docker:x86 --git-tag=${{ steps.branch_name.outputs.SOURCE_TAG }}"
 
 #            - name: Release to docker registry (arm)
-#              run: "rkd :release:docker:x86 --git-tag=${GITHUB_REF##*/}"
+#              run: "rkd :release:docker:x86 --git-tag=${{ steps.branch_name.outputs.SOURCE_TAG }}"
 
             - name: Release to PyPI
-              run: "rkd :release:pypi --token=${PYPI_TOKEN}"
+              run: "rkd :release:pypi --token=${{ secrets.PYPI_TOKEN }}"
