@@ -45,7 +45,7 @@ jobs:
                   python-version: 3.8
 
             - name: Install dependencies
-              run: "pip install -r ./requirements.txt"
+              run: "pip install -r ./requirements.txt && pip install -r ./requirements-dev.txt"
 
             - name: Release to docker registry (x86)
               run: "RKD_COMPAT_SUBPROCESS=true rkd :release:docker:x86 --git-tag=${GITHUB_REF##*/}"
