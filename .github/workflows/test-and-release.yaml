@@ -52,8 +52,8 @@ jobs:
             - name: Release to docker registry (x86)
               run: "RKD_COMPAT_SUBPROCESS=true rkd :release:docker:x86 --git-tag=${GITHUB_REF}"
 
-#            - name: Release to docker registry (arm)
-#              run: "rkd :release:docker:x86 --git-tag=${GITHUB_REF}"
+            - name: Release to docker registry (arm)
+              run: "rkd :release:docker:x86 --git-tag=${GITHUB_REF}"
 
             - name: Release to PyPI
               run: "rkd :release:pypi --token=${{ secrets.PYPI_TOKEN }}"
