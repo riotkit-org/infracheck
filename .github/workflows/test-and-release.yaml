@@ -2,31 +2,31 @@ name: Test and release a package
 on: [push]
 
 jobs:
-#    build:
-#        runs-on: ubuntu-20.04
-#        steps:
-#            - name: Checkout
-#              uses: actions/checkout@v2
-#
-#            - name: Setup Python
-#              uses: actions/setup-python@v2
-#              with:
-#                  python-version: 3.8
-#
-#            - name: Install dependencies
-#              run: "pip install -r ./requirements.txt && pip install -r ./requirements-dev.txt && sudo apt-get install whois sshpass"
-#
-#            - name: Install project via setuptools
-#              run: "rkd :install"
-#
-#            - name: Run unit tests
-#              run: "rkd :test:unit"
-#
-#            - name: Run functional tests
-#              run: "rkd :test:functional"
+    test:
+        runs-on: ubuntu-20.04
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v2
+
+            - name: Setup Python
+              uses: actions/setup-python@v2
+              with:
+                  python-version: 3.8
+
+            - name: Install dependencies
+              run: "pip install -r ./requirements.txt && pip install -r ./requirements-dev.txt && sudo apt-get install whois sshpass"
+
+            - name: Install project via setuptools
+              run: "rkd :install"
+
+            - name: Run unit tests
+              run: "rkd :test:unit"
+
+            - name: Run functional tests
+              run: "rkd :test:functional"
 
     release:
-#        needs: [build]
+        needs: [test]
         runs-on: ubuntu-20.04
         steps:
             - name: Checkout
@@ -52,8 +52,8 @@ jobs:
             - name: Release to docker registry (x86)
               run: "RKD_COMPAT_SUBPROCESS=true rkd :release:docker:x86 --git-tag=${GITHUB_REF}"
 
-            - name: Release to docker registry (arm)
-              run: "rkd :release:docker:x86 --git-tag=${GITHUB_REF}"
-
             - name: Release to PyPI
               run: "rkd :release:pypi --token=${{ secrets.PYPI_TOKEN }}"
+
+            - name: Release to docker registry (arm)
+              run: "rkd :release:docker:x86 --git-tag=${GITHUB_REF}"
