@@ -22,11 +22,6 @@ RUN cd /infracheck \
     && pip3 install pbr==5.4.5 \
     && pip3 install -r /infracheck/requirements.txt \
     && rkd :install \
-    # after installing as package extract infrastructural files
-    \
-    && cp -pr /infracheck/entrypoint.sh / \
-    && cp -pr /infracheck/supervisord.conf /etc/supervisord.conf \
-    && chmod +x /entrypoint.sh \
     \
     # delete the temporary directory after the application was installed via setuptools
     && rm -rf /infracheck \
@@ -35,6 +30,13 @@ RUN cd /infracheck \
     && infracheck --help \
     \
     && apk del BUILD_DEPS
+RUN [ "cross-build-end" ]
+
+ADD /.infrastructure/entrypoint.sh /entrypoint.sh
+ADD /.infrastructure/supervisord.conf /etc/supervisord.conf
+
+RUN [ "cross-build-start" ]
+RUN chmod +x /entrypoint.sh
 RUN [ "cross-build-end" ]
 
 ENTRYPOINT ["/entrypoint.sh"]
