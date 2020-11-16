@@ -3,11 +3,11 @@ import docker
 import os
 
 from tempfile import NamedTemporaryFile
-from .utils import run_check
-from .utils.ssh_test import TestThatRequiresSshServer
+from tests.utils import run_check
+from tests.utils.ssh_test import SSHServerContainerRequirement
 
 
-class SshCommandCheckTest(TestThatRequiresSshServer, unittest.TestCase):
+class SshCommandCheckTest(SSHServerContainerRequirement, unittest.TestCase):
     docker_client: docker.DockerClient
 
     def test_fingerprint_will_be_fetched_first_time(self):

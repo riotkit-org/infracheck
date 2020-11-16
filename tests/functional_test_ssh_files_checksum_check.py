@@ -1,11 +1,11 @@
 import unittest
 import docker
 
-from .utils import run_check
-from .utils.ssh_test import TestThatRequiresSshServer
+from tests.utils import run_check
+from tests.utils.ssh_test import SSHServerContainerRequirement
 
 
-class SshCommandCheckTest(TestThatRequiresSshServer, unittest.TestCase):
+class SshCommandCheckTest(SSHServerContainerRequirement, unittest.TestCase):
     docker_client: docker.DockerClient
 
     def test_not_passed_host_raises_human_readable_message(self):

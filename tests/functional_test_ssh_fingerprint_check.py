@@ -1,11 +1,11 @@
 import unittest
 import docker
 
-from .utils import run_check
-from .utils.ssh_test import TestThatRequiresSshServer
+from tests.utils import run_check
+from tests.utils.ssh_test import SSHServerContainerRequirement
 
 
-class SshFingerprintTest(TestThatRequiresSshServer, unittest.TestCase):
+class SshFingerprintTest(SSHServerContainerRequirement, unittest.TestCase):
     docker_client: docker.DockerClient
 
     def test_success_case(self):

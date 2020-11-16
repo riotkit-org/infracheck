@@ -1,48 +1,12 @@
 
-import docker
-import docker.errors
 import subprocess
 import time
+from .base_docker_container_test import BaseDockerContainerRequirement
 
 
-class TestThatRequiresSshServer:
-    docker_client: docker.DockerClient
-
-    @classmethod
-    def setUpClass(cls) -> None:
-        TestThatRequiresSshServer.docker_client = docker.from_env()
-        TestThatRequiresSshServer._remove_ssh_container()
-        TestThatRequiresSshServer.docker_client.containers.run('sickp/alpine-sshd:7.5', name='ssh', ports={'22/tcp': 3222}, detach=True)
-        TestThatRequiresSshServer._wait_for_ssh_to_be_ready()
-
-    @classmethod
-    def tearDownClass(cls) -> None:
-        TestThatRequiresSshServer._remove_ssh_container()
-        TestThatRequiresSshServer.docker_client.close()
-
+class SSHServerContainerRequirement(BaseDockerContainerRequirement):
     @staticmethod
-    def _remove_ssh_container():
-        try:
-            container = TestThatRequiresSshServer.docker_client.containers.get('ssh')
-
-            try:
-                container.kill()
-            except docker.errors.APIError:
-                pass
-
-            container.remove()
-
-        except docker.errors.NotFound:
-            pass
-
-    @staticmethod
-    def get_current_ssh_server_fingerprint():
-        return subprocess.check_output(
-            'ssh-keyscan -t rsa -p 3222 localhost', stderr=subprocess.DEVNULL, shell=True
-        ).decode('utf-8')
-
-    @staticmethod
-    def _wait_for_ssh_to_be_ready():
+    def _wait_for_container_to_be_ready():
         out = ''
 
         for i in range(1, 600):
@@ -56,3 +20,21 @@ class TestThatRequiresSshServer:
                 time.sleep(0.5)
 
         raise Exception('SSH container did not get up properly. Output: ' + out)
+
+    @staticmethod
+    def get_current_ssh_server_fingerprint():
+        return subprocess.check_output(
+            'ssh-keyscan -t rsa -p 3222 localhost', stderr=subprocess.DEVNULL, shell=True
+        ).decode('utf-8')
+
+    @staticmethod
+    def _get_container_name() -> str:
+        return 'ssh'
+
+    @staticmethod
+    def _get_ports() -> dict:
+        return {'22/tcp': 3222}
+
+    @staticmethod
+    def _get_image_name() -> str:
+        return 'sickp/alpine-sshd:7.5'
