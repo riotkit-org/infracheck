@@ -10,7 +10,7 @@ Grab credentials at https://api.ovh.com/createToken/index.cgi
 
 **Required privileges on OVH API: "GET /vps*"**
 
-Parameters:
+**Parameters:**
 
 - endpoint (ex. ovh-eu)
 - app_key
@@ -19,6 +19,23 @@ Parameters:
 - service_name (ex. somevps.ovh.net)
 - days_to_alert (ex. 30 for 30 days)
 </sphinx>
+
+**Example JSON:**
+
+.. code:: json
+
+    {
+        "type": "ovh-expiration",
+        "input": {
+            "endpoint": "ovh-eu",
+            "app_key": "xyyyyyyyyyyyyzz",
+            "app_secret": "xyxyxyxyyxyxyxyxyxyxxyyxyxyxyxy",
+            "app_consumer_key": "xyxyyxyxyxyxyxyxyxyyxyxyxyxyxy",
+            "service_name": "vps12345678.ovh.net",
+            "days_to_alert": 5
+        }
+    }
+
 """
 
 
