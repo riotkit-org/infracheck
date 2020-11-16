@@ -7,7 +7,7 @@ docker-container-log
 
 Searches docker container logs for matching given regular expression.
 
-Parameters:
+**Parameters:**
 
 - container: Docker container name
 - regexp: Regular expression
@@ -15,6 +15,26 @@ Parameters:
 - since_seconds: Get only logs since this time (eg. last 5 minutes = 5 * 60 = 300) (defaults to 300)
 - present: Boolean, if the string should be present in the output or not
 </sphinx>
+
+**Example JSON:**
+
+.. code:: json
+
+    {
+        "type": "docker-container-log",
+        "input": {
+            "container": "food_not_bombs_stats_collector_1",
+            "regexp": "connection timed out",
+            "max_lines": 15,
+            "since_seconds": 360,
+            "present": false
+        },
+        "hooks": {
+            "on_each_down": [
+                "docker restart food_not_bombs_stats_collector_1"
+            ]
+        }
+    }
 """
 
 import os
