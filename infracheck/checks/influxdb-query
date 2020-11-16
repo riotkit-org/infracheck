@@ -1,0 +1,77 @@
+
+"""
+<sphinx>
+influxdb-query
+--------------
+
+Queries an InfluxDB database and compares results.
+
+Parameters:
+
+- host
+- port
+- user
+- password
+- database
+- query
+- expected: A json serialized result (not pretty formatted)
+
+Example of JSON serialized result for query 'SELECT "duration" FROM "pyexample"."autogen"."brushEvents" WHERE time > now() - 4d GROUP BY "user"':
+
+[
+    ['2018-03-28T08:01:00Z', 127],
+    ['2018-03-29T08:04:00Z', 132],
+    ['2018-03-30T08:02:00Z', 129]
+]
+
+</sphinx>
+"""
+
+import os
+import sys
+import influxdb
+import itertools
+import json
+from typing import Tuple
+
+
+class InfluxDBQueryCheck(object):
+    client: influxdb.InfluxDBClient
+
+    def __init__(self, host: str, port: int, user: str, password: str, database: str):
+        self.client = influxdb.InfluxDBClient(host=host, port=port)
+        self.client.switch_user(user, password)
+        self.client.switch_database(database)
+
+    def main(self, query: str, expected: str) -> Tuple[bool, str]:
+        results = self.client.query(query)
+        mapped = itertools.chain(list(map(lambda result: result['values'], results['series'])))
+
+        encoded = json.dumps(mapped)
+
+        if encoded != expected:
+            return False, "Expected '{expectation}', got '{actual}'".format(expectation=expected, actual=encoded)
+
+        return True, "Query results are matching"
+
+
+if __name__ == '__main__':
+    try:
+        app = InfluxDBQueryCheck(
+            host=os.environ['HOST'],
+            port=int(os.getenv('PORT', 8086)),
+            user=os.environ['USER'],
+            password=os.environ['PASSWORD'],
+            database=os.environ['DATABASE']
+        )
+
+        status, message = app.main(
+            query=os.environ['QUERY'],
+            expected=os.environ['EXPECTED']
+        )
+    except KeyError as attribute:
+        print('Missing environment variable: {}'.format(attribute))
+        sys.exit(1)
+
+    print(message)
+    sys.exit(0 if status else 1)

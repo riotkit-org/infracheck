@@ -6,6 +6,7 @@ pytz >= 2019.3
 six >= 1.15.0, < 2
 tornado >= 5.1.1, < 6
 whois >= 0.9.4, < 1
+influxdb >= 5.3.1, < 6
 
 rkd>=2.2, <3
 rkd-python>=2.2, <3

@@ -121,6 +121,10 @@ Parameters:
    :start-after: <sphinx>
    :end-before: </sphinx>
 
+.. include:: ../../infracheck/checks/influxdb-query
+   :start-after: <sphinx>
+   :end-before: </sphinx>
+
 .. include:: ../../infracheck/checks/postgres
    :start-after: <sphinx>
    :end-before: </sphinx>
