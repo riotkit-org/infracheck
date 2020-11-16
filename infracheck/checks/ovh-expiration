@@ -18,7 +18,6 @@ Grab credentials at https://api.ovh.com/createToken/index.cgi
 - app_consumer_key
 - service_name (ex. somevps.ovh.net)
 - days_to_alert (ex. 30 for 30 days)
-</sphinx>
 
 **Example JSON:**
 
@@ -35,7 +34,7 @@ Grab credentials at https://api.ovh.com/createToken/index.cgi
             "days_to_alert": 5
         }
     }
-
+</sphinx>
 """
 
 
