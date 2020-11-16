@@ -7,10 +7,25 @@ disk-space
 
 Monitors disk space.
 
-Parameters:
+**Parameters:**
 
 - min_req_space (in gigabytes)
 - dir (path)
+
+
+**Example JSON:**
+
+.. code:: json
+
+    {
+        "type": "disk-space",
+        "input": {
+            "dir": "/",
+            "min_req_space": "6"
+        }
+    }
+
+
 </sphinx>
 """
 import os
