@@ -18,11 +18,13 @@ Parameters:
 
 Example of JSON serialized result for query 'SELECT "duration" FROM "pyexample"."autogen"."brushEvents" WHERE time > now() - 4d GROUP BY "user"':
 
-[
-    ['2018-03-28T08:01:00Z', 127],
-    ['2018-03-29T08:04:00Z', 132],
-    ['2018-03-30T08:02:00Z', 129]
-]
+.. code:: json
+
+    [
+        ['2018-03-28T08:01:00Z', 127],
+        ['2018-03-29T08:04:00Z', 132],
+        ['2018-03-30T08:02:00Z', 129]
+    ]
 
 </sphinx>
 """
