@@ -16,15 +16,21 @@ Infracheck can work as a HTTP endpoint responding with JSON, or as a console com
 
 You need to install all requirements manually if you decide not to use a docker container.
 
-Requirements:
+**Requirements:**
 
-- Python 3.6+
+- Python 3.7+
 - OpenSSH Client
-- sshpass
-- mysql-client
-- postgresql-client
-- docker client
+- sshpass (for SSH checks)
+- whois (for domain checks)
+- mysql-client (for MySQL checks)
+- postgresql-client (for PostgreSQL checks)
+- docker client (for Docker checks)
 - curl
+
+
+**Python package requirements:**
+
+.. literalinclude:: ../../requirements.txt
 
 
 2. Structure
@@ -80,12 +86,19 @@ Hint: You can pass environment variables in parameters - see: :ref:`Templating` 
 
 **With Docker**
 
-You can use a ready-to-use docker image **wolnosciowiec/infracheck** or **wolnosciowiec/infracheck:armhf** for 32 bit ARM.
+You can use a ready-to-use docker image **quay.io/riotkit/infracheck** or **quay.io/riotkit/infracheck** for ARM.
+Please check `the list of available versions <https://quay.io/repository/riotkit/infracheck?tab=tags>`_.
+
 The image will by default expose a HTTP endpoint.
+
+.. _the list of available versions: https://quay.io/repository/riotkit/infracheck?tab=tags
 
 .. code:: bash
 
-    sudo docker run --name infracheck -p 8000:8000 -v $(pwd):/data -d --rm wolnosciowiec/infracheck
+    # create directory structure that will be present in "/data" inside container (see one of previous steps about the structure)
+    mkdir checks configured
+
+    sudo docker run --name infracheck -p 8000:8000 -v $(pwd):/data -d --rm quay.io/riotkit/infracheck:v1.9-x86_64
 
     # now test it
     curl http://localhost:8000
@@ -102,7 +115,7 @@ List of supported environment variables:
 
     git clone https://github.com/riotkit-org/infracheck
     cd infracheck
-    make install
+    rkd :install
 
     # run checks in the shell
     infracheck --directory=/your-project-directory-path-there
