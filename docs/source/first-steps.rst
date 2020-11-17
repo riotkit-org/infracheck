@@ -98,10 +98,12 @@ The image will by default expose a HTTP endpoint.
     # create directory structure that will be present in "/data" inside container (see one of previous steps about the structure)
     mkdir checks configured
 
-    sudo docker run --name infracheck -p 8000:8000 -v $(pwd):/data -d --rm quay.io/riotkit/infracheck:v1.9-x86_64
+    sudo docker run --name infracheck -p 8000:8000 -v $(pwd):/data -d --rm quay.io/riotkit/infracheck:v1.9.1-x86_64 \
+        --directory=/data --server-path-prefix=/your-secret-code-there
 
     # now test it
-    curl http://localhost:8000
+    curl http://localhost:8000/your-secret-code-there/
+
 
 List of supported environment variables:
 
