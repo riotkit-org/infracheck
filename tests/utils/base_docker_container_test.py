@@ -1,6 +1,7 @@
 
 import docker
 import docker.errors
+import time
 from abc import abstractmethod
 
 
@@ -23,7 +24,7 @@ class BaseDockerContainerRequirement(object):
     @classmethod
     def _remove_container(cls):
         try:
-            container = cls.docker_client.containers.get('ssh')
+            container = cls.docker_client.containers.get(cls._get_container_name())
 
             try:
                 container.kill()
@@ -35,9 +36,23 @@ class BaseDockerContainerRequirement(object):
         except docker.errors.NotFound:
             pass
 
-    @staticmethod
+    @classmethod
+    def _wait_for_log_message(cls, message: str, timeout: int = 60):
+        container = cls.docker_client.containers.get(cls._get_container_name())
+
+        for sec in range(0, timeout):
+            logs = container.logs().decode('utf-8')
+
+            if message in logs:
+                return True
+
+            time.sleep(1)
+
+        raise Exception('Message "{message}" not found in container logs'.format(message=message))
+
+    @classmethod
     @abstractmethod
-    def _wait_for_container_to_be_ready():
+    def _wait_for_container_to_be_ready(cls):
         pass
 
     @staticmethod

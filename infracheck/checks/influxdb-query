@@ -9,7 +9,7 @@ Queries an InfluxDB database and compares results.
 Parameters:
 
 - host
-- port
+- port (default: 8086)
 - user
 - password
 - database
@@ -45,12 +45,10 @@ class InfluxDBQueryCheck(object):
 
     def main(self, query: str, expected: str) -> Tuple[bool, str]:
         results = self.client.query(query)
-        mapped = itertools.chain(list(map(lambda result: result['values'], results['series'])))
+        encoded = json.dumps(list(results))
 
-        encoded = json.dumps(mapped)
-
-        if encoded != expected:
-            return False, "Expected '{expectation}', got '{actual}'".format(expectation=expected, actual=encoded)
+        if expected not in encoded:
+            return False, "Expected '{actual}' to contain '{expectation}'".format(expectation=expected, actual=encoded)
 
         return True, "Query results are matching"
 
