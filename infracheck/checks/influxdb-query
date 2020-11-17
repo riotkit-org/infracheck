@@ -16,14 +16,17 @@ Parameters:
 - query
 - expected: A json serialized result (not pretty formatted)
 
-Example of JSON serialized result for query 'SELECT "duration" FROM "pyexample"."autogen"."brushEvents" WHERE time > now() - 4d GROUP BY "user"':
+Example of JSON serialized result for query 'select value from cpu_load_short;':
 
 .. code:: json
 
     [
-        ['2018-03-28T08:01:00Z', 127],
-        ['2018-03-29T08:04:00Z', 132],
-        ['2018-03-30T08:02:00Z', 129]
+        [
+            {"time": "2009-11-10T23:00:10Z", "value": 10.64},
+            {"time": "2009-11-10T23:00:20Z", "value": 20.64},
+            {"time": "2009-11-10T23:00:30Z", "value": 30.64},
+            {"time": "2009-11-10T23:00:40Z", "value": 40.64}
+        ]
     ]
 
 </sphinx>
@@ -50,8 +53,10 @@ class InfluxDBQueryCheck(object):
         encoded = json.dumps(list(results))
 
         if expected not in encoded:
+            self.client.close()
             return False, "Expected '{actual}' to contain '{expectation}'".format(expectation=expected, actual=encoded)
 
+        self.client.close()
         return True, "Query results are matching"
 
 
