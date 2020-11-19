@@ -5,6 +5,7 @@ import sys
 import os
 import argparse
 import json
+from enum import Enum
 
 t = sys.argv[0].replace(os.path.basename(sys.argv[0]), "") + "/../"
 
@@ -13,6 +14,17 @@ if os.path.isdir(t):
 
 
 from .controller import Controller
+
+
+class LogLevel(Enum):
+    info = 'info'
+    debug = 'debug'
+    warning = 'warning'
+    error = 'error'
+    fatal = 'fatal'
+
+    def __str__(self):
+        return self.value
 
 
 def main():
@@ -39,42 +51,38 @@ def main():
         action='store_true'
     )
     parser.add_argument(
-        '--directory',
+        '--directory', '-d',
         help='Alternative project directory',
         default=''
     )
     parser.add_argument(
-        '--server',
-        help='Spawn a HTTP server at 7422 port',
-        default=False,
-        action='store_true'
-    )
-    parser.add_argument(
-        '--server-port',
+        '--server-port', '-p',
         help='Server port, default is 7422',
         default=7422
     )
     parser.add_argument(
-        '--db-path',
+        '--db-path', '-b',
         help='Database path',
         default='~/.infracheck.sqlite3'
     )
     parser.add_argument(
-        '--force',
-        help='Set write mode on cache, so all health checks are always executed',
-        default=False,
-        action='store_true'
-    )
-    parser.add_argument(
-        '--wait',
-        help='Seconds between doing checks (works only in --force mode)',
+        '--wait', '-w',
+        help='Seconds between doing checks',
         default=0
     )
     parser.add_argument(
-        '--lazy',
-        help='If check result is not ready, then the ' +
-             'check result will be populated on-demand, even if --force is not active',
-        default=False,
+        '--timeout', '-t',
+        help='Timeout for a single healthcheck to execute',
+        default=10
+    )
+    parser.add_argument(
+        '--refresh-time', '-r',
+        help='Refresh time in seconds - how often perform health checks. Defaults to 120 (seconds) = 2 minutes',
+        default=120
+    )
+    parser.add_argument(
+        '--no-server', '-n',
+        help='Do not run the server, just run all the checks from CLI',
         action='store_true'
     )
     parser.add_argument(
@@ -83,19 +91,29 @@ def main():
              'http://localhost:8000/this-is-a-secret/',
         default=''
     )
+    parser.add_argument(
+        '--log-level', '-l',
+        help='Logging level name - debug, info, warning, error, fatal. Defaults to "info"',
+        type=LogLevel,
+        choices=list(LogLevel)
+    )
 
     parsed = parser.parse_args()
     project_dir = parsed.directory if parsed.directory else os.getcwd()
     server_port = int(parsed.server_port if parsed.server_port else 7422)
     server_path_prefix = parsed.server_path_prefix if parsed.server_path_prefix else ''
     wait_time = int(parsed.wait)
+    timeout = int(parsed.timeout)
 
-    app = Controller(project_dir, server_port, server_path_prefix,
-                     parsed.db_path, wait_time, parsed.lazy, parsed.force)
-
-    if parsed.server:
-        app.spawn_server()
-        sys.exit(0)
+    app = Controller(
+        project_dir=project_dir,
+        server_port=server_port,
+        server_path_prefix=server_path_prefix,
+        db_path=parsed.db_path,
+        wait_time=wait_time,
+        timeout=timeout,
+        log_level=str(parsed.log_level)
+    )
 
     # action: --list-all-configurations
     if parsed.list_all_configurations:
@@ -119,10 +137,15 @@ def main():
         sys.exit(0)
 
     # action: perform health checking
-    result = app.perform_checks(force=parsed.force, wait_time=wait_time, lazy=parsed.lazy)
-    print(json.dumps(result, sort_keys=True, indent=4, separators=(',', ': ')))
+    if not parsed.no_server:
+        app.spawn_threaded_application(refresh_time=int(parsed.refresh_time))
+        sys.exit(0)
 
-    if not result['global_status']:
-        sys.exit(1)
+    if parsed.no_server:
+        result = app.perform_checks().to_hash()
+        print(json.dumps(result, sort_keys=True, indent=4, separators=(',', ': ')))
+
+        if not result['global_status']:
+            sys.exit(1)
 
     sys.exit(0)

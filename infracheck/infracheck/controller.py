@@ -1,88 +1,74 @@
-
+import os
+from typing import List
+from .model import ExecutedChecksResultList
 from .runner import Runner
 from .repository import Repository
 from .config import ConfigLoader
-from .server import HttpServer
+from .scheduler import Scheduler
+from .http import HttpServer
+from rkd.api.inputoutput import IO
 
-import os
-import time
 
+class Controller(object):
+    """
+    Constructs application context and passes actions to given services that are taking care about the processing
+    """
 
-class Controller:
-    project_dirs = None   # type: list
-    runner = None         # type: Runner
-    repository = None     # type: Repository
-    config_loader = None  # type: ConfigLoader
-    server = None         # type: HttpServer
+    project_dirs: list
+    runner: Runner
+    repository: Repository
+    config_loader: ConfigLoader
+    server: HttpServer
+    io: IO
 
     def __init__(self, project_dir: str, server_port: int, server_path_prefix: str,
-                 db_path: str, wait_time: int, lazy: bool, force: bool):
+                 db_path: str, wait_time: int, timeout: int, log_level: str):
 
+        self.io = IO()
+        self.io.set_log_level(log_level)
         self.project_dirs = self._combine_project_dirs(project_dir)
-        self.runner = Runner(self.project_dirs)
         self.config_loader = ConfigLoader(self.project_dirs)
         self.repository = Repository(self.project_dirs, db_path)
-        self.server = HttpServer(self, server_port, server_path_prefix, wait_time, lazy, force)
 
-    def list_enabled_configs(self):
+        self.runner = Runner(dirs=self.project_dirs, config_loader=self.config_loader,
+                             repository=self.repository, timeout=timeout, wait_time=wait_time, io=self.io)
+
+        self.server = HttpServer(self, port=server_port, server_path_prefix=server_path_prefix)
+        self.scheduler = Scheduler(self.runner, self.repository, self.io)
+
+    def list_enabled_configs(self) -> List[str]:
         return self.repository.get_configured_checks(with_disabled=False)
 
-    def list_available_checks(self):
+    def list_available_checks(self) -> List[str]:
         return self.repository.get_available_checks()
 
-    def list_all_configs(self):
+    def list_all_configs(self) -> List[str]:
         return self.repository.get_configured_checks(with_disabled=True)
 
-    def spawn_server(self):
-        return self.server.run()
-
-    def perform_checks(self, force: bool, wait_time: int = 0, lazy=False):
+    def spawn_threaded_application(self, refresh_time: int) -> None:
         """
-        :param force: Perform checks and write results
-        :param wait_time: After each check wait (in seconds)
-        :param lazy: If force not specified, and there is no result, then allow to perform a check on-demand
-        :return:
+        Spawns a webserver + background worker
+        """
+
+        self.scheduler.schedule_jobs_in_background(every_seconds=refresh_time)
+        self.server.run()
+
+    def retrieve_checks(self) -> ExecutedChecksResultList:
+        """
+        Only retrieves results of last checking
+        """
+
+        return self.runner.get_checks_results(self.list_enabled_configs())
+
+    def perform_checks(self) -> ExecutedChecksResultList:
+        """
+        Runs and returns results synchronously
         """
 
         configs = self.list_enabled_configs()
-        results = {}
-        global_status = True
 
-        for config_name in configs:
-            result = None
-
-            if not force:
-                cache = self.repository.retrieve_cache(config_name)
-
-                if cache:
-                    result = cache
-
-            config = self.config_loader.load(config_name)
-
-            if not result:
-                if lazy or force:
-                    result = self.runner.run(config['type'], config['input'], config.get('hooks', {}))
-                    self.repository.push_to_cache(config_name, result)
-                else:
-                    result = ["Check not ready", False, ""]
-
-            results[config_name] = {
-                'status': result[1],
-                'output': result[0],
-                'hooks_output': result[2],
-                'ident': config_name + '=' + str(result[1])
-            }
-
-            if not result[1]:
-                global_status = False
-
-            if force and wait_time > 0:
-                time.sleep(wait_time)
-
-        return {
-            'checks': results,
-            'global_status': global_status
-        }
+        self.runner.run_checks(configs)
+        return self.runner.get_checks_results(configs)
 
     @staticmethod
     def _combine_project_dirs(project_dir: str) -> list:

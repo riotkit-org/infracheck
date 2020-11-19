@@ -1,6 +1,144 @@
 CHANGES
 =======
 
+* #8: Fix issue with missing "msgpack"
+* #8: Add missing package "msgpack"
+* #8: Add hashbang
+* #8: Update docs
+* #8: Update docs
+* #8: Fix deprecations, update docs
+* #8: Update docs formatting
+* #8: Covered influxdb-query with tests
+* #8: Refactor container test utils
+* Docs: Add example to the disk-space
+* Docs: Add example to the ovh-expiration
+* Docs: Add example to the ovh-expiration
+* Docs: Add example to the docker-container-log
+* #8: Initially added influxdb-query check
+* #7: Added missing ARCH in docker tag
+* Updated badges
+
+v1.9
+----
+
+* #7: Clean up
+* #7: Build on ARM
+* #7: Set almost final pipelines
+* #7: Enable ARM build
+* #7: Attempt to keep the git tag in PBR build
+* #7: Attempting to resolve git tag retrieving
+* #7: Attempting to resolve git tag retrieving
+* #7: add missing wheel package
+* #7: add missing wheel package
+* #7: add missing hashbang
+* #7: return a value in :image task
+* #7: Compat
+* #7: Add login to registry
+* #7: Release job
+* #7: Release job
+* #7: Fixes related to GH Actions
+* #7: Fixes related to GH Actions
+* #7: Fixes related to GH Actions
+* #7: Fixes related to GH Actions
+* #7: Fixes related to GH Actions
+* #7: Moving to Github Actions
+* #7: Moving to Github Actions
+* Build on Python 3.7
+* #6: Implement "docker-container-log" check
+* Remove unused, nonsense check
+* Create index also on existing databases
+* Correct: sqlite3.Warning: You can only execute one statement at a time
+* Add index for better performance of the SQLite3
+
+v1.8
+----
+
+* Refactor: Moved docs to Python files
+* Postgres support: Included "postgres" check in docs
+* Postgres support: Added simple PostgreSQL check if the DB is up
+
+v1.8.rc1
+--------
+
+* Postgres support: Corrected one typo, and added distinction between no rights and no data
+* ARM: Correct package name
+* Fixed problem with building Docker image - after enforcing regeneration of requirements.txt
+* Postgres support: Added missing postgresql-devel required for building/installing psycopg2
+* Building: Always re-generate requirements.txt
+* Postgres support: Switch from psycopg2 to psycopg2-binary
+* Postgres support: Switch from psycopg2 to psycopg2-binary
+* Postgres support: Added psycopg2 as dependency
+* Postgres support: chmod +x
+* Docs: Added PostgreSQL replication checks
+* Added PostgreSQL replication checks
+
+v1.7
+----
+
+* Docs: Added passwords deploying strategy
+* Docs: Added templating documentation
+
+v1.7.rc5
+--------
+
+* Runner: Added a simple templating in input variables. Example: ${ENV.USER} to see current user. Use this mechanism to pass credentials securely
+* Runner: Added some default timeout for safety reasons
+
+v1.7.rc4
+--------
+
+* SSH: Added creation of .ssh directory and known\_hosts file if not present
+* SSH: Added support for adding to known\_hosts first time
+* Tests: Increased SSH container timeout to avoid random failures
+* Load avg checks: Corrected invalid casting in timeout parameter and extracted code into the checklib
+* Formatting
+* Docker: Added required packages
+* Reminder check: Correct a misleading message
+* Docs: Deleted development-only information
+
+v1.7.rc3
+--------
+
+* Docker: Fixed containers - added missing gcc after adding dependency that requires compilation
+* Added correct requirements.txt
+* Tests: Corrected paths in tests
+* Checks: Add swap-usage-max-percent
+* Checks: Added load-average and load-average-auto
+
+v1.7.rc2
+--------
+
+* CI: Increased timeout for SSH container
+* CI: Added missing make task
+* CI: debug
+* CI: Fix build by allowing running in venv
+* CI: Fix build by allowing running in venv
+* Docs: Added all new checks to docs
+* Docs: Fixed errors in the docs
+* Added new check - \`ssh-files-checksum\`: \`Calls remote process using SSH and expects: the listed files and checksums will be matching\`
+* SSH-based checks are now sharing the same code by using a library, simplified imports and made them more safe
+* Runner: Added support for lists and dicts in parameters
+* Add \`ssh-fingerprint\` check: \`Verifies if remote host fingerprint matches. Helps detecting man-in-the-middle and server takeover attacks.\`
+* Tests: Close the docker socket to avoid warnings in tests
+* Tests: Separate unit tests from functional tests, improve pipeline - correct mistake
+* Tests: Separate unit tests from functional tests, improve pipeline
+
+v1.7.rc1
+--------
+
+* Tests: Improved tests that uses SSH container - the container is setup one for a class
+* Tests: Collecting output from SSH container
+* Refactored "replication-running" check syntax and added additional status information
+* CI: Attempt to run unit tests on travis
+* CI: Trying to bring up the unit tests
+* Covered "reminder" check with tests
+* CI: Fixing Python 3.7 build
+* CI: Add missing pipenv
+* Add compatibility with Python 3.7 stage
+* Downgrade packages for Python 3.6 compatibility
+* No longer require strict Python version, correct Docker builds
+* Corrected mistake in travis configuration
+* Changing the way the application is deployed. Introducing pipenv
 * Enabled docker in travis builds as it is required for testing
 * Covered "ssh-command" with tests and fixed all spotted bugs
 * Preparation for the Pipenv support
