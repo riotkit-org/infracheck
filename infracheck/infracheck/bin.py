@@ -95,7 +95,8 @@ def main():
         '--log-level', '-l',
         help='Logging level name - debug, info, warning, error, fatal. Defaults to "info"',
         type=LogLevel,
-        choices=list(LogLevel)
+        choices=list(LogLevel),
+        default='info'
     )
 
     parsed = parser.parse_args()

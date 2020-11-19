@@ -107,9 +107,9 @@ The image will by default expose a HTTP endpoint.
 
 List of supported environment variables:
 
-- CHECK_INTERVAL="\*/1 \* \* \* \*"
+- REFRESH_TIME=120
+- CHECK_TIMEOUT=120
 - WAIT_TIME=0
-- LAZY=false
 
 **Without Docker**
 
@@ -120,13 +120,11 @@ List of supported environment variables:
     rkd :install
 
     # run checks in the shell
-    infracheck --directory=/your-project-directory-path-there
+    infracheck --directory=/your-project-directory-path-there --no-server
 
-    # run a webserver
-    infracheck --directory=/your-project-directory-path-there --server --server-port=7422 --lazy
+    # run the application with webserver and background worker
+    infracheck --directory=/your-project-directory-path-there --server-port=7422 --refresh-time=120 --log-level=info
 
-    # set up a scheduled checking
-    echo "*/1 * * * * infracheck --directory=/your-project-directory-path-there --force" >> /etc/crontabs/root
 
 **Using PIP**
 
@@ -135,11 +133,13 @@ List of supported environment variables:
     sudo pip install infracheck
 
     # run checks in the shell
-    infracheck --directory=/your-project-directory-path-there
+    infracheck --directory=/your-project-directory-path-there --no-server
 
-    # run a webserver
-    infracheck --directory=/your-project-directory-path-there --server --server-port=7422
+    # run the application with webserver and background worker
+    infracheck --directory=/your-project-directory-path-there --server-port=7422 --refresh-time=120 --log-level=info
 
-    # set up a scheduled checking
-    echo "*/1 * * * * infracheck --directory=/your-project-directory-path-there --force" >> /etc/crontabs/root
 
+Advanced
+--------
+
+**Setting timeout per check:** Set :code:`INFRACHECK_TIMEOUT` environment variable in json file to adjust timeout for given check.

@@ -1,6 +1,7 @@
 CHANGES
 =======
 
+* #9, #10: Logic extraction from controller into more layers, added model, using pickle instead of json in database cache, the application now is working in two threads - one is server, second is background worker (replaces crontab calls)
 * #8: Fix issue with missing "msgpack"
 * #8: Add missing package "msgpack"
 * #8: Add hashbang
