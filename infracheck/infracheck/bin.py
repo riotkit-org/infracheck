@@ -6,6 +6,7 @@ import os
 import argparse
 import json
 from enum import Enum
+from .http import HttpServer
 
 t = sys.argv[0].replace(os.path.basename(sys.argv[0]), "") + "/../"
 
@@ -98,6 +99,11 @@ def main():
         choices=list(LogLevel),
         default='info'
     )
+    parser.add_argument(
+        '--version', '-v',
+        help='Get application version',
+        action='store_true'
+    )
 
     parsed = parser.parse_args()
     project_dir = parsed.directory if parsed.directory else os.getcwd()
@@ -115,6 +121,10 @@ def main():
         timeout=timeout,
         log_level=str(parsed.log_level)
     )
+
+    if parsed.version:
+        print(app.get_version()['version'])
+        sys.exit(0)
 
     # action: --list-all-configurations
     if parsed.list_all_configurations:
@@ -140,6 +150,9 @@ def main():
     # action: perform health checking
     if not parsed.no_server:
         app.spawn_threaded_application(refresh_time=int(parsed.refresh_time))
+        server = HttpServer(app=app, port=server_port, server_path_prefix=server_path_prefix)
+        server.run()
+
         sys.exit(0)
 
     if parsed.no_server:

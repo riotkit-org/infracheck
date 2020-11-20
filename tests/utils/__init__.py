@@ -11,4 +11,4 @@ from infracheck.infracheck.runner import Runner
 
 def run_check(check_type: str, input_data: dict, hooks: dict):
     runner = Runner([path + '/../../example/healthchecks', path + '/../infracheck/'])
-    return runner.run(check_type, input_data, hooks)
+    return runner.run_single_check(check_type, input_data, hooks)

@@ -1,13 +1,20 @@
 
+"""
+HTTP
+====
+
+Exposes simple HTTP endpoint with JSON response
+"""
+
 import tornado.ioloop
 import tornado.web
 import json
+from .controller import Controller
+from .model import ExecutedChecksResultList
 
-from infracheck.infracheck.model import ExecutedChecksResultList
 
-
-class MainHandler(tornado.web.RequestHandler):  # pragma: no cover
-    app = None
+class CheckExposingHandler(tornado.web.RequestHandler):  # pragma: no cover
+    app: Controller
 
     def get(self):
         result: ExecutedChecksResultList = self.app.retrieve_checks()
@@ -22,19 +29,38 @@ class MainHandler(tornado.web.RequestHandler):  # pragma: no cover
         pass
 
 
+class VersionHandler(tornado.web.RequestHandler):  # pragma: no cover
+    app: Controller
+
+    def get(self):
+        self.set_status(200)
+        self.add_header('Content-Type', 'application/json')
+        self.write(
+            json.dumps(self.app.get_version(), sort_keys=True, indent=4, separators=(',', ': '))
+        )
+
+    def data_received(self, chunk):
+        pass
+
+
 class HttpServer(object):
     app = None
     port: int
     path_prefix: str
 
-    def __init__(self, app, port: int, server_path_prefix: str):
+    def __init__(self, app: Controller, port: int, server_path_prefix: str):
         self.app = app
         self.port = port
         self.path_prefix = server_path_prefix
 
     def run(self):
-        MainHandler.app = self.app
+        CheckExposingHandler.app = self.app
+        VersionHandler.app = self.app
 
-        srv = tornado.web.Application([(r"" + self.path_prefix + "/", MainHandler)])
+        srv = tornado.web.Application([
+            (r"" + self.path_prefix + "/", CheckExposingHandler),
+            (r"" + self.path_prefix + "/version", VersionHandler)
+        ])
+
         srv.listen(self.port)
         tornado.ioloop.IOLoop.current().start()

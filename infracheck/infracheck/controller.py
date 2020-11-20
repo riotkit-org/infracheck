@@ -1,11 +1,12 @@
 import os
+import sys
 from typing import List
 from .model import ExecutedChecksResultList
 from .runner import Runner
 from .repository import Repository
 from .config import ConfigLoader
 from .scheduler import Scheduler
-from .http import HttpServer
+from .versioning import get_version
 from rkd.api.inputoutput import IO
 
 
@@ -18,7 +19,6 @@ class Controller(object):
     runner: Runner
     repository: Repository
     config_loader: ConfigLoader
-    server: HttpServer
     io: IO
 
     def __init__(self, project_dir: str, server_port: int, server_path_prefix: str,
@@ -33,7 +33,6 @@ class Controller(object):
         self.runner = Runner(dirs=self.project_dirs, config_loader=self.config_loader,
                              repository=self.repository, timeout=timeout, wait_time=wait_time, io=self.io)
 
-        self.server = HttpServer(self, port=server_port, server_path_prefix=server_path_prefix)
         self.scheduler = Scheduler(self.runner, self.repository, self.io)
 
     def list_enabled_configs(self) -> List[str]:
@@ -47,11 +46,21 @@ class Controller(object):
 
     def spawn_threaded_application(self, refresh_time: int) -> None:
         """
-        Spawns a webserver + background worker
+        Spawns a background worker
         """
 
         self.scheduler.schedule_jobs_in_background(every_seconds=refresh_time)
-        self.server.run()
+
+    @staticmethod
+    def get_version() -> dict:
+        """
+        Gets Infracheck version
+        """
+
+        return {
+            "version": get_version(),
+            "python": sys.version
+        }
 
     def retrieve_checks(self) -> ExecutedChecksResultList:
         """

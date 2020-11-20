@@ -1,13 +1,30 @@
 CHANGES
 =======
 
+* #9, #10: Update docker image
 * #9, #10: Logic extraction from controller into more layers, added model, using pickle instead of json in database cache, the application now is working in two threads - one is server, second is background worker (replaces crontab calls)
+
+v1.10
+-----
+
 * #8: Fix issue with missing "msgpack"
+
+v1.10.0.0b3
+-----------
+
 * #8: Add missing package "msgpack"
+
+v1.10.0.0b2
+-----------
+
 * #8: Add hashbang
 * #8: Update docs
 * #8: Update docs
 * #8: Fix deprecations, update docs
+
+v1.10.0.0b1
+-----------
+
 * #8: Update docs formatting
 * #8: Covered influxdb-query with tests
 * #8: Refactor container test utils
@@ -16,6 +33,10 @@ CHANGES
 * Docs: Add example to the ovh-expiration
 * Docs: Add example to the docker-container-log
 * #8: Initially added influxdb-query check
+
+v1.9.1
+------
+
 * #7: Added missing ARCH in docker tag
 * Updated badges
 

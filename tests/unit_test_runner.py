@@ -50,13 +50,13 @@ class RunnerTest(unittest.TestCase):
     @data_provider(provide_data)
     def test_run_with_hooks(self, check_type: str, input_data: dict, hooks: dict, expected_result: bool, expected_text: str):
         runner = Runner([path + '/../example/healthchecks', path + '/infracheck/'])
-        out = runner.run(check_type, input_data, hooks)
+        out = runner.run_single_check(check_type, input_data, hooks)
 
         self.assertEqual(expected_result, out[1])
         self.assertEqual(expected_text, out[2])
 
     def test_injects_variables(self):
         runner = Runner([path + '/../example/healthchecks', path + '/infracheck/'])
-        out = runner.run('printr', {'message': 'Current user is ${ENV.USER}, running a ${checkName}'}, {})
+        out = runner.run_single_check('printr', {'message': 'Current user is ${ENV.USER}, running a ${checkName}'}, {})
 
         self.assertEqual('Current user is ' + os.environ['USER'] + ', running a printr', out[0].strip())

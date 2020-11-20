@@ -1,10 +1,19 @@
 
+"""
+Runner
+======
+
+Executes checks and captures result
+"""
+
 import subprocess
 import os
 import json
 import re
 import time
 from datetime import datetime
+
+from .exceptions import RunnerException
 from .model import ExecutedCheckResult, ExecutedChecksResultList
 from .repository import Repository
 from .config import ConfigLoader
@@ -12,10 +21,6 @@ from rkd.api.inputoutput import IO
 
 
 class Runner(object):
-    """
-    Runs a configured check
-    """
-
     paths: list
     timeout: int
     wait_time: int
@@ -36,7 +41,19 @@ class Runner(object):
         for path in dirs:
             self.paths.append(path + '/checks')
 
-    def run(self, configured_name: str, check_name: str, input_data: dict, hooks: dict) -> ExecutedCheckResult:
+    def run_single_check(self, configured_name: str, check_name: str, input_data: dict, hooks: dict) \
+            -> ExecutedCheckResult:
+
+        """
+        Runs a single check and returns result
+
+        :param configured_name:
+        :param check_name:
+        :param input_data:
+        :param hooks:
+        :return:
+        """
+
         self.io.debug('Executing check {}'.format(configured_name))
         bin_path = self._get_check_path(check_name)
 
@@ -77,7 +94,7 @@ class Runner(object):
             config = self.config_loader.load(config_name)
 
             if not result:
-                result = self.run(config_name, config['type'], config['input'], config.get('hooks', {}))
+                result = self.run_single_check(config_name, config['type'], config['input'], config.get('hooks', {}))
                 self.repository.push_to_cache(config_name, result)
 
             if self.wait_time > 0:
@@ -137,9 +154,7 @@ class Runner(object):
 
         for match in matches:
             if match not in variables:
-                # @todo: Refactor exception class
-                raise Exception('Invalid variable "%s" in check %s. Available variables: %s' %
-                                (match, check_name, str(variables.keys())))
+                raise RunnerException.from_invalid_variable_error(match, check_name, variables)
 
             value = value.replace('${%s}' % match, variables[match])
 
@@ -150,8 +165,7 @@ class Runner(object):
             if os.path.isfile(path + '/' + check_name):
                 return path + '/' + check_name
 
-        # @todo: Refactor exception class
-        raise Exception('Healthcheck executable "' + check_name + '" does not exist')
+        raise RunnerException.from_non_existing_executable(check_name)
 
     @staticmethod
     def _notify_hooks(hooks: dict, exit_status: bool, io: IO) -> str:
@@ -166,7 +180,7 @@ class Runner(object):
             commands = hooks[mapping[exit_status]]
 
             if type(commands).__name__ != 'list':
-                raise Exception('Expected a LIST of hooks in "' + mapping[exit_status] + '"')
+                raise RunnerException.from_expected_list_of_hooks(mapping[exit_status])
 
             for command in commands:
                 io.debug('Triggering hook command "{}"'.format(command))

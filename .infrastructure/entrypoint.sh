@@ -1,10 +1,5 @@
 #!/bin/bash
 
-# shellcheck disable=SC2001
-get_common_args () {
-    echo " --directory=/data --db-path=/database/db.sqlite3 "
-}
-
 prepare_data_directory () {
     #
     # Database is outside of "data" directory, as the database contains dynamic data, that could be considered
@@ -32,7 +27,7 @@ prepare_entrypoint () {
 
     # allow to pass custom arguments from docker run command
     echo "#!/bin/bash" > /entrypoint.cmd.sh
-    echo "infracheck --server-port 8000 ${ARGS} $(get_common_args) $@" >> /entrypoint.cmd.sh
+    echo "infracheck --server-port 8000 ${ARGS} --directory=/data --db-path=/database/db.sqlite3 $@" >> /entrypoint.cmd.sh
 
     cat /entrypoint.cmd.sh
     chmod +x /entrypoint.cmd.sh

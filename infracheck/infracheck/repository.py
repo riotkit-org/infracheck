@@ -1,4 +1,11 @@
 
+"""
+Repository
+==========
+
+A data source - database, cache, list of checks, etc.
+"""
+
 import os
 import posix
 import sqlite3

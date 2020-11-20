@@ -7,7 +7,7 @@ Schedules execution of health checks verification every X seconds.
 """
 import time
 from threading import Thread
-from traceback import print_exc
+from traceback import format_exc
 from .repository import Repository
 from .runner import Runner
 from rkd.api.inputoutput import IO
@@ -38,7 +38,8 @@ class Scheduler(object):
                 self.runner.run_checks(configured_checks)
 
             except Exception:
-                print_exc()
+                self.io.error('Exception happened during processing')
+                self.io.error(format_exc())
 
             self.io.debug('Sleeping {}s'.format(every_seconds))
             time.sleep(every_seconds)
