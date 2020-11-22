@@ -2,6 +2,9 @@
 import os
 import json
 
+from .exceptions import ConfigurationException
+from .rkd_support import is_rkd_check, rkd_module_exists
+
 
 class ConfigLoader:
     paths = []
@@ -32,8 +35,14 @@ class ConfigLoader:
             raise Exception('Configuration "' + config_name + '" needs to specify a name of a check in field "type"')
 
     def _assert_has_valid_type(self, type_name: str):
+        if is_rkd_check(type_name):
+            if not rkd_module_exists(type_name):
+                raise ConfigurationException.from_rkd_module_not_existing(type_name)
+
+            return True
+
         if not self._find_file_path('/checks/', type_name, ''):
-            raise Exception('Invalid check type "' + type_name + '", was looking in: ' + str(self.paths))
+            raise ConfigurationException.from_binary_not_found(type_name, self.paths)
 
         return
 

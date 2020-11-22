@@ -12,12 +12,12 @@ import json
 import re
 import time
 from datetime import datetime
-
+from rkd.api.inputoutput import IO
 from .exceptions import RunnerException
 from .model import ExecutedCheckResult, ExecutedChecksResultList
 from .repository import Repository
 from .config import ConfigLoader
-from rkd.api.inputoutput import IO
+from .rkd_support import is_rkd_check, prepare_rkd_check_bin_path, split_rkd_path, add_rkd_environment_variables
 
 
 class Runner(object):
@@ -56,9 +56,14 @@ class Runner(object):
 
         self.io.debug('Executing check {}'.format(configured_name))
         bin_path = self._get_check_path(check_name)
+        bin_path = self._append_commandline_switches(input_data, bin_path)
 
         try:
+            self.io.debug('bin_path=' + str(bin_path))
+
             env = {**dict(os.environ), **self._prepare_data(check_name, input_data)}
+            env = self._add_environment_variables(env, check_name)
+
             timeout = env['INFRACHECK_TIMEOUT'] if 'INFRACHECK_TIMEOUT' in env else self.timeout
 
             output = subprocess.check_output(bin_path, env=env, stderr=subprocess.PIPE, timeout=timeout)
@@ -66,9 +71,12 @@ class Runner(object):
 
         except subprocess.CalledProcessError as e:
             output = e.output + e.stderr
+            self.io.warn('{} returned error: {}'.format(configured_name, output.decode('utf-8')))
             exit_status = False
+
         except subprocess.TimeoutExpired as e:
             output = b'Timed out: ' + ((str(e.output) + str(e.stderr)).encode('utf-8'))
+            self.io.error('{} timed out and returned: {}'.format(configured_name, output))
             exit_status = False
 
         self.io.debug('Execution finished, running hooks...')
@@ -121,14 +129,48 @@ class Runner(object):
         return results
 
     @staticmethod
+    def _add_environment_variables(env: dict, check_name: str):
+        if is_rkd_check(check_name):
+            env = add_rkd_environment_variables(env, check_name)
+
+        return env
+
+    @staticmethod
+    def _append_commandline_switches(input_data: dict, bin_path: list) -> list:
+        """
+        Inject commandline switches
+
+        :param input_data:
+        :param bin_path:
+        :return:
+        """
+
+        for name, value in input_data.items():
+            name: str
+
+            if name.startswith('--'):
+                bin_path.append(name + '=' + str(value))
+
+            elif name.startswith('-'):
+                bin_path.append(name)
+                bin_path.append(str(value))
+
+        return bin_path
+
+    @staticmethod
     def _prepare_data(check_name: str, input_data: dict):
         """ Serialize and parse """
 
         output_data = {}
 
         for key, value in input_data.items():
+            key: str
+
             if type(value) == dict or type(value) == list:
                 value = json.dumps(value)
+
+            if key.startswith('-'):
+                continue
 
             output_data[key.upper()] = Runner._inject_variables(check_name, str(value))
 
@@ -136,8 +178,10 @@ class Runner(object):
 
     @staticmethod
     def _inject_variables(check_name: str, value: str) -> str:
-        """ Inject variables, including environment variables from host,
-            to allow for example secure passing of passwords"""
+        """
+        Inject variables, including environment variables from host,
+        to allow for example secure passing of passwords
+        """
 
         matches = re.findall(r'\${([A-Za-z0-9_.]+)\}', value)
 
@@ -147,6 +191,7 @@ class Runner(object):
         variables = {
             'checkName': check_name,
             'date': datetime.now().isoformat(),
+            'timestamp': str(datetime.now().timestamp())
         }
 
         for env_name, env_value in os.environ.items():
@@ -160,10 +205,13 @@ class Runner(object):
 
         return value
 
-    def _get_check_path(self, check_name: str):
+    def _get_check_path(self, check_name: str) -> list:
+        if is_rkd_check(check_name):
+            return prepare_rkd_check_bin_path(check_name)
+
         for path in self.paths:
             if os.path.isfile(path + '/' + check_name):
-                return path + '/' + check_name
+                return [path + '/' + check_name]
 
         raise RunnerException.from_non_existing_executable(check_name)
 
