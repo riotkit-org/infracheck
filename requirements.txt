@@ -9,5 +9,8 @@ whois >= 0.9.4, < 1
 influxdb >= 5.3.1, < 6
 msgpack >= 1.0, < 2
 
-rkd>=2.2, <3
-rkd-python>=2.2, <3
+#rkd>=2.2, <3
+#rkd-python>=2.2, <3
+
+rkd==2.3.0.0b3
+rkd-python==2.3.0.0b3
