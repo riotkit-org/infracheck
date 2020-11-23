@@ -28,7 +28,7 @@ def split_rkd_path(check_name: str) -> Tuple[str, str]:
 def prepare_rkd_check_bin_path(check_name: str) -> list:
     module_name, task_name = split_rkd_path(check_name)
 
-    return [sys.executable, '-m', 'rkd', task_name]
+    return [sys.executable, '-m', 'rkd', '--imports', module_name, task_name]
 
 
 def rkd_module_exists(check_name: str) -> bool:
@@ -45,8 +45,6 @@ def rkd_module_exists(check_name: str) -> bool:
 
 
 def add_rkd_environment_variables(env: dict, check_name: str) -> dict:
-    module_name, task_name = split_rkd_path(check_name)
-    env['RKD_IMPORTS'] = module_name
     env['RKD_UI'] = 'false'
 
     return env

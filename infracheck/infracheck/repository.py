@@ -110,6 +110,9 @@ class Repository:
         self.db.commit()
 
     def _execute(self, query: str, parameters = None):
+        if parameters is None:
+            parameters = []
+
         with self.db_lock:
             return self.db.execute(query, parameters)
 

@@ -17,7 +17,7 @@ from .exceptions import RunnerException
 from .model import ExecutedCheckResult, ExecutedChecksResultList
 from .repository import Repository
 from .config import ConfigLoader
-from .rkd_support import is_rkd_check, prepare_rkd_check_bin_path, split_rkd_path, add_rkd_environment_variables
+from .rkd_support import is_rkd_check, prepare_rkd_check_bin_path, add_rkd_environment_variables
 
 
 class Runner(object):
@@ -75,7 +75,14 @@ class Runner(object):
             exit_status = False
 
         except subprocess.TimeoutExpired as e:
-            output = b'Timed out: ' + ((str(e.output) + str(e.stderr)).encode('utf-8'))
+            output = 'Timed out: '
+
+            if e.output:
+                output += e.output.decode('utf-8')
+
+            if e.stderr:
+                output += e.stderr.decode('utf-8')
+
             self.io.error('{} timed out and returned: {}'.format(configured_name, output))
             exit_status = False
 
