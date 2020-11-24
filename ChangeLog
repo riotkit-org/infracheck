@@ -1,6 +1,8 @@
 CHANGES
 =======
 
+* Fixed "AttributeError: 'str' object has no attribute 'decode'"
+* Fixed "AttributeError: 'str' object has no attribute 'decode'"
 * #12: Temporarily point to RKD beta version
 * #12: Improve RKD integration by using simpler switch \`--imports\`
 * #12: Added integration with RiotKit-Do

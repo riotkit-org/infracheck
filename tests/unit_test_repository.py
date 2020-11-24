@@ -17,7 +17,7 @@ class RepositoryTest(unittest.TestCase):
         self.assertEqual(
             sorted([
                 'is_dd_accessible', 'docker-health', 'domain-expiration', 'some_port_is_open',
-                'disk-space', 'hello-test-custom-check-example', 'ram']),
+                'disk-space', 'hello-test-custom-check-example', 'ram', 'rkd-sh']),
             sorted(repository.get_configured_checks(with_disabled=False))
         )
 

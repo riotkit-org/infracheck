@@ -1,3 +1,4 @@
+import tempfile
 import unittest
 import sys
 import os
@@ -142,30 +143,32 @@ class ControllerTest(unittest.TestCase):
     @data_provider(provide_data)
     def test_simply_perform_checks(self, config: dict, expected_result: bool, expected_ident: str,
                                    expected_hooks_output: str):
-        controller = Controller(
-            project_dir=path,
-            server_port=8000,
-            server_path_prefix='',
-            db_path='/tmp/.infracheck.sqlite3',
-            wait_time=0,
-            lazy=True,
-            force=True
-        )
 
-        # mocks
-        controller.list_enabled_configs = get_enabled_configs_mock
-        controller.config_loader.load = mock.Mock()
+        with tempfile.NamedTemporaryFile() as f:
+            controller = Controller(
+                project_dir=path,
+                server_port=8000,
+                server_path_prefix='',
+                db_path=f.name,
+                wait_time=0,
+                timeout=60,
+                log_level='info'
+            )
 
-        with mock.patch.object(controller.config_loader, 'load', return_value=config):
-            performed = controller.perform_checks(force=True, lazy=True)
+            # mocks
+            controller.list_enabled_configs = get_enabled_configs_mock
+            controller.config_loader.load = mock.Mock()
 
-        self.assertEqual(expected_result, performed['checks']['example-check']['status'])
+            with mock.patch.object(controller.config_loader, 'load', return_value=config):
+                performed = controller.perform_checks()
+
+        self.assertEqual(expected_result, performed.to_hash()['checks']['example-check']['status'])
 
         # ident - important for monitoring
-        self.assertEqual(expected_ident, performed['checks']['example-check']['ident'])
+        self.assertEqual(expected_ident, performed.to_hash()['checks']['example-check']['ident'])
 
         # hooks for notifying
-        self.assertEqual(expected_hooks_output, performed['checks']['example-check']['hooks_output'])
+        self.assertEqual(expected_hooks_output, performed.to_hash()['checks']['example-check']['hooks_output'])
 
 
 def get_enabled_configs_mock():
