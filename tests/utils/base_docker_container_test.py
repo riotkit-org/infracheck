@@ -12,8 +12,8 @@ class BaseDockerContainerRequirement(object):
     def setUpClass(cls) -> None:
         cls.docker_client = docker.from_env()
         cls._remove_container()
-        cls.docker_client.containers.schedule_jobs_in_background(cls._get_image_name(), name=cls._get_container_name(), ports=cls._get_ports(),
-                                                                 detach=True, environment=cls._get_environment())
+        cls.docker_client.containers.run(cls._get_image_name(), name=cls._get_container_name(), ports=cls._get_ports(),
+                                         detach=True, environment=cls._get_environment())
         cls._wait_for_container_to_be_ready()
 
     @classmethod

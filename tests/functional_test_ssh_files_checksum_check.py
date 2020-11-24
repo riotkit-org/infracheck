@@ -9,19 +9,13 @@ class SshCommandCheckTest(SSHServerContainerRequirement, unittest.TestCase):
     docker_client: docker.DockerClient
 
     def test_not_passed_host_raises_human_readable_message(self):
-        stdout: str
-        result: int
+        result = run_check('ssh-files-checksum', {}, {})
 
-        stdout, result, hooks_output = run_check('ssh-files-checksum', {}, {})
-
-        self.assertIn('HOST is mandatory', stdout)
-        self.assertFalse(result)
+        self.assertIn('HOST is mandatory', result.output.strip())
+        self.assertFalse(result.exit_status)
 
     def test_success_case(self):
-        stdout: str
-        result: int
-
-        stdout, result, hooks_output = run_check('ssh-files-checksum', {
+        result = run_check('ssh-files-checksum', {
             'HOST': 'localhost',
             'PORT': 3222,
             'USER': 'root',
@@ -32,14 +26,11 @@ class SshCommandCheckTest(SSHServerContainerRequirement, unittest.TestCase):
             }
         }, {})
 
-        self.assertEqual('All checksums are matching', stdout.strip())
-        self.assertTrue(result)
+        self.assertEqual('All checksums are matching', result.output.strip())
+        self.assertTrue(result.exit_status)
 
     def test_at_least_one_checksum_not_matching(self):
-        stdout: str
-        result: int
-
-        stdout, result, hooks_output = run_check('ssh-files-checksum', {
+        result = run_check('ssh-files-checksum', {
             'HOST': 'localhost',
             'PORT': 3222,
             'USER': 'root',
@@ -51,5 +42,5 @@ class SshCommandCheckTest(SSHServerContainerRequirement, unittest.TestCase):
             }
         }, {})
 
-        self.assertIn("FAIL: '/bin/sh' checksum is not matching. Expected: 'will-not-match-this-one'", stdout.strip())
-        self.assertFalse(result)
+        self.assertIn("FAIL: '/bin/sh' checksum is not matching. Expected: 'will-not-match-this-one'", result.output.strip())
+        self.assertFalse(result.exit_status)
