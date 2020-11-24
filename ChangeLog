@@ -1,6 +1,8 @@
 CHANGES
 =======
 
+* #12: Temporarily point to RKD beta version
+* #12: Improve RKD integration by using simpler switch \`--imports\`
 * #12: Added integration with RiotKit-Do
 * #9, #10, #11: Extracted few exceptions into exceptions.py module, moved http layer to the lower level (it should be next to cli), added versioning endpoint
 * #9, #10: Update docker image

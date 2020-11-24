@@ -75,13 +75,13 @@ class Runner(object):
             exit_status = False
 
         except subprocess.TimeoutExpired as e:
-            output = 'Timed out: '
+            output = b'Timed out: '
 
             if e.output:
-                output += e.output.decode('utf-8')
+                output += e.output
 
             if e.stderr:
-                output += e.stderr.decode('utf-8')
+                output += e.stderr
 
             self.io.error('{} timed out and returned: {}'.format(configured_name, output))
             exit_status = False
