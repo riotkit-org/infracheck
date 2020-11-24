@@ -83,7 +83,7 @@ class Runner(object):
             if e.stderr:
                 output += e.stderr
 
-            self.io.error('{} timed out and returned: {}'.format(configured_name, output))
+            self.io.error('{} timed out and returned: {}'.format(configured_name, output.decode('utf-8')))
             exit_status = False
 
         self.io.debug('Execution finished, running hooks...')
