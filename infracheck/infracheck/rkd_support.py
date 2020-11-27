@@ -7,13 +7,20 @@ Methods used to add RiotKit-Do support in the InfraCheck
 
 import sys
 from typing import Tuple
+
+from rkd.exception import ParsingException
 from rkd.api.contract import TaskDeclarationInterface
 from rkd.api.parsing import SyntaxParsing
 from .exceptions import ConfigurationException
 
 
-def is_rkd_check(check_name: str):
-    return check_name[0:len('rkd://')] == 'rkd://'
+def is_rkd_check(check_name: str) -> bool:
+    schema_length = len('rkd://')
+
+    if not check_name[0:schema_length] == 'rkd://':
+        return False
+
+    return ":" in check_name[schema_length:]
 
 
 def split_rkd_path(check_name: str) -> Tuple[str, str]:
@@ -33,7 +40,12 @@ def prepare_rkd_check_bin_path(check_name: str) -> list:
 
 def rkd_module_exists(check_name: str) -> bool:
     module_name, task_name = split_rkd_path(check_name)
-    tasks = SyntaxParsing.parse_imports_by_list_of_classes([module_name])
+
+    try:
+        tasks = SyntaxParsing.parse_imports_by_list_of_classes([module_name])
+
+    except ParsingException:
+        return False
 
     for task in tasks:
         task: TaskDeclarationInterface
