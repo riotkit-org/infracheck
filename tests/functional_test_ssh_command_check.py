@@ -11,12 +11,9 @@ class SshCommandCheckTest(SSHServerContainerRequirement, unittest.TestCase):
     docker_client: docker.DockerClient
 
     def test_fingerprint_will_be_fetched_first_time(self):
-        stdout: str
-        result: int
-
         known_hosts_file = NamedTemporaryFile(delete=False)
 
-        stdout, result, hooks_output = run_check('ssh-command', {
+        result = run_check('ssh-command', {
             'HOST': 'localhost',
             'PORT': 3222,
             'USER': 'root',
@@ -27,16 +24,13 @@ class SshCommandCheckTest(SSHServerContainerRequirement, unittest.TestCase):
         }, {})
 
         os.unlink(known_hosts_file.name)
-        self.assertTrue(result)
+        self.assertTrue(result.exit_status)
 
     def test_not_passed_host_raises_human_readable_message(self):
-        stdout: str
-        result: int
+        result = run_check('ssh-command', {}, {})
 
-        stdout, result, hooks_output = run_check('ssh-command', {}, {})
-
-        self.assertIn('HOST is mandatory', stdout)
-        self.assertFalse(result)
+        self.assertIn('HOST is mandatory', result.output.strip())
+        self.assertFalse(result.exit_status)
 
     def test_success_case(self):
         """
@@ -44,10 +38,7 @@ class SshCommandCheckTest(SSHServerContainerRequirement, unittest.TestCase):
         :return:
         """
 
-        stdout: str
-        result: int
-
-        stdout, result, hooks_output = run_check('ssh-command', {
+        result = run_check('ssh-command', {
             'HOST': 'localhost',
             'PORT': 3222,
             'USER': 'root',
@@ -58,14 +49,11 @@ class SshCommandCheckTest(SSHServerContainerRequirement, unittest.TestCase):
             'UNEXPECTED_KEYWORDS': 'Darwin'
         }, {})
 
-        self.assertEqual('OK', stdout.strip())
-        self.assertTrue(result)
+        self.assertEqual('OK', result.output.strip())
+        self.assertTrue(result.exit_status)
 
     def test_invalid_password(self):
-        stdout: str
-        result: int
-
-        stdout, result, hooks_output = run_check('ssh-command', {
+        result = run_check('ssh-command', {
             'HOST': 'localhost',
             'PORT': 3222,
             'USER': 'root',
@@ -73,5 +61,5 @@ class SshCommandCheckTest(SSHServerContainerRequirement, unittest.TestCase):
             'SSH_OPTS': '-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null'
         }, {})
 
-        self.assertIn('Permission denied, please try again.', stdout)
-        self.assertFalse(result)
+        self.assertIn('Permission denied, please try again.', result.output.strip())
+        self.assertFalse(result.exit_status)

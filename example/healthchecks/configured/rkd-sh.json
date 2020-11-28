@@ -1,0 +1,6 @@
+{
+    "type": "rkd://rkd.standardlib.shell:sh",
+    "input": {
+        "-c": "ls -la"
+    }
+}

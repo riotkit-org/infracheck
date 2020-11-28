@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
 
 __author__ = 'RiotKit'
-__email__ = 'riotkit_org@riseup.net'
+__email__ = 'riotkit@riseup.net'
 

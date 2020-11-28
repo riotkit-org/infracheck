@@ -4,17 +4,16 @@ import os
 import inspect
 from unittest_data_provider import data_provider
 
-path = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe()))) + '/../'
-sys.path.insert(0, path)
+TESTS_PATH = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe()))) + '/../'
+sys.path.insert(0, TESTS_PATH)
 
-try:
-    from .infracheck.infracheck.runner import Runner
-except ImportError as e:
-    from infracheck.infracheck.runner import Runner
+from infracheck.infracheck.runner import Runner
+from infracheck.infracheck.config import ConfigLoader
+from infracheck.infracheck.repository import Repository
+from rkd.api.inputoutput import IO
 
 
 class RunnerTest(unittest.TestCase):
-
     def provide_data():
         return [
             # url does not exist: will return False
@@ -49,14 +48,26 @@ class RunnerTest(unittest.TestCase):
 
     @data_provider(provide_data)
     def test_run_with_hooks(self, check_type: str, input_data: dict, hooks: dict, expected_result: bool, expected_text: str):
-        runner = Runner([path + '/../example/healthchecks', path + '/infracheck/'])
-        out = runner.run(check_type, input_data, hooks)
+        result = self._create_runner().run_single_check('some-check-name', check_type, input_data, hooks)
 
-        self.assertEqual(expected_result, out[1])
-        self.assertEqual(expected_text, out[2])
+        self.assertEqual(expected_result, result.exit_status)
+        self.assertEqual(expected_text, result.hooks_output)
 
     def test_injects_variables(self):
-        runner = Runner([path + '/../example/healthchecks', path + '/infracheck/'])
-        out = runner.run('printr', {'message': 'Current user is ${ENV.USER}, running a ${checkName}'}, {})
+        out = self._create_runner().run_single_check(
+            configured_name='some-check-name',
+            check_name='printr',
+            input_data={'message': 'Current user is ${ENV.USER}, running a ${checkName}'},
+            hooks={}
+        )
 
-        self.assertEqual('Current user is ' + os.environ['USER'] + ', running a printr', out[0].strip())
+        self.assertEqual('Current user is ' + os.environ['USER'] + ', running a printr', out.output.strip())
+
+    @staticmethod
+    def _create_runner() -> Runner:
+        dirs = [TESTS_PATH + '/../example/healthchecks', TESTS_PATH + '/infracheck/']
+
+        return Runner(dirs,
+                      config_loader=ConfigLoader(dirs),
+                      repository=Repository(dirs),
+                      io=IO())
