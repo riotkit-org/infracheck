@@ -9,7 +9,7 @@ Check if the domain is close to expiration date or if it is already expired.
 
 **Notice: Multiple usage of this check can cause a "request limit exceeded" error to happen**
 
-*Suggestion: If you check multiple domains, then separate domains checking from regular health checks and set CHECK_INTERVAL (docker) to once a day, and WAIT_TIME=300 for non-docker installations - in crontab set a check with --force once a day*
+*Suggestion: If you check multiple domains, then separate domains checking from regular health checks and set REFRESH_TIME (docker) to once a day, and WAIT_TIME=300 for non-docker installations - in crontab set a check with --force once a day*
 
 Parameters:
 

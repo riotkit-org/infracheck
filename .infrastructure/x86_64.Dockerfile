@@ -1,14 +1,14 @@
 FROM alpine:3.12
 
-RUN apk --update add python3 bash perl curl wget grep sed docker sudo mysql-client postgresql-client git supervisor tzdata \
+RUN apk --update add python3 bash perl curl wget grep sed docker sudo mysql-client postgresql-client git tzdata \
                      sshpass openssh-client
 ADD . /infracheck
 ADD .git /infracheck/
 ADD .infrastructure /infracheck/
 
-ENV CHECK_INTERVAL="*/1 * * * *" \
-    WAIT_TIME=0\
-    LAZY=false
+ENV REFRESH_TIME="120" \
+    WAIT_TIME="0" \
+    CHECK_TIMEOUT="10"
 
 RUN cd /infracheck \
     # install as a package
@@ -30,7 +30,6 @@ RUN cd /infracheck \
     && apk del BUILD_DEPS
 
 ADD /.infrastructure/entrypoint.sh /entrypoint.sh
-ADD /.infrastructure/supervisord.conf /etc/supervisord.conf
 RUN chmod +x /entrypoint.sh
 
 ENTRYPOINT ["/entrypoint.sh"]

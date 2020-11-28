@@ -22,18 +22,12 @@ prepare_entrypoint () {
     fi
 
     if [[ ${WAIT_TIME} ]]; then
-        ARGS="${ARGS} --wait${WAIT_TIME} "
+        ARGS="${ARGS} --wait=${WAIT_TIME} "
     fi
 
     # allow to pass custom arguments from docker run command
-    echo "#!/bin/bash" > /entrypoint.cmd.sh
-    echo "infracheck --server-port 8000 ${ARGS} --directory=/data --db-path=/database/db.sqlite3 $@" >> /entrypoint.cmd.sh
-
-    cat /entrypoint.cmd.sh
-    chmod +x /entrypoint.cmd.sh
+    echo "infracheck --server-port 8000 ${ARGS} --directory=/data --db-path=/database/db.sqlite3 $@"
 }
 
 prepare_data_directory
-prepare_entrypoint "$@"
-
-exec supervisord -c /etc/supervisord.conf
+exec $(prepare_entrypoint "$@")
