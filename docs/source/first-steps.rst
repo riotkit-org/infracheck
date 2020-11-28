@@ -98,14 +98,14 @@ The image will by default expose a HTTP endpoint.
     # create directory structure that will be present in "/data" inside container (see one of previous steps about the structure)
     mkdir checks configured
 
-    sudo docker run --name infracheck -p 8000:8000 -v $(pwd):/data -d --rm quay.io/riotkit/infracheck:v1.9.1-x86_64 \
+    sudo docker run --name infracheck -p 8000:8000 -v $(pwd):/data -d --rm quay.io/riotkit/infracheck:v2.0-x86_64 \
         --directory=/data --server-path-prefix=/your-secret-code-there
 
     # now test it
     curl http://localhost:8000/your-secret-code-there/
 
 
-List of supported environment variables:
+**List of supported environment variables:**
 
 - REFRESH_TIME=120
 - CHECK_TIMEOUT=120
@@ -123,7 +123,7 @@ List of supported environment variables:
     infracheck --directory=/your-project-directory-path-there --no-server
 
     # run the application with webserver and background worker
-    infracheck --directory=/your-project-directory-path-there --server-port=7422 --refresh-time=120 --log-level=info
+    infracheck --directory=/your-project-directory-path-there --server-port=8000 --refresh-time=120 --log-level=info
 
 
 **Using PIP**
@@ -136,7 +136,7 @@ List of supported environment variables:
     infracheck --directory=/your-project-directory-path-there --no-server
 
     # run the application with webserver and background worker
-    infracheck --directory=/your-project-directory-path-there --server-port=7422 --refresh-time=120 --log-level=info
+    infracheck --directory=/your-project-directory-path-there --server-port=8000 --refresh-time=120 --log-level=info
 
 
 Advanced
