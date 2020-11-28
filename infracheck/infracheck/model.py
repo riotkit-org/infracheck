@@ -54,17 +54,13 @@ class ExecutedChecksResultList(object):
 
     def to_hash(self) -> dict:
         checks_as_hash = {}
-        global_status = True
 
         for name, details in self.checks.items():
             checks_as_hash[name] = details.to_hash()
 
-            if not details.exit_status:
-                global_status = False
-
         return {
             'checks': checks_as_hash,
-            'global_status': global_status
+            'global_status': self.is_global_status_success()
         }
 
     def is_global_status_success(self) -> bool:
