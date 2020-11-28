@@ -8,9 +8,9 @@ RUN [ "cross-build-end" ]
 ADD . /infracheck
 ADD .git /infracheck/
 
-ENV CHECK_INTERVAL="*/1 * * * *" \
-    WAIT_TIME=0\
-    LAZY=false
+ENV REFRESH_TIME="120" \
+    WAIT_TIME="0" \
+    CHECK_TIMEOUT="10"
 
 RUN [ "cross-build-start" ]
 RUN cd /infracheck \

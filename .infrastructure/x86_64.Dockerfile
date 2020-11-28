@@ -6,9 +6,9 @@ ADD . /infracheck
 ADD .git /infracheck/
 ADD .infrastructure /infracheck/
 
-ENV CHECK_INTERVAL="*/1 * * * *" \
-    WAIT_TIME=0\
-    LAZY=false
+ENV REFRESH_TIME="120" \
+    WAIT_TIME="0" \
+    CHECK_TIMEOUT="10"
 
 RUN cd /infracheck \
     # install as a package
