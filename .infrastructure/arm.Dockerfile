@@ -1,7 +1,7 @@
 FROM balenalib/armv7hf-alpine:3.12
 
 RUN [ "cross-build-start" ]
-RUN apk --update add python3 bash perl curl wget grep sed docker sudo mysql-client postgresql-client make git supervisor tzdata \
+RUN apk --update add python3 bash perl curl wget grep sed docker sudo mysql-client postgresql-client make git tzdata \
                      sshpass openssh-client
 RUN [ "cross-build-end" ]
 
@@ -34,7 +34,6 @@ RUN cd /infracheck \
 RUN [ "cross-build-end" ]
 
 ADD /.infrastructure/entrypoint.sh /entrypoint.sh
-ADD /.infrastructure/supervisord.conf /etc/supervisord.conf
 
 RUN [ "cross-build-start" ]
 RUN chmod +x /entrypoint.sh

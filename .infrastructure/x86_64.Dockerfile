@@ -1,6 +1,6 @@
 FROM alpine:3.12
 
-RUN apk --update add python3 bash perl curl wget grep sed docker sudo mysql-client postgresql-client git supervisor tzdata \
+RUN apk --update add python3 bash perl curl wget grep sed docker sudo mysql-client postgresql-client git tzdata \
                      sshpass openssh-client
 ADD . /infracheck
 ADD .git /infracheck/
@@ -30,7 +30,6 @@ RUN cd /infracheck \
     && apk del BUILD_DEPS
 
 ADD /.infrastructure/entrypoint.sh /entrypoint.sh
-ADD /.infrastructure/supervisord.conf /etc/supervisord.conf
 RUN chmod +x /entrypoint.sh
 
 ENTRYPOINT ["/entrypoint.sh"]
