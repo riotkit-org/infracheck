@@ -11,6 +11,7 @@ ENV REFRESH_TIME="120" \
     CHECK_TIMEOUT="10"
 
 RUN cd /infracheck \
+    && export CRYPTOGRAPHY_DONT_BUILD_RUST=1 \
     # install as a package
     && git remote remove origin || true \
     && git remote add origin https://github.com/riotkit-org/infracheck.git \
