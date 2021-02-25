@@ -36,7 +36,7 @@ class EnvKeys(enum.Enum):
 
 
 class SMTPCheck():
-    def main(self, host: str, port: int, username: str, password: str) -> Tuple[int, int]:
+    def main(self, host: str, port: int, username: str, password: str) -> Tuple[int, str]:
         try:
             self._verify_credentials(host, port, username, password)
             return True, Messages.SUCCESS.value,
