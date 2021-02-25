@@ -13,7 +13,7 @@ class SshFingerprintTest(SSHServerContainerRequirement, unittest.TestCase):
         current_expected_fingerprint = self.get_current_ssh_server_fingerprint()
 
         result = run_check('ssh-fingerprint', {
-            'HOST': 'localhost',
+            'HOST': '127.0.0.1',
             'PORT': 3223,
             'EXPECTED_FINGERPRINT': current_expected_fingerprint
         }, {})
@@ -23,7 +23,7 @@ class SshFingerprintTest(SSHServerContainerRequirement, unittest.TestCase):
 
     def test_invalid_fingerprint(self):
         result = run_check('ssh-fingerprint', {
-            'HOST': 'localhost',
+            'HOST': '127.0.0.1',
             'PORT': 3223,
             'EXPECTED_FINGERPRINT': 'SOME FINGERPRINT THAT DOES NOT MATCH SERVER FINGERPRINT'
         }, {})

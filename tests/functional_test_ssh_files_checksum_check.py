@@ -16,7 +16,7 @@ class SshCommandCheckTest(SSHServerContainerRequirement, unittest.TestCase):
 
     def test_success_case(self):
         result = run_check('ssh-files-checksum', {
-            'HOST': 'localhost',
+            'HOST': '127.0.0.1',
             'PORT': 3223,
             'USER': 'root',
             'PASSWORD': 'root',
@@ -31,7 +31,7 @@ class SshCommandCheckTest(SSHServerContainerRequirement, unittest.TestCase):
 
     def test_at_least_one_checksum_not_matching(self):
         result = run_check('ssh-files-checksum', {
-            'HOST': 'localhost',
+            'HOST': '127.0.0.1',
             'PORT': 3223,
             'USER': 'root',
             'PASSWORD': 'root',

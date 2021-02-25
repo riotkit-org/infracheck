@@ -14,7 +14,7 @@ class SshCommandCheckTest(SSHServerContainerRequirement, unittest.TestCase):
         known_hosts_file = NamedTemporaryFile(delete=False)
 
         result = run_check('ssh-command', {
-            'HOST': 'localhost',
+            'HOST': '127.0.0.1',
             'PORT': 3223,
             'USER': 'root',
             'PASSWORD': 'root',
@@ -41,7 +41,7 @@ class SshCommandCheckTest(SSHServerContainerRequirement, unittest.TestCase):
         """
 
         result = run_check('ssh-command', {
-            'HOST': 'localhost',
+            'HOST': '127.0.0.1',
             'PORT': 3223,
             'USER': 'root',
             'PASSWORD': 'root',
@@ -56,7 +56,7 @@ class SshCommandCheckTest(SSHServerContainerRequirement, unittest.TestCase):
 
     def test_invalid_password(self):
         result = run_check('ssh-command', {
-            'HOST': 'localhost',
+            'HOST': '127.0.0.1',
             'PORT': 3223,
             'USER': 'root',
             'PASSWORD': 'invalid-password',
