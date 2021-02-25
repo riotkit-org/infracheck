@@ -1,5 +1,6 @@
 #!/usr/bin/python3
 """
+<sphinx>
 Verifies SMTP credentials by using smtplib module to log in at the server.
 Arguments are provided via environmental variables:
 SMTP_HOST
@@ -12,6 +13,7 @@ import smtplib
 import os
 import enum
 import sys
+from typing import Tuple
 
 
 class Messages(enum.Enum):
@@ -34,7 +36,7 @@ class EnvKeys(enum.Enum):
 
 
 class SMTPCheck():
-    def main(self, host: str, port: int, username: str, password: str) -> tuple:
+    def main(self, host: str, port: int, username: str, password: str) -> Tuple[int, int]:
         try:
             self._verify_credentials(host, port, username, password)
             return True, Messages.SUCCESS.value,

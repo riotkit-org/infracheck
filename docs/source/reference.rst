@@ -177,3 +177,14 @@ Parameters:
 .. include:: ../../infracheck/checks/docker-container-log
    :start-after: <sphinx>
    :end-before: </sphinx>
+
+SMTP
+----
+
+Verifies SMTP credentials by using smtplib module to log in at the server.
+
+Parameters:
+- smtp_host
+- smtp_port
+- smtp_user
+- smtp_password
