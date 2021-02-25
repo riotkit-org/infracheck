@@ -14,8 +14,8 @@ class SshCommandCheckTest(SSHServerContainerRequirement, unittest.TestCase):
         known_hosts_file = NamedTemporaryFile(delete=False)
 
         result = run_check('ssh-command', {
-            'HOST': 'localhost',
-            'PORT': 3222,
+            'HOST': '127.0.0.1',
+            'PORT': 3223,
             'USER': 'root',
             'PASSWORD': 'root',
             'KNOWN_HOSTS_FILE': known_hosts_file.name,
@@ -24,6 +24,8 @@ class SshCommandCheckTest(SSHServerContainerRequirement, unittest.TestCase):
         }, {})
 
         os.unlink(known_hosts_file.name)
+
+        self.assertEqual('OK', result.output.strip())
         self.assertTrue(result.exit_status)
 
     def test_not_passed_host_raises_human_readable_message(self):
@@ -39,8 +41,8 @@ class SshCommandCheckTest(SSHServerContainerRequirement, unittest.TestCase):
         """
 
         result = run_check('ssh-command', {
-            'HOST': 'localhost',
-            'PORT': 3222,
+            'HOST': '127.0.0.1',
+            'PORT': 3223,
             'USER': 'root',
             'PASSWORD': 'root',
             'SSH_OPTS': '-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null',
@@ -54,8 +56,8 @@ class SshCommandCheckTest(SSHServerContainerRequirement, unittest.TestCase):
 
     def test_invalid_password(self):
         result = run_check('ssh-command', {
-            'HOST': 'localhost',
-            'PORT': 3222,
+            'HOST': '127.0.0.1',
+            'PORT': 3223,
             'USER': 'root',
             'PASSWORD': 'invalid-password',
             'SSH_OPTS': '-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null'

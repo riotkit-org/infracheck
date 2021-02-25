@@ -25,6 +25,10 @@ jobs:
             - name: Run functional tests
               run: "rkd :test:functional"
 
+            - name: "Inspect containers"
+              if: ${{ always() }}
+              run: "docker events --since 2h --until 0m"
+
     release:
         needs: [test]
         runs-on: ubuntu-20.04

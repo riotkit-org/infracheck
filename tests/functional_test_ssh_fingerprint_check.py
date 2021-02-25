@@ -13,8 +13,8 @@ class SshFingerprintTest(SSHServerContainerRequirement, unittest.TestCase):
         current_expected_fingerprint = self.get_current_ssh_server_fingerprint()
 
         result = run_check('ssh-fingerprint', {
-            'HOST': 'localhost',
-            'PORT': 3222,
+            'HOST': '127.0.0.1',
+            'PORT': 3223,
             'EXPECTED_FINGERPRINT': current_expected_fingerprint
         }, {})
 
@@ -23,8 +23,8 @@ class SshFingerprintTest(SSHServerContainerRequirement, unittest.TestCase):
 
     def test_invalid_fingerprint(self):
         result = run_check('ssh-fingerprint', {
-            'HOST': 'localhost',
-            'PORT': 3222,
+            'HOST': '127.0.0.1',
+            'PORT': 3223,
             'EXPECTED_FINGERPRINT': 'SOME FINGERPRINT THAT DOES NOT MATCH SERVER FINGERPRINT'
         }, {})
 
@@ -33,9 +33,19 @@ class SshFingerprintTest(SSHServerContainerRequirement, unittest.TestCase):
 
     def test_missing_host_parameter(self):
         result = run_check('ssh-fingerprint', {
-            'PORT': 3222,
+            'PORT': 3223,
             'EXPECTED_FINGERPRINT': 'SOME FINGERPRINT THAT DOES NOT MATCH SERVER FINGERPRINT'
         }, {})
 
         self.assertIn('You need to provide a HOST', result.output.strip())
+        self.assertFalse(result.exit_status)
+
+    def test_reports_stderr_messages(self):
+        result = run_check('ssh-fingerprint', {
+            'HOST': 'non-existing-host',
+            'PORT': 3223,
+            'EXPECTED_FINGERPRINT': 'BAKUNIN'
+        }, {})
+
+        self.assertIn('getaddrinfo non-existing-host', result.output.strip())
         self.assertFalse(result.exit_status)
