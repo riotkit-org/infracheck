@@ -24,6 +24,8 @@ class SshCommandCheckTest(SSHServerContainerRequirement, unittest.TestCase):
         }, {})
 
         os.unlink(known_hosts_file.name)
+
+        self.assertEqual('OK', result.output.strip())
         self.assertTrue(result.exit_status)
 
     def test_not_passed_host_raises_human_readable_message(self):
