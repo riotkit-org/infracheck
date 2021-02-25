@@ -23,9 +23,12 @@ class SSHServerContainerRequirement(BaseDockerContainerRequirement):
 
     @staticmethod
     def get_current_ssh_server_fingerprint():
-        return subprocess.check_output(
-            'ssh-keyscan -t rsa -p 3222 localhost', stderr=subprocess.DEVNULL, shell=True
-        ).decode('utf-8')
+        try:
+            return subprocess.check_output(
+                'ssh-keyscan -t rsa -p 3222 localhost', stderr=subprocess.PIPE, shell=True
+            ).decode('utf-8')
+        except subprocess.CalledProcessError as err:
+            return err.stderr.decode('utf-8') + "\n" + err.stdout.decode('utf-8')
 
     @staticmethod
     def _get_container_name() -> str:

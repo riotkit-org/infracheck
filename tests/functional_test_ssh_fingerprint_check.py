@@ -47,5 +47,5 @@ class SshFingerprintTest(SSHServerContainerRequirement, unittest.TestCase):
             'EXPECTED_FINGERPRINT': 'BAKUNIN'
         }, {})
 
-        self.assertIn('getaddrinfo non-existing-host: Name or service not known', result.output.strip())
+        self.assertIn('getaddrinfo non-existing-host', result.output.strip())
         self.assertFalse(result.exit_status)
