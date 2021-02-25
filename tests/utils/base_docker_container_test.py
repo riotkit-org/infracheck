@@ -31,7 +31,7 @@ class BaseDockerContainerRequirement(object):
             # try to get logs if container crashed
             try:
                 if container.status == 'exited':
-                    print(container.logs())
+                    print('Container "' + cls._get_container_name() + '" crashed, there are logs:', container.logs())
             except:
                 pass
 
