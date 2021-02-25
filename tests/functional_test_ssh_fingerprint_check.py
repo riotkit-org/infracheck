@@ -39,3 +39,13 @@ class SshFingerprintTest(SSHServerContainerRequirement, unittest.TestCase):
 
         self.assertIn('You need to provide a HOST', result.output.strip())
         self.assertFalse(result.exit_status)
+
+    def test_reports_stderr_messages(self):
+        result = run_check('ssh-fingerprint', {
+            'HOST': 'non-existing-host',
+            'PORT': 3222,
+            'EXPECTED_FINGERPRINT': 'BAKUNIN'
+        }, {})
+
+        self.assertIn('getaddrinfo non-existing-host: Name or service not known', result.output.strip())
+        self.assertFalse(result.exit_status)

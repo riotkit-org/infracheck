@@ -43,8 +43,13 @@ class SshFingerprintScan:
 
     @staticmethod
     def _get_fingerprint(domain: str, method: str, port: int) -> str:
-        out = subprocess.check_output(['ssh-keyscan', '-t', method, '-p', str(port), domain], stderr=subprocess.DEVNULL)
-        return out.decode('utf-8')
+        try:
+            out = subprocess.check_output(['ssh-keyscan', '-t', method, '-p', str(port), domain],
+                                          stderr=subprocess.PIPE)
+
+            return out.decode('utf-8')
+        except subprocess.CalledProcessError as err:
+            return err.stderr.decode('utf-8') + "\n" + err.stdout.decode('utf-8')
 
 
 if __name__ == '__main__':
