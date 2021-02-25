@@ -22,10 +22,7 @@ class TestSmtpCredentials(TestCase):
 
     @staticmethod
     def _run_mocked_check(testname: str, check: smtpcheck.SMTPCheck) -> Tuple[bool, str]:
-        print("""
-            Testing  SMTP credentials check -
-            """.format(testname))
-        return check.main("host", "port", "username", "password")
+        return check.main("host", 25, "username", "password")
 
     def test_expecting_success(self) -> None:
         check = TestSmtpCredentials._create_mocked_method_raising()
@@ -33,7 +30,6 @@ class TestSmtpCredentials(TestCase):
             self.test_expecting_success.__name__, check)
         assert (status, message) == (
             True, smtpcheck.Messages.SUCCESS.value)
-
 
     def test_expecting_SMTP_connection_error(self) -> None:
         check = TestSmtpCredentials._create_mocked_method_raising(
@@ -91,4 +87,8 @@ class TestSmtpCredentials(TestCase):
         check = TestSmtpCredentials._create_mocked_method_raising(smtplib.SMTPNotSupportedError())
         status, message = TestSmtpCredentials._run_mocked_check(
             self.test_expecting_auth_command_not_supported_error.__name__, check)
-        assert (status, message) == (False, smtpcheck.Messages.AUTH_METHOD_NOT_SUPPORTED_BY_SERVER.value)
+
+        self.assertEqual(
+            (status, message),
+            (False, smtpcheck.Messages.AUTH_METHOD_NOT_SUPPORTED_BY_SERVER.value)
+        )

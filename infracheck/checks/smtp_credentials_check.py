@@ -40,21 +40,21 @@ class SMTPCheck():
         try:
             self._verify_credentials(host, port, username, password)
             return True, Messages.SUCCESS.value,
-        except smtplib.SMTPConnectError as e:
+        except smtplib.SMTPConnectError:
             return False, Messages.SMTP_CONNECTION_ERROR.value
-        except smtplib.SMTPHeloError as e:
+        except smtplib.SMTPHeloError:
             return False, Messages.HELO_OR_EHLO_ERROR.value
-        except smtplib.SMTPAuthenticationError as e:
+        except smtplib.SMTPAuthenticationError:
             return False, Messages.AUTHENTICATION_ERROR.value
-        except smtplib.SMTPServerDisconnected as e:
+        except smtplib.SMTPServerDisconnected:
             return False, Messages.DISCONNECTION_ERROR.value
-        except smtplib.SMTPException as e:
+        except smtplib.SMTPNotSupportedError:
+            return False, Messages.AUTH_METHOD_NOT_SUPPORTED_BY_SERVER.value
+        except smtplib.SMTPException:
             return False, Messages.UNKNOWN_SMTP_ERROR.value
-        except smtplib.SMTPNotSupportedError as e:
-            return False, Messages.AUTH_METHOD_NOT_SUPPORTED_BY_SERVER
-        except ConnectionRefusedError as e:
+        except ConnectionRefusedError:
             return False, Messages.CONNECTION_REFUSED_ERROR.value
-        except Exception as e:
+        except Exception:
             return False, Messages.UNKNOWN_ERROR.value
 
     def _verify_credentials(self, host, port, username, password):
@@ -65,24 +65,24 @@ class SMTPCheck():
 
 
 if __name__ == '__main__':
-    dict = {
+    inputs = {
         EnvKeys.HOST.value: os.getenv(EnvKeys.HOST.value),
         EnvKeys.PORT.value: os.getenv(EnvKeys.PORT.value),
         EnvKeys.USERNAME.value: os.getenv(EnvKeys.USERNAME.value),
         EnvKeys.PASSWORD.value: os.getenv(EnvKeys.PASSWORD.value)
     }
 
-    for key in dict:
-        if dict[key] == None:
+    for key in inputs:
+        if inputs[key] is None:
             print('Missing environment variable: {}'.format(key))
             sys.exit(1)
 
     app = SMTPCheck()
     isSuccess, message = app.main(
-        dict[EnvKeys.HOST.value],
-        dict[EnvKeys.PORT.value],
-        dict[EnvKeys.USERNAME.value],
-        dict[EnvKeys.PASSWORD.value]
+        inputs[EnvKeys.HOST.value],
+        int(inputs[EnvKeys.PORT.value]),
+        inputs[EnvKeys.USERNAME.value],
+        inputs[EnvKeys.PASSWORD.value]
     )
 
     print(message)
