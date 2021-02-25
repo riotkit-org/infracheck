@@ -13,7 +13,7 @@ class SSHServerContainerRequirement(BaseDockerContainerRequirement):
 
         for i in range(1, 600):
             try:
-                out += str(subprocess.check_output('echo "ttttt\n\n" | nc -w 1 "localhost" "3222"',
+                out += str(subprocess.check_output('echo "ttttt\n\n" | nc -w 1 "localhost" "3223"',
                                                    shell=True, stderr=subprocess.STDOUT))
 
                 if "SSH-2.0-OpenSSH" in out:
@@ -30,7 +30,7 @@ class SSHServerContainerRequirement(BaseDockerContainerRequirement):
     def get_current_ssh_server_fingerprint():
         try:
             return subprocess.check_output(
-                'ssh-keyscan -t rsa -p 3222 localhost', stderr=subprocess.PIPE, shell=True
+                'ssh-keyscan -t rsa -p 3223 localhost', stderr=subprocess.PIPE, shell=True
             ).decode('utf-8')
         except subprocess.CalledProcessError as err:
             return err.stderr.decode('utf-8') + "\n" + err.stdout.decode('utf-8')
