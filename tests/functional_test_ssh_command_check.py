@@ -15,7 +15,7 @@ class SshCommandCheckTest(SSHServerContainerRequirement, unittest.TestCase):
 
         result = run_check('ssh-command', {
             'HOST': 'localhost',
-            'PORT': 3222,
+            'PORT': 3223,
             'USER': 'root',
             'PASSWORD': 'root',
             'KNOWN_HOSTS_FILE': known_hosts_file.name,
@@ -42,7 +42,7 @@ class SshCommandCheckTest(SSHServerContainerRequirement, unittest.TestCase):
 
         result = run_check('ssh-command', {
             'HOST': 'localhost',
-            'PORT': 3222,
+            'PORT': 3223,
             'USER': 'root',
             'PASSWORD': 'root',
             'SSH_OPTS': '-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null',
@@ -57,7 +57,7 @@ class SshCommandCheckTest(SSHServerContainerRequirement, unittest.TestCase):
     def test_invalid_password(self):
         result = run_check('ssh-command', {
             'HOST': 'localhost',
-            'PORT': 3222,
+            'PORT': 3223,
             'USER': 'root',
             'PASSWORD': 'invalid-password',
             'SSH_OPTS': '-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null'

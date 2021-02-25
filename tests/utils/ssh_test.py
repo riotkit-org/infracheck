@@ -41,7 +41,7 @@ class SSHServerContainerRequirement(BaseDockerContainerRequirement):
 
     @staticmethod
     def _get_ports() -> dict:
-        return {'22/tcp': 3222}
+        return {'22/tcp': 3223}
 
     @staticmethod
     def _get_image_name() -> str:
