@@ -4,6 +4,8 @@ import docker.errors
 import time
 from abc import abstractmethod
 
+from docker.models.containers import Container
+
 
 class BaseDockerContainerRequirement(object):
     docker_client: docker.DockerClient
@@ -24,7 +26,14 @@ class BaseDockerContainerRequirement(object):
     @classmethod
     def _remove_container(cls):
         try:
-            container = cls.docker_client.containers.get(cls._get_container_name())
+            container: Container = cls.docker_client.containers.get(cls._get_container_name())
+
+            # try to get logs if container crashed
+            try:
+                if container.status == 'exited':
+                    print(container.logs())
+            except:
+                pass
 
             try:
                 container.kill()

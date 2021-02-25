@@ -9,13 +9,18 @@ class SSHServerContainerRequirement(BaseDockerContainerRequirement):
     def _wait_for_container_to_be_ready():
         out = ''
 
+        print('Spawning SSH container')
+
         for i in range(1, 600):
             try:
                 out += str(subprocess.check_output('echo "ttttt\n\n" | nc -w 1 "localhost" "3222"',
                                                    shell=True, stderr=subprocess.STDOUT))
 
                 if "SSH-2.0-OpenSSH" in out:
+                    print('SSH container is ready')
+                    time.sleep(1)
                     return
+
             except subprocess.CalledProcessError:
                 time.sleep(0.5)
 
