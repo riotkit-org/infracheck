@@ -8,3 +8,4 @@
 /.venv
 .venv-setup.log
 /build/
+/.vscode

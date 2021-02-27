@@ -3,15 +3,17 @@
 <sphinx>
 Verifies SMTP credentials by using smtplib module to log in at the server.
 Arguments are provided via environmental variables:
+
 SMTP_HOST
 SMTP_PORT
 SMTP_USER
 SMTP_PASSWORD
+</sphinx>
 """
 
-import smtplib
-import os
 import enum
+import os
+import smtplib
 import sys
 from typing import Tuple
 
@@ -19,13 +21,13 @@ from typing import Tuple
 class Messages(enum.Enum):
     SUCCESS = 'Success'
     SMTP_CONNECTION_ERROR = 'Error connecting to the SMTP server'
-    HELO_OR_EHLO_ERROR = 'HELO or EHLO error'
-    AUTHENTICATION_ERROR = 'Authentication failed'
-    DISCONNECTION_ERROR = 'Server is disconnected'
-    UNKNOWN_ERROR = 'Unknown error'
-    UNKNOWN_SMTP_ERROR = 'Unknown SMTP error'
+    SMTP_HELO_OR_EHLO_ERROR = 'HELO or EHLO error'
+    SMTP_AUTHENTICATION_ERROR = 'Authentication failed'
+    SMTP_DISCONNECTION_ERROR = 'Server is disconnected'
+    GENERAL_ERROR = 'General error'
+    GENERAL_SMTP_ERROR = 'General SMTP error'
     CONNECTION_REFUSED_ERROR = 'Connection refused'
-    AUTH_METHOD_NOT_SUPPORTED_BY_SERVER = 'AUTH command not supported by the server'
+    SMTP_AUTH_METHOD_NOT_SUPPORTED_BY_SERVER = 'AUTH command not supported by the server'
 
 
 class EnvKeys(enum.Enum):
@@ -36,26 +38,26 @@ class EnvKeys(enum.Enum):
 
 
 class SMTPCheck():
-    def main(self, host: str, port: int, username: str, password: str) -> Tuple[int, str]:
+    def main(self, host: str, port: int, username: str, password: str) -> Tuple[int, str, OSError]:
         try:
             self._verify_credentials(host, port, username, password)
-            return True, Messages.SUCCESS.value,
-        except smtplib.SMTPConnectError:
-            return False, Messages.SMTP_CONNECTION_ERROR.value
-        except smtplib.SMTPHeloError:
-            return False, Messages.HELO_OR_EHLO_ERROR.value
-        except smtplib.SMTPAuthenticationError:
-            return False, Messages.AUTHENTICATION_ERROR.value
-        except smtplib.SMTPServerDisconnected:
-            return False, Messages.DISCONNECTION_ERROR.value
-        except smtplib.SMTPNotSupportedError:
-            return False, Messages.AUTH_METHOD_NOT_SUPPORTED_BY_SERVER.value
-        except smtplib.SMTPException:
-            return False, Messages.UNKNOWN_SMTP_ERROR.value
-        except ConnectionRefusedError:
-            return False, Messages.CONNECTION_REFUSED_ERROR.value
-        except Exception:
-            return False, Messages.UNKNOWN_ERROR.value
+            return True, Messages.SUCCESS.value, None
+        except smtplib.SMTPConnectError as exc:
+            return False, Messages.SMTP_CONNECTION_ERROR.value, exc
+        except smtplib.SMTPHeloError as exc:
+            return False, Messages.SMTP_HELO_OR_EHLO_ERROR.value, exc
+        except smtplib.SMTPAuthenticationError as exc:
+            return False, Messages.SMTP_AUTHENTICATION_ERROR.value, exc
+        except smtplib.SMTPServerDisconnected as exc:
+            return False, Messages.SMTP_DISCONNECTION_ERROR.value, exc
+        except smtplib.SMTPNotSupportedError as exc:
+            return False, Messages.SMTP_AUTH_METHOD_NOT_SUPPORTED_BY_SERVER.value, exc
+        except smtplib.SMTPException as exc:
+            return False, Messages.GENERAL_SMTP_ERROR.value, exc
+        except ConnectionRefusedError as exc:
+            return False, Messages.CONNECTION_REFUSED_ERROR.value, exc
+        except Exception as exc:
+            return False, Messages.GENERAL_ERROR.value, exc
 
     def _verify_credentials(self, host, port, username, password):
         connection = smtplib.SMTP_SSL(host, port)
@@ -78,7 +80,7 @@ if __name__ == '__main__':
             sys.exit(1)
 
     app = SMTPCheck()
-    isSuccess, message = app.main(
+    isSuccess, message, exception = app.main(
         inputs[EnvKeys.HOST.value],
         int(inputs[EnvKeys.PORT.value]),
         inputs[EnvKeys.USERNAME.value],
@@ -86,4 +88,5 @@ if __name__ == '__main__':
     )
 
     print(message)
+    if(exception is not None): print(exception)
     sys.exit(0 if isSuccess else 1)
