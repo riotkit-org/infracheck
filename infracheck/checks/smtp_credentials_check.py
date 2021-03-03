@@ -1,21 +1,29 @@
 #!/usr/bin/python3
 """
 <sphinx>
-Verifies SMTP credentials by using smtplib module to log in at the server.
-Arguments are provided via environmental variables:
+smtp_credentials_check.py
+-------------------------
 
-SMTP_HOST
-SMTP_PORT
-SMTP_USER
-SMTP_PASSWORD
+Verifies connection, TLS certificate and credentials to a SMTP server by doing a ping + authorization try.
+
+Parameters:
+
+- smtp_host (example: bakunin.example.org)
+- smtp_port (example: 25)
+- smtp_user (example: noreply@example.org)
+- smtp_password (example: bakunin-1936)
+- smtp_encryption (example: starttls. Values: "", "ssl", "starttls")
+- smtp_timeout (default: 30, unit: seconds)
 </sphinx>
 """
 
 import enum
 import os
 import smtplib
+import ssl
+import socket
 import sys
-from typing import Tuple
+from typing import Tuple, Optional
 
 
 class Messages(enum.Enum):
@@ -26,6 +34,7 @@ class Messages(enum.Enum):
     SMTP_DISCONNECTION_ERROR = 'Server is disconnected'
     GENERAL_ERROR = 'General error'
     GENERAL_SMTP_ERROR = 'General SMTP error'
+    SOCKET_TIMEOUT = 'Connection timeout'
     CONNECTION_REFUSED_ERROR = 'Connection refused'
     SMTP_AUTH_METHOD_NOT_SUPPORTED_BY_SERVER = 'AUTH command not supported by the server'
 
@@ -35,12 +44,22 @@ class EnvKeys(enum.Enum):
     PORT = 'SMTP_PORT'
     USERNAME = 'SMTP_USER'
     PASSWORD = 'SMTP_PASSWORD'
+    ENCRYPTION = 'SMTP_ENCRYPTION'
+    TIMEOUT = 'SMTP_TIMEOUT'
 
 
-class SMTPCheck():
-    def main(self, host: str, port: int, username: str, password: str) -> Tuple[int, str, OSError]:
+class Encryption(enum.Enum):
+    ENC_NONE = ''
+    ENC_SSL = 'ssl'
+    ENC_STARTTLS = 'starttls'
+
+
+class SMTPCheck(object):
+    def main(self, host: str, port: int, username: str, password: str, encryption: str, timeout: int) \
+            -> Tuple[int, str, Optional[Exception]]:
+
         try:
-            self._verify_credentials(host, port, username, password)
+            self._verify_credentials(host, port, username, password, encryption, timeout)
             return True, Messages.SUCCESS.value, None
         except smtplib.SMTPConnectError as exc:
             return False, Messages.SMTP_CONNECTION_ERROR.value, exc
@@ -54,15 +73,26 @@ class SMTPCheck():
             return False, Messages.SMTP_AUTH_METHOD_NOT_SUPPORTED_BY_SERVER.value, exc
         except smtplib.SMTPException as exc:
             return False, Messages.GENERAL_SMTP_ERROR.value, exc
+        except socket.timeout as exc:
+            return False, Messages.SOCKET_TIMEOUT.value, exc
         except ConnectionRefusedError as exc:
             return False, Messages.CONNECTION_REFUSED_ERROR.value, exc
         except Exception as exc:
             return False, Messages.GENERAL_ERROR.value, exc
 
-    def _verify_credentials(self, host, port, username, password):
-        connection = smtplib.SMTP_SSL(host, port)
-        connection.set_debuglevel(1)
-        connection.login(username, password)
+    @staticmethod
+    def _verify_credentials(host: str, port: int, username: str, password: str, encryption: str, timeout: int):
+        connection = smtplib.SMTP_SSL(host, port, timeout=timeout) if encryption == Encryption.ENC_SSL.value else \
+            smtplib.SMTP(host, port, timeout=timeout)
+
+        connection.set_debuglevel(0)
+
+        if encryption == Encryption.ENC_STARTTLS:
+            connection.starttls(context=ssl.create_default_context())
+
+        if username and password:
+            connection.login(username, password)
+
         connection.close()
 
 
@@ -71,7 +101,9 @@ if __name__ == '__main__':
         EnvKeys.HOST.value: os.getenv(EnvKeys.HOST.value),
         EnvKeys.PORT.value: os.getenv(EnvKeys.PORT.value),
         EnvKeys.USERNAME.value: os.getenv(EnvKeys.USERNAME.value),
-        EnvKeys.PASSWORD.value: os.getenv(EnvKeys.PASSWORD.value)
+        EnvKeys.PASSWORD.value: os.getenv(EnvKeys.PASSWORD.value),
+        EnvKeys.ENCRYPTION.value: os.getenv(EnvKeys.ENCRYPTION.value, True),
+        EnvKeys.TIMEOUT.value: os.getenv(EnvKeys.TIMEOUT.value, 30)
     }
 
     for key in inputs:
@@ -80,13 +112,18 @@ if __name__ == '__main__':
             sys.exit(1)
 
     app = SMTPCheck()
-    isSuccess, message, exception = app.main(
+    is_success, message, exception = app.main(
         inputs[EnvKeys.HOST.value],
         int(inputs[EnvKeys.PORT.value]),
         inputs[EnvKeys.USERNAME.value],
-        inputs[EnvKeys.PASSWORD.value]
+        inputs[EnvKeys.PASSWORD.value],
+        inputs[EnvKeys.ENCRYPTION.value],
+        int(inputs[EnvKeys.TIMEOUT.value])
     )
 
-    print(message)
-    if(exception is not None): print(exception)
-    sys.exit(0 if isSuccess else 1)
+    print(('Error: {}'.format(message)) if exception else message)
+
+    if exception is not None:
+        print('Exception:', exception)
+
+    sys.exit(0 if is_success else 1)
