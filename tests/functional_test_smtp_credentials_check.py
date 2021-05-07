@@ -16,7 +16,7 @@ class FunctionalTestSmtpCredentials(TestCase):
     Check container docs for detailed usage: https://github.com/riotkit-org/smtp-ext-relay
     """
 
-    container: DockerContainer
+    container: DockerContainer = None
 
     def tearDown(self):
         if self.container:
