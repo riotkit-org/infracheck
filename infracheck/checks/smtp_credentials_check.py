@@ -46,49 +46,66 @@ class EnvKeys(enum.Enum):
     PASSWORD = 'SMTP_PASSWORD'
     ENCRYPTION = 'SMTP_ENCRYPTION'
     TIMEOUT = 'SMTP_TIMEOUT'
+    DEBUG = 'SMTP_DEBUG'
 
 
 class Encryption(enum.Enum):
     ENC_NONE = ''
     ENC_SSL = 'ssl'
     ENC_STARTTLS = 'starttls'
+    ENC_STARTTLS_SELF_SIGNED = 'starttls_self_signed'
 
 
 class SMTPCheck(object):
-    def main(self, host: str, port: int, username: str, password: str, encryption: str, timeout: int) \
-            -> Tuple[int, str, Optional[Exception]]:
+    def main(self, host: str, port: int, username: str, password: str, encryption: str,
+             timeout: int, debug: bool = False) \
+            -> Tuple[bool, str, Optional[Exception]]:
 
         try:
-            self._verify_credentials(host, port, username, password, encryption, timeout)
+            self._verify_connection(host, port, username, password, encryption, timeout, debug)
             return True, Messages.SUCCESS.value, None
+
         except smtplib.SMTPConnectError as exc:
             return False, Messages.SMTP_CONNECTION_ERROR.value, exc
+
         except smtplib.SMTPHeloError as exc:
             return False, Messages.SMTP_HELO_OR_EHLO_ERROR.value, exc
+
         except smtplib.SMTPAuthenticationError as exc:
             return False, Messages.SMTP_AUTHENTICATION_ERROR.value, exc
+
         except smtplib.SMTPServerDisconnected as exc:
             return False, Messages.SMTP_DISCONNECTION_ERROR.value, exc
+
         except smtplib.SMTPNotSupportedError as exc:
             return False, Messages.SMTP_AUTH_METHOD_NOT_SUPPORTED_BY_SERVER.value, exc
+
         except smtplib.SMTPException as exc:
             return False, Messages.GENERAL_SMTP_ERROR.value, exc
+
         except socket.timeout as exc:
             return False, Messages.SOCKET_TIMEOUT.value, exc
+
         except ConnectionRefusedError as exc:
             return False, Messages.CONNECTION_REFUSED_ERROR.value, exc
+
         except Exception as exc:
             return False, Messages.GENERAL_ERROR.value, exc
 
     @staticmethod
-    def _verify_credentials(host: str, port: int, username: str, password: str, encryption: str, timeout: int):
+    def _verify_connection(host: str, port: int, username: str, password: str,
+                           encryption: str, timeout: int, debug: bool):
+
         connection = smtplib.SMTP_SSL(host, port, timeout=timeout) if encryption == Encryption.ENC_SSL.value else \
             smtplib.SMTP(host, port, timeout=timeout)
 
-        connection.set_debuglevel(0)
+        connection.set_debuglevel(1 if debug else 0)
 
-        if encryption == Encryption.ENC_STARTTLS:
+        if encryption == Encryption.ENC_STARTTLS.value:
             connection.starttls(context=ssl.create_default_context())
+
+        elif encryption == Encryption.ENC_STARTTLS_SELF_SIGNED.value:
+            connection.starttls(context=ssl._create_unverified_context())
 
         if username and password:
             connection.login(username, password)
@@ -102,8 +119,9 @@ if __name__ == '__main__':
         EnvKeys.PORT.value: os.getenv(EnvKeys.PORT.value),
         EnvKeys.USERNAME.value: os.getenv(EnvKeys.USERNAME.value),
         EnvKeys.PASSWORD.value: os.getenv(EnvKeys.PASSWORD.value),
-        EnvKeys.ENCRYPTION.value: os.getenv(EnvKeys.ENCRYPTION.value, True),
-        EnvKeys.TIMEOUT.value: os.getenv(EnvKeys.TIMEOUT.value, 30)
+        EnvKeys.ENCRYPTION.value: os.getenv(EnvKeys.ENCRYPTION.value, 'starttls'),
+        EnvKeys.TIMEOUT.value: os.getenv(EnvKeys.TIMEOUT.value, 30),
+        EnvKeys.DEBUG.value: os.getenv(EnvKeys.DEBUG.value, False)
     }
 
     for key in inputs:
@@ -118,7 +136,8 @@ if __name__ == '__main__':
         inputs[EnvKeys.USERNAME.value],
         inputs[EnvKeys.PASSWORD.value],
         inputs[EnvKeys.ENCRYPTION.value],
-        int(inputs[EnvKeys.TIMEOUT.value])
+        int(inputs[EnvKeys.TIMEOUT.value]),
+        bool(inputs[EnvKeys.DEBUG.value])
     )
 
     print(('Error: {}'.format(message)) if exception else message)
