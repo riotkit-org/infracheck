@@ -10,6 +10,12 @@ import infracheck.checks.smtp_credentials_check as smtpcheck
 
 
 class FunctionalTestSmtpCredentials(TestCase):
+    """
+    SMTP functional tests using a real Postfix container
+    ----------------------------------------------------
+    Check container docs for detailed usage: https://github.com/riotkit-org/smtp-ext-relay
+    """
+
     container: DockerContainer
 
     def tearDown(self):
