@@ -80,16 +80,6 @@ class FunctionalTestSmtpCredentials(TestCase):
         self.assertFalse(status)
 
     def test_connection_refused_when_invalid_port_entered(self):
-        self._start_container(
-            self._create_container()
-                .with_env('SMTP_USE_TLS', 'true')
-                .with_env('SMTPD_TLS_CERT_FILE', '/keys/bakunin.example.org.crt')
-                .with_env('SMTPD_TLS_KEY_FILE', '/keys/bakunin.example.org.key')
-                .with_env('SMTP_TLS_CA_FILE', '/keys/cacert.pem')
-                .with_env('ENABLE_DKIM', 'false')
-                .with_volume_mapping(os.path.dirname(os.path.realpath(__file__)) + '/files/keys', '/keys', mode='ro')
-        )
-
         status, txt, err = smtpcheck.SMTPCheck().main("127.0.0.1", 2529, "durruti", "durruti", '', 2)
         self.assertFalse(status)
         self.assertEqual('Connection refused', txt)
