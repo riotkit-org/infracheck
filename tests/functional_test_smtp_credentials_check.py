@@ -76,7 +76,7 @@ class FunctionalTestSmtpCredentials(TestCase):
         )
 
         status, txt, err = smtpcheck.SMTPCheck().main("127.0.0.1", 2525, "durruti", "durruti", 'starttls', 5)
-        self.assertIn('[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed (_ssl.c:841)', str(err))
+        self.assertIn('[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed', str(err))
         self.assertFalse(status)
 
     def test_connection_refused_when_invalid_port_entered(self):
