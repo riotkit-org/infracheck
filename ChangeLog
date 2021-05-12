@@ -1,6 +1,44 @@
 CHANGES
 =======
 
+* #14: Fix test - on various versions of OpenSSL there are different messages
+* #14: Clean up
+* #14: Clean up
+* #14: Docs reference
+* #14: SMTP - Added functional test, separated from unit test
+* #14: Added TLS and TIMEOUT support
+* #14: Fixed documentation entry
+* PR #19 fixes
+* PR #19 fixes
+* PR #19 fixes
+* Try to fix CI build: \`error: Can not find Rust compiler\`
+* Debug CI: Avoid DNS resolution
+* Debug CI - change port
+* Debug CI - change port
+* Improve assertion to see whats wrong on CI
+* Increase verbosity for tests on CI
+* Increase verbosity for tests on CI: Always inspect docker events after build
+* Increase verbosity for tests on CI: Inspect why
+* Increase verbosity for tests on CI in test case
+* Increase verbosity for tests on CI, enable stderr on error
+* [https://github.com/riotkit-org/infracheck/pull/19] Smaller fixes, mostly reported by Intelji PyCharm as part of code review
+* Added SMTP credentials healthcheck and basic unit tests
+
+v2.0
+----
+
+* Update docs
+* Update docs
+* Remove supervisord, we no longer need it - as Infracheck is now working in daemon mode
+* Updated docs, added info about rkd:// protocol
+* Increased coverage
+* Increased coverage
+* Added minimal coverage for ConfigLoader
+* Added more unittests coverage for rkd\_support, improved rkd\_support by the way while writing tests
+* Bump RKD to stable v2.3.3
+* Set RKD version to 2.3
+* Resolve existing functional tests
+* Resolve existing unit tests
 * Fixed "AttributeError: 'str' object has no attribute 'decode'"
 * Fixed "AttributeError: 'str' object has no attribute 'decode'"
 * #12: Temporarily point to RKD beta version
