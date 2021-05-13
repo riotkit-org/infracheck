@@ -10,7 +10,8 @@ import os
 import posix
 import sqlite3
 import time
-from typing import Union, List
+from datetime import datetime
+from typing import Union, List, Optional
 from .model import ExecutedCheckResult
 from pickle import loads as deserialize, dumps as serialize
 from threading import RLock
@@ -92,6 +93,14 @@ class Repository:
             results += map(map_checks_to_name, available_checks)
 
         return list(set(results))
+
+    def find_cache_time(self, check_name: str) -> Optional[datetime]:
+        results = self._execute('SELECT date_added FROM checks_cache WHERE check_name = ?', [check_name]).fetchone()
+
+        if not results:
+            return None
+
+        return datetime.fromtimestamp(int(float(results[0])))
 
     def _purge_cache(self, check_name: str):
         self._execute('DELETE FROM checks_cache WHERE check_name = ?', [check_name])
