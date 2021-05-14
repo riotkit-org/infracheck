@@ -13,6 +13,7 @@ Parameters:
 - domain: TLS certificate domain for which the certificate was created
 - host: IP address or DNS hostname from which the certificate should be downloaded (defaults to domain value)
 - port: Port (defaults to 443)
+- alert_days_before: Number of days before expiration date to start alerting (defaults to 3)
 
 </sphinx>
 """
