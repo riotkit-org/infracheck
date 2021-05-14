@@ -21,4 +21,4 @@ def run_check(check_type: str, input_data: dict, hooks: dict) -> ExecutedCheckRe
                     repository=Repository(project_dirs),
                     io=IO())
 
-    return runner.run_single_check('example-check', check_type, input_data, hooks)
+    return runner.run_single_check('example-check', check_type, input_data, hooks, config={})
