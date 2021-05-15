@@ -1,0 +1,99 @@
+#!/usr/bin/env python3
+
+"""
+<sphinx>
+
+tls
+---
+
+TLS/SSL certificate expiration validation
+
+Parameters:
+
+- domain: TLS certificate domain for which the certificate was created
+- host: IP address or DNS hostname from which the certificate should be downloaded (defaults to domain value)
+- port: Port (defaults to 443)
+
+</sphinx>
+"""
+
+import os
+import sys
+import subprocess
+from datetime import timedelta, datetime
+from dateutil import parser as date_parser
+from dateutil.parser import ParserError
+from subprocess import check_output
+from typing import Tuple
+
+
+class TlsCheck(object):
+    def main(self, domain: str, host: str, port: int, alert_days_before: int) -> Tuple[int, str]:
+        if not host:
+            host = domain
+
+        tls_exp_date = ''
+        cert_raw_info = ''
+
+        try:
+            (tls_exp_date, cert_raw_info) = self.get_certificate_expiration_date(domain, host, port)
+            diff_to_alert, diff_to_deadline, expiration_date = self.calculate_days(tls_exp_date, alert_days_before)
+
+            if diff_to_alert.days <= 0:
+                return 1, "Certificate is expiring soon, only {} days left!".format(diff_to_deadline.days)
+
+        except ParserError:
+            return 1, "Error parsing date - invalid format returned by OpenSSL binary '{}'. Output: {}"\
+                .format(tls_exp_date, cert_raw_info)
+
+        except IndexError:
+            return 1, "Error receiving certificate information, output: {}".format(cert_raw_info)
+
+        return 0, 'Certificate valid until {}'.format(tls_exp_date)
+
+    @property
+    def now(self) -> datetime:
+        return self.normalize_date(datetime.now())
+
+    @staticmethod
+    def get_certificate_expiration_date(domain: str, host: str, port: int) -> Tuple[str, str]:
+        try:
+            cert_info = check_output(
+                'echo QUIT ' +
+                '| openssl s_client -servername ' + domain + ' -connect ' + host + ':' + str(port) + ' 2>/dev/null ' +
+                '| openssl x509 -noout -dates | grep notAfter',
+                shell=True,
+                stderr=subprocess.STDOUT
+            )
+        except subprocess.CalledProcessError as e:
+            return '', str(e.output)
+
+        return cert_info.decode('utf-8').split('=')[1], cert_info.decode('utf-8'),
+
+    def calculate_days(self, input_date: str, alert_days_before: int) -> Tuple[timedelta, timedelta, datetime]:
+        expiration_date = self.normalize_date(date_parser.parse(input_date))
+
+        days = timedelta(days=alert_days_before)
+        alert_date = expiration_date - days
+
+        diff_to_alert = alert_date - self.now
+        diff_to_deadline = expiration_date - self.now
+        
+        return diff_to_alert, diff_to_deadline, expiration_date
+
+    @staticmethod
+    def normalize_date(date: datetime) -> datetime:
+        return date.replace(minute=0, hour=0, second=0, microsecond=0, tzinfo=None)
+
+
+if __name__ == '__main__':
+    app = TlsCheck()
+    status, message = app.main(
+        domain=os.getenv('DOMAIN', ''),
+        host=os.getenv('HOST', ''),
+        port=int(os.getenv('PORT', '443')),
+        alert_days_before=int(os.getenv('ALERT_DAYS_BEFORE', 3))
+    )
+
+    print(message)
+    sys.exit(0 if status else 1)
