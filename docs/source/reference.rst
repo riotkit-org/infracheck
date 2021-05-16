@@ -181,3 +181,7 @@ Parameters:
 .. include:: ../../infracheck/checks/smtp_credentials_check.py
    :start-after: <sphinx>
    :end-before: </sphinx>
+
+.. include:: ../../infracheck/checks/tls
+   :start-after: <sphinx>
+   :end-before: </sphinx>

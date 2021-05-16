@@ -45,3 +45,4 @@ External dependencies
 
 - **whois** commandline tool (`apt-get install whois`)
 - **sshpass** (`apt-get install sshpass`)
+- **openssl**
