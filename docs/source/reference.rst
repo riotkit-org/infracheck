@@ -185,3 +185,7 @@ Parameters:
 .. include:: ../../infracheck/checks/tls
    :start-after: <sphinx>
    :end-before: </sphinx>
+
+.. include:: ../../infracheck/checks/tls-docker-network
+   :start-after: <sphinx>
+   :end-before: </sphinx>
