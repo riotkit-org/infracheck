@@ -29,7 +29,7 @@ from typing import Tuple
 
 
 class TlsCheck(object):
-    def main(self, domain: str, host: str, port: int, alert_days_before: int) -> Tuple[int, str]:
+    def main(self, domain: str, host: str, port: int, alert_days_before: int) -> Tuple[bool, str]:
         if not host:
             host = domain
 
@@ -41,16 +41,16 @@ class TlsCheck(object):
             diff_to_alert, diff_to_deadline, expiration_date = self.calculate_days(tls_exp_date, alert_days_before)
 
             if diff_to_alert.days <= 0:
-                return 1, "Certificate is expiring soon, only {} days left!".format(diff_to_deadline.days)
+                return False, "Certificate is expiring soon, only {} days left!".format(diff_to_deadline.days)
 
         except ParserError:
-            return 1, "Error parsing date - invalid format returned by OpenSSL binary '{}'. Output: {}"\
+            return False, "Error parsing date - invalid format returned by OpenSSL binary '{}'. Output: {}"\
                 .format(tls_exp_date, cert_raw_info)
 
         except IndexError:
-            return 1, "Error receiving certificate information, output: {}".format(cert_raw_info)
+            return False, "Error receiving certificate information, output: {}".format(cert_raw_info)
 
-        return 0, 'Certificate valid until {}'.format(tls_exp_date)
+        return True, 'Certificate valid until {}'.format(tls_exp_date)
 
     @property
     def now(self) -> datetime:
