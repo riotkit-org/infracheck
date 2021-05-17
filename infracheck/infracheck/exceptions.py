@@ -5,6 +5,10 @@ class InfracheckException(Exception):
     pass
 
 
+class CheckNotReadyShouldBeSkippedSignal(InfracheckException):
+    pass
+
+
 class RunnerException(InfracheckException):
     @staticmethod
     def from_invalid_variable_error(var_name: str, check_name: str, available_vars: Dict[str, str]) \

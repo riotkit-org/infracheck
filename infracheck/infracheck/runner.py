@@ -11,9 +11,9 @@ import os
 import json
 import re
 import time
-from datetime import datetime
+from datetime import datetime, timedelta
 from rkd.api.inputoutput import IO
-from .exceptions import RunnerException
+from .exceptions import RunnerException, CheckNotReadyShouldBeSkippedSignal
 from .model import ExecutedCheckResult, ExecutedChecksResultList
 from .repository import Repository
 from .config import ConfigLoader
@@ -41,7 +41,7 @@ class Runner(object):
         for path in dirs:
             self.paths.append(path + '/checks')
 
-    def run_single_check(self, configured_name: str, check_name: str, input_data: dict, hooks: dict) \
+    def run_single_check(self, configured_name: str, check_name: str, input_data: dict, hooks: dict, config: dict) \
             -> ExecutedCheckResult:
 
         """
@@ -51,8 +51,14 @@ class Runner(object):
         :param check_name:
         :param input_data:
         :param hooks:
+        :param config:
         :return:
         """
+
+        if not self.should_check_run(configured_name, config):
+            self.io.debug('Check "{}" not ready to run, maybe the cache life time prevents from execution'
+                          .format(configured_name))
+            raise CheckNotReadyShouldBeSkippedSignal(configured_name)
 
         self.io.debug('Executing check {}'.format(configured_name))
         bin_path = self._get_check_path(check_name)
@@ -109,7 +115,12 @@ class Runner(object):
             config = self.config_loader.load(config_name)
 
             if not result:
-                result = self.run_single_check(config_name, config['type'], config['input'], config.get('hooks', {}))
+                try:
+                    result = self.run_single_check(config_name, config['type'], config['input'], config.get('hooks', {}), config)
+
+                except CheckNotReadyShouldBeSkippedSignal:
+                    continue
+
                 self.repository.push_to_cache(config_name, result)
 
             if self.wait_time > 0:
@@ -134,6 +145,21 @@ class Runner(object):
             results.add(config_name, result)
 
         return results
+
+    def should_check_run(self, config_name: str, config: dict) -> bool:
+        # cache life time is disabled
+        if "results_cache_time" not in config or not config.get('results_cache_time'):
+            self.io.debug('results_cache_time not configured for {}'.format(config_name))
+            return True
+
+        cache_lifetime_seconds = timedelta(seconds=int(config.get('results_cache_time')))
+        last_cache_write_time = self.repository.find_cache_time(config_name)
+
+        if not last_cache_write_time:
+            self.io.debug('No last cache write time for {}'.format(config_name))
+            return True
+
+        return last_cache_write_time + cache_lifetime_seconds <= datetime.now()
 
     @staticmethod
     def _add_environment_variables(env: dict, check_name: str):
