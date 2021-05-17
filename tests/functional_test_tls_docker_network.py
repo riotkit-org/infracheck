@@ -19,7 +19,7 @@ class FunctionalTestTlsDockerNetwork(TestCase):
 
     def test_multiple_containers_with_multiple_domains_per_container(self):
         """
-        There are two containers.
+        There are two containers. Matching is by environment variable INFR_VIRTUAL_HOST={{ domain }}
         One with single domain: google.com
         Second one: duckduck.com and bing.com
 
@@ -49,6 +49,13 @@ class FunctionalTestTlsDockerNetwork(TestCase):
         self.assertTrue(check[1])
 
     def test_containers_matched_by_label(self):
+        """
+        There are two docker containers. Matching is by label org.riotkit.domain: {{ domain }}
+
+        Checks:
+            - Parsing of the labels syntax
+        """
+
         first = DockerContainer(image='nginx:1.19').with_kwargs(labels={'org.riotkit.domain': 'duckduckgo.com'}).start()
         second = DockerContainer(image='nginx:1.19')\
             .with_kwargs(labels={'org.riotkit.domain': 'riseup.net,bing.com'}).start()
