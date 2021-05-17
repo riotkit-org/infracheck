@@ -69,3 +69,11 @@ class FunctionalTestTlsDockerNetwork(TestCase):
         self.assertIn('Domain bing.com is OK', check[0])
         self.assertIn('Domain riseup.net is OK', check[0])
         self.assertTrue(check[1])
+
+    def test_no_domains_found_will_result_in_error_status(self):
+        check = TlsDockerNetworkCheck(param_type='label', param_name='invalid-label-name', alert_days_before=1) \
+            .main()
+
+        self.assertEqual('No any domains found, maybe the containers are not running?', check[0])
+        self.assertFalse(check[1])
+
