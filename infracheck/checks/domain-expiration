@@ -21,7 +21,7 @@ Parameters:
 
 </sphinx>
 """
-
+from typing import Optional
 import whois
 import datetime
 import pytz
@@ -100,7 +100,6 @@ class DomainCheck(object):
             finally:
                 sys.stdout = _stdout_copy
 
-
     @staticmethod
     def _ask_whois_in_shell(domain: str) -> str:
         return subprocess.check_output(['whois', domain]).decode('utf-8')
@@ -128,7 +127,7 @@ class DomainCheck(object):
         return WhoisResult(expiration_date=None)
 
     def perform_check(self) -> tuple:
-        domain_check: WhoisResult = self._check_with_wait()
+        domain_check: Optional[WhoisResult] = self._check_with_wait()
 
         if domain_check is None or domain_check.expiration_date is None:
             return False, "Domain seems to be not registered"
