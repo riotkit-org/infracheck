@@ -34,7 +34,7 @@ from collections import namedtuple
 from whois._3_adjust import str_to_date
 
 
-WhoisResult = namedtuple('ManualCheck', 'expiration_date')
+WhoisResult = namedtuple('WhoisResult', 'expiration_date')
 
 
 class DomainCheck(object):
