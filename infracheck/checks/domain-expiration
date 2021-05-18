@@ -63,16 +63,7 @@ class DomainCheck(object):
 
         while retries <= max_retries:
             try:
-                _stdout_copy = sys.stdout
-
-                # the "whois" library is using print(), sys.stdout needs to be mocked for a moment to not print those
-                # messages
-                try:
-                    sys.stdout = open('/dev/null', 'w')
-                    query = self._ask_whois_library(self._domain)
-                finally:
-                    sys.stdout.close()
-                    sys.stdout = _stdout_copy
+                query = self._ask_whois_library(self._domain)
 
                 if not query or not query.expiration_date:
                     return self._parse_shell_whois(self._domain)
@@ -97,7 +88,18 @@ class DomainCheck(object):
                     time.sleep(5)
 
     def _ask_whois_library(self, domain: str) -> WhoisResult:
-        return self.whois.query(domain)
+        _stdout_copy = sys.stdout
+
+        # the "whois" library is using print(), sys.stdout needs to be mocked for a moment to not print those
+        # messages
+        with open('/dev/null', 'w') as null_out:
+            try:
+                sys.stdout = null_out
+
+                return self.whois.query(domain)
+            finally:
+                sys.stdout = _stdout_copy
+
 
     @staticmethod
     def _ask_whois_in_shell(domain: str) -> str:
