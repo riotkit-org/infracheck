@@ -34,7 +34,7 @@ from collections import namedtuple
 from whois._3_adjust import str_to_date
 
 
-ManualCheck = namedtuple('ManualCheck', 'expiration_date')
+WhoisResult = namedtuple('ManualCheck', 'expiration_date')
 
 
 class DomainCheck(object):
@@ -56,7 +56,7 @@ class DomainCheck(object):
         if not self._domain or self._domain == '':
             raise Exception('Domain must be specified')
 
-    def _check_with_wait(self) -> ManualCheck:
+    def _check_with_wait(self) -> WhoisResult:
         time.sleep(1)
         max_retries = 10
         retries = 0
@@ -69,7 +69,7 @@ class DomainCheck(object):
                 # messages
                 try:
                     sys.stdout = open('/dev/null', 'w')
-                    query = self.whois.query(self._domain)
+                    query = self._ask_whois_library(self._domain)
                 finally:
                     sys.stdout.close()
                     sys.stdout = _stdout_copy
@@ -96,7 +96,14 @@ class DomainCheck(object):
                 if "request limit exceeded" in str(e):
                     time.sleep(5)
 
-    def _parse_shell_whois(self, domain: str) -> ManualCheck:
+    def _ask_whois_library(self, domain: str) -> WhoisResult:
+        return self.whois.query(domain)
+
+    @staticmethod
+    def _ask_whois_in_shell(domain: str) -> str:
+        return subprocess.check_output(['whois', domain]).decode('utf-8')
+
+    def _parse_shell_whois(self, domain: str) -> WhoisResult:
         """
         Fallback to shell command in case, when a whois library does not support given domain TLD
 
@@ -105,21 +112,21 @@ class DomainCheck(object):
         """
 
         try:
-            output = subprocess.check_output(['whois', domain])
+            output = self._ask_whois_in_shell(domain)
 
             for pattern in self.PATTERNS:
-                match = re.search(pattern, output.decode('utf-8'), re.IGNORECASE)
+                match = re.search(pattern, output, re.IGNORECASE)
 
                 if match:
-                    return ManualCheck(expiration_date=str_to_date(match.group(1)))
+                    return WhoisResult(expiration_date=str_to_date(match.group(1)))
 
         except subprocess.CalledProcessError:
             pass
 
-        return ManualCheck(expiration_date=None)
+        return WhoisResult(expiration_date=None)
 
     def perform_check(self) -> tuple:
-        domain_check: ManualCheck = self._check_with_wait()
+        domain_check: WhoisResult = self._check_with_wait()
 
         if domain_check is None or domain_check.expiration_date is None:
             return False, "Domain seems to be not registered"
