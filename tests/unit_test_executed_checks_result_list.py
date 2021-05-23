@@ -21,13 +21,15 @@ class ExecutedChecksResultListTest(BasicTestingCase):
                 configured_name='first',
                 output='Test',
                 exit_status=False,
-                hooks_output=''
+                hooks_output='',
+                description='First in test'
             ))
             results.add('second', ExecutedCheckResult(
                 configured_name='second',
                 output='Test',
                 exit_status=True,
-                hooks_output=''
+                hooks_output='',
+                description='Second in test'
             ))
 
             self.assertFalse(results.is_global_status_success())
@@ -38,13 +40,15 @@ class ExecutedChecksResultListTest(BasicTestingCase):
                 configured_name='first',
                 output='Test',
                 exit_status=True,
-                hooks_output=''
+                hooks_output='',
+                description='First in test'
             ))
             results.add('second', ExecutedCheckResult(
                 configured_name='second',
                 output='Test',
                 exit_status=True,
-                hooks_output=''
+                hooks_output='',
+                description='Second in test'
             ))
 
             self.assertTrue(results.is_global_status_success())
@@ -55,13 +59,15 @@ class ExecutedChecksResultListTest(BasicTestingCase):
                 configured_name='first',
                 output='Test',
                 exit_status=False,
-                hooks_output=''
+                hooks_output='',
+                description='First in test'
             ))
             results.add('second', ExecutedCheckResult(
                 configured_name='second',
                 output='Test',
                 exit_status=False,
-                hooks_output=''
+                hooks_output='',
+                description='Second in test'
             ))
 
             self.assertFalse(results.is_global_status_success())

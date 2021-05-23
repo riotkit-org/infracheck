@@ -12,21 +12,24 @@ class ExecutedCheckResult(object):
     hooks_output: str
     configured_name: str
     refresh_time: datetime
+    description: str
 
-    def __init__(self, configured_name: str, output: str, exit_status: bool, hooks_output: str):
+    def __init__(self, configured_name: str, output: str, exit_status: bool, hooks_output: str, description: str):
         self.configured_name = configured_name
         self.output = output
         self.exit_status = exit_status
         self.hooks_output = hooks_output
         self.refresh_time = datetime.now()
+        self.description = description
 
     @classmethod
-    def from_not_ready(cls, configured_name: str):
+    def from_not_ready(cls, configured_name: str, description: str):
         check = cls(
             configured_name=configured_name,
             output='Check not ready',
             exit_status=False,
-            hooks_output=''
+            hooks_output='',
+            description=description
         )
 
         check.refresh_time = None
@@ -37,6 +40,7 @@ class ExecutedCheckResult(object):
         return {
             'status': self.exit_status,
             'output': self.output,
+            'description': self.description,
             'hooks_output': self.hooks_output,
             'ident': self.configured_name + '=' + str(self.exit_status),
             'checked_at': self.refresh_time.strftime('%Y-%m-%d %H-%M-%S') if self.refresh_time else ''
