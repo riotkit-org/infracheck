@@ -27,7 +27,7 @@ class Controller(object):
         self.io = IO()
         self.io.set_log_level(log_level)
         self.project_dirs = self._combine_project_dirs(project_dir)
-        self.config_loader = ConfigLoader(self.project_dirs)
+        self.config_loader = ConfigLoader(self.project_dirs, self.io)
         self.repository = Repository(self.project_dirs, db_path)
 
         self.runner = Runner(dirs=self.project_dirs, config_loader=self.config_loader,
