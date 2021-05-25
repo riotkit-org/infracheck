@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 from typing import Dict, List, Union, Optional
 from dataclasses import dataclass
-
+from croniter import croniter
 from rkd.api.inputoutput import IO
 
 QUIET_PERIODS_DATA_STRUCT = List[Dict[str, Union[str, int]]]
@@ -24,6 +24,16 @@ class ConfiguredCheck(object):
     def from_config(cls, name: str, config: dict, io: IO):
         quiet_periods = config.get('quiet_periods', [])
 
+        if quiet_periods:
+            for period in quiet_periods:
+                period: dict
+                if "starts" not in period or "duration" not in period:
+                    # todo: exception class
+                    raise Exception(
+                        '"quiet_periods" contains invalid structure. Valid entry example: '
+                        '{"starts": "30 00 * * *", "duration": 60}'
+                    )
+
         # cache life time is disabled
         if "results_cache_time" not in config or not config.get('results_cache_time'):
             io.debug('results_cache_time not configured for {}'.format(name))
@@ -42,6 +52,37 @@ class ConfiguredCheck(object):
             results_cache_time=int(config.get('results_cache_time')) if "results_cache_time" in config else None,
             io=io
         )
+
+    def should_status_be_ignored(self) -> bool:
+        """
+        Decides if health check failure status could be ignored in this time
+        :return:
+        """
+
+        if not self.quiet_periods:
+            return False
+
+        for period in self.quiet_periods:
+            period: dict
+            if "starts" not in period or "duration" not in period:
+                continue
+
+            last_execution = croniter(period.get('starts'), start_time=self._time_now()).get_prev(ret_type=datetime)
+            duration = timedelta(minutes=int(period.get('duration')))
+            current_time = self._time_now()
+
+            self.io.debug(f'Quiet hours: last_execution={last_execution}, duration={duration}')
+
+            # happening NOW
+            if last_execution + duration >= current_time:
+                self.io.debug('Quiet hours started')
+                return True
+
+        return False
+
+    @staticmethod
+    def _time_now() -> datetime:
+        return datetime.now()
 
     def should_check_run(self, last_cache_write_time: Optional[datetime]) -> bool:
         if not self.results_cache_time:
@@ -67,9 +108,10 @@ class ExecutedCheckResult(object):
     configured_name: str
     refresh_time: datetime
     description: str
+    is_silenced: bool
 
     def __init__(self, configured_name: str, output: str, exit_status: bool, hooks_output: str,
-                 description: str):
+                 description: str, is_silenced: bool):
 
         self.configured_name = configured_name
         self.output = output
@@ -77,6 +119,7 @@ class ExecutedCheckResult(object):
         self.hooks_output = hooks_output
         self.refresh_time = datetime.now()
         self.description = description
+        self.is_silenced = is_silenced
 
     @classmethod
     def from_not_ready(cls, configured_name: str, description: str):
@@ -85,7 +128,8 @@ class ExecutedCheckResult(object):
             output='Check not ready',
             exit_status=False,
             hooks_output='',
-            description=description
+            description=description,
+            is_silenced=False
         )
 
         check.refresh_time = None
@@ -99,7 +143,8 @@ class ExecutedCheckResult(object):
             'description': self.description,
             'hooks_output': self.hooks_output,
             'ident': self.configured_name + '=' + str(self.exit_status),
-            'checked_at': self.refresh_time.strftime('%Y-%m-%d %H-%M-%S') if self.refresh_time else ''
+            'checked_at': self.refresh_time.strftime('%Y-%m-%d %H-%M-%S') if self.refresh_time else '',
+            'silenced': f'silenced={self.is_silenced}'
         }
 
 

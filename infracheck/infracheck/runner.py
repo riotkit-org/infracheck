@@ -58,6 +58,7 @@ class Runner(object):
         self.io.debug('Executing check {}'.format(check.name))
         bin_path = self._get_check_path(check.check_type)
         bin_path = self._append_commandline_switches(check.input_variables, bin_path)
+        ignored = False
 
         try:
             self.io.debug('bin_path=' + str(bin_path))
@@ -90,12 +91,18 @@ class Runner(object):
         self.io.debug('Execution finished, running hooks...')
         hooks_out = self._notify_hooks(check.hooks, exit_status, self.io)
 
+        if check.should_status_be_ignored():
+            exit_status = True
+            ignored = True
+            self.io.debug(f'Quiet hours enabled for "{check.name}" check, ignoring error')
+
         return ExecutedCheckResult(
             output=output.decode('utf-8'),
             exit_status=exit_status,
             hooks_output=hooks_out,
             configured_name=check.name,
-            description=check.description
+            description=check.description,
+            is_silenced=ignored
         )
 
     def run_checks(self, enabled_configs: list) -> None:

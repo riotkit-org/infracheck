@@ -1,11 +1,17 @@
 
+"""
+Config
+======
+
+Configuration locator and loader, loads JSON objects from disk and returns ConfigurationCheck models.
+Searches through hierarchy of paths defined in controller.Controller._combine_project_dirs()
+"""
+
 import os
 import json
 from dataclasses import dataclass
 from typing import List
-
 from rkd.api.inputoutput import IO
-
 from .exceptions import ConfigurationException
 from .model import ConfiguredCheck
 from .rkd_support import is_rkd_check, rkd_module_exists
