@@ -4,7 +4,11 @@ import sys
 import os
 import inspect
 from unittest import mock
+
+from rkd.api.inputoutput import IO
 from unittest_data_provider import data_provider
+
+from infracheck.infracheck.model import ConfiguredCheck
 
 path = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe()))) + '/../'
 sys.path.append(path)
@@ -159,7 +163,8 @@ class ControllerTest(unittest.TestCase):
             controller.list_enabled_configs = get_enabled_configs_mock
             controller.config_loader.load = mock.Mock()
 
-            with mock.patch.object(controller.config_loader, 'load', return_value=config):
+            with mock.patch.object(controller.config_loader, 'load',
+                                   return_value=ConfiguredCheck.from_config('example-check', config, IO())):
                 performed = controller.perform_checks()
 
         self.assertEqual(expected_result, performed.to_hash()['checks']['example-check']['status'])

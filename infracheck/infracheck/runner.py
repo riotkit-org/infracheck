@@ -62,8 +62,8 @@ class Runner(object):
         try:
             self.io.debug('bin_path=' + str(bin_path))
 
-            env = {**dict(os.environ), **self._prepare_data(check.name, check.input_variables)}
-            env = self._add_environment_variables(env, check.name)
+            env = {**dict(os.environ), **self._prepare_data(check.check_type, check.input_variables)}
+            env = self._add_environment_variables(env, check.check_type)
 
             timeout = env['INFRACHECK_TIMEOUT'] if 'INFRACHECK_TIMEOUT' in env else self.timeout
 
@@ -95,8 +95,7 @@ class Runner(object):
             exit_status=exit_status,
             hooks_output=hooks_out,
             configured_name=check.name,
-            description=check.description,
-            quiet_periods=check.quiet_periods
+            description=check.description
         )
 
     def run_checks(self, enabled_configs: list) -> None:
