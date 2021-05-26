@@ -4,6 +4,8 @@ from dataclasses import dataclass
 from croniter import croniter
 from rkd.api.inputoutput import IO
 
+from infracheck.infracheck.exceptions import ConfigurationException
+
 QUIET_PERIODS_DATA_STRUCT = List[Dict[str, Union[str, int]]]
 HOOKS_STRUCT = Dict[str, List[str]]
 INPUT_VARIABLES_STRUCT = Dict[str, Union[str, int]]
@@ -24,23 +26,18 @@ class ConfiguredCheck(object):
     def from_config(cls, name: str, config: dict, io: IO):
         quiet_periods = config.get('quiet_periods', [])
 
+        if not isinstance(quiet_periods, list):
+            raise ConfigurationException.from_quiet_periods_should_be_a_list_error()
+
         if quiet_periods:
             for period in quiet_periods:
                 period: dict
                 if "starts" not in period or "duration" not in period:
-                    # todo: exception class
-                    raise Exception(
-                        '"quiet_periods" contains invalid structure. Valid entry example: '
-                        '{"starts": "30 00 * * *", "duration": 60}'
-                    )
+                    raise ConfigurationException.from_quiet_periods_invalid_structure()
 
         # cache life time is disabled
         if "results_cache_time" not in config or not config.get('results_cache_time'):
             io.debug('results_cache_time not configured for {}'.format(name))
-
-        # todo: exception class
-        if not isinstance(quiet_periods, list):
-            raise Exception('"quiet_periods" should be a list')
 
         return cls(
             name=name,
@@ -60,6 +57,7 @@ class ConfiguredCheck(object):
         """
 
         if not self.quiet_periods:
+            self.io.debug('Quiet period not enabled')
             return False
 
         for period in self.quiet_periods:
@@ -67,15 +65,21 @@ class ConfiguredCheck(object):
             if "starts" not in period or "duration" not in period:
                 continue
 
-            last_execution = croniter(period.get('starts'), start_time=self._time_now()).get_prev(ret_type=datetime)
+            schedule = croniter(period.get('starts'), start_time=self._time_now())
+            last_execution = self._strip_date(schedule.get_prev(ret_type=datetime))
+            next_execution = self._strip_date(schedule.get_next(ret_type=datetime))
             duration = timedelta(minutes=int(period.get('duration')))
-            current_time = self._time_now()
+            current_time = self._strip_date(self._time_now())
 
-            self.io.debug(f'Quiet hours: last_execution={last_execution}, duration={duration}')
+            self.io.debug(f'Quiet period: last_execution={last_execution}, duration={duration}, now={current_time}')
 
-            # happening NOW
+            # STARTED just now
+            if next_execution <= current_time:
+                return True
+
+            # ALREADY happening
             if last_execution + duration >= current_time:
-                self.io.debug('Quiet hours started')
+                self.io.debug('Quiet period started')
                 return True
 
         return False
@@ -83,6 +87,10 @@ class ConfiguredCheck(object):
     @staticmethod
     def _time_now() -> datetime:
         return datetime.now()
+
+    @staticmethod
+    def _strip_date(date) -> datetime:
+        return date.replace(second=0, microsecond=0, tzinfo=None)
 
     def should_check_run(self, last_cache_write_time: Optional[datetime]) -> bool:
         if not self.results_cache_time:
@@ -111,7 +119,7 @@ class ExecutedCheckResult(object):
     is_silenced: bool
 
     def __init__(self, configured_name: str, output: str, exit_status: bool, hooks_output: str,
-                 description: str, is_silenced: bool):
+                 description: str, is_silenced: bool = False):
 
         self.configured_name = configured_name
         self.output = output
@@ -137,15 +145,19 @@ class ExecutedCheckResult(object):
         return check
 
     def to_hash(self) -> dict:
+        exit_status = self.exit_status if not self.is_silenced else True
+
         return {
-            'status': self.exit_status,
+            'status': exit_status,
             'output': self.output,
             'description': self.description,
             'hooks_output': self.hooks_output,
-            'ident': self.configured_name + '=' + str(self.exit_status),
+            'ident': f'{self.configured_name}={exit_status}, silenced={self.is_silenced}',
             'checked_at': self.refresh_time.strftime('%Y-%m-%d %H-%M-%S') if self.refresh_time else '',
-            'silenced': f'silenced={self.is_silenced}'
         }
+
+    def enable_quiet_time_now(self) -> None:
+        self.is_silenced = True
 
 
 class ExecutedChecksResultList(object):

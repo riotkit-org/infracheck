@@ -45,7 +45,18 @@ class ConfigurationException(InfracheckException):
         )
 
     @classmethod
-    def from_rkd_check_url_error(cls, check_name):
+    def from_rkd_check_url_error(cls, check_name) -> 'ConfigurationException':
         return cls(
             'RiotKit-Do check syntax "{}" is invalid. Valid example: rkd://rkd.standardlib.shell:sh'.format(check_name)
+        )
+
+    @classmethod
+    def from_quiet_periods_should_be_a_list_error(cls) -> 'ConfigurationException':
+        return cls('"quiet_periods" should be a list')
+
+    @classmethod
+    def from_quiet_periods_invalid_structure(cls) -> 'ConfigurationException':
+        return cls(
+            '"quiet_periods" contains invalid structure. Valid entry example: '
+            '{"starts": "30 00 * * *", "duration": 60}'
         )

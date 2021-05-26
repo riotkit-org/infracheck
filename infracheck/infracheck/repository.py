@@ -118,7 +118,7 @@ class Repository:
 
         self.db.commit()
 
-    def _execute(self, query: str, parameters = None):
+    def _execute(self, query: str, parameters=None):
         if parameters is None:
             parameters = []
 

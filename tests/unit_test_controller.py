@@ -42,7 +42,7 @@ class ControllerTest(unittest.TestCase):
                 # expected result
                 True,
                 # expected ident
-                'example-check=True',
+                'example-check=True, silenced=False',
                 # expected hooks output
                 'Yeeeah, is up'
             ],
@@ -68,7 +68,7 @@ class ControllerTest(unittest.TestCase):
                 # expected result
                 False,
                 # expected ident
-                'example-check=False',
+                'example-check=False, silenced=False',
                 # expected hooks output
                 'Oops!'
             ],
@@ -85,7 +85,7 @@ class ControllerTest(unittest.TestCase):
                 # expected result
                 True,
                 # expected ident
-                'example-check=True',
+                'example-check=True, silenced=False',
                 # expected hooks output
                 ''
             ],
@@ -104,7 +104,7 @@ class ControllerTest(unittest.TestCase):
                 # expected result
                 True,
                 # expected ident
-                'example-check=True',
+                'example-check=True, silenced=False',
                 # expected hooks output
                 ''
             ],
@@ -121,7 +121,7 @@ class ControllerTest(unittest.TestCase):
                 # expected result
                 False,
                 # expected ident
-                'example-check=False',
+                'example-check=False, silenced=False',
                 # expected hooks output
                 ''
             ],
@@ -138,7 +138,28 @@ class ControllerTest(unittest.TestCase):
                 # expected result
                 False,
                 # expected ident
-                'example-check=False',
+                'example-check=False, silenced=False',
+                # expected hooks output
+                ''
+            ],
+
+            # Failing check, but silenced due to quiet time
+            [
+                # config
+                {
+                    "type": "http",
+                    "input": {
+                        "url": "https://httpstat.us/404"
+                    },
+                    "quiet_periods": [
+                        # always
+                        {"starts": "* * * * *", "duration": 60}
+                    ]
+                },
+                # expected result
+                True,
+                # expected ident
+                'example-check=True, silenced=True',
                 # expected hooks output
                 ''
             ]

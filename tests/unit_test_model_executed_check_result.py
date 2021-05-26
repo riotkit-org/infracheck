@@ -34,9 +34,8 @@ class ExecutedCheckResultTest(BasicTestingCase):
         self.assertEqual({
             'checked_at': '2020-11-27 23-40-18',
             'hooks_output': 'A las barricadas!',
-            'ident': 'Durruti=True',
+            'ident': 'Durruti=True, silenced=False',
             'output': 'Viva la revolution!',
             'status': True,
-            'description': 'For the triumph of the libertarian confederation!',
-            'silenced': 'silenced=False'
+            'description': 'For the triumph of the libertarian confederation!'
         }, as_hash)
