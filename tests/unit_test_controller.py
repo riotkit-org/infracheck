@@ -147,10 +147,8 @@ class ControllerTest(unittest.TestCase):
             [
                 # config
                 {
-                    "type": "http",
-                    "input": {
-                        "url": "https://httpstat.us/404"
-                    },
+                    "type": "false",
+                    "input": {},
                     "quiet_periods": [
                         # always
                         {"starts": "* * * * *", "duration": 60}
