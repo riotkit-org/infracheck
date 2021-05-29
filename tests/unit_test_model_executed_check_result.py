@@ -13,7 +13,7 @@ from infracheck.infracheck.model import ExecutedCheckResult
 
 class ExecutedCheckResultTest(BasicTestingCase):
     def test_from_not_ready(self):
-        result = ExecutedCheckResult.from_not_ready('Durruti')
+        result = ExecutedCheckResult.from_not_ready('Durruti', description='Buenaventura')
 
         self.assertEqual(False, result.exit_status)
         self.assertIsNone(result.refresh_time)
@@ -23,7 +23,8 @@ class ExecutedCheckResultTest(BasicTestingCase):
             configured_name='Durruti',
             output='Viva la revolution!',
             exit_status=True,
-            hooks_output='A las barricadas!'
+            hooks_output='A las barricadas!',
+            description='For the triumph of the libertarian confederation!'
         )
 
         check.refresh_time = datetime(2020, 11, 27, 23, 40, 18)  # mock the time
@@ -34,5 +35,6 @@ class ExecutedCheckResultTest(BasicTestingCase):
             'hooks_output': 'A las barricadas!',
             'ident': 'Durruti=True',
             'output': 'Viva la revolution!',
-            'status': True
+            'status': True,
+            'description': 'For the triumph of the libertarian confederation!'
         }, as_hash)

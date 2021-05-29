@@ -46,6 +46,7 @@ Simple, easy to setup, easy to understand. Works perfectly with Docker. A perfec
    first-steps
    hooks
    reference
+   check-configuration-reference
    templating
    custom-scripts
    cache

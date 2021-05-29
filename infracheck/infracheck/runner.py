@@ -99,7 +99,8 @@ class Runner(object):
             output=output.decode('utf-8'),
             exit_status=exit_status,
             hooks_output=hooks_out,
-            configured_name=configured_name
+            configured_name=configured_name,
+            description=config.get('description', '')
         )
 
     def run_checks(self, enabled_configs: list) -> None:
@@ -116,7 +117,8 @@ class Runner(object):
 
             if not result:
                 try:
-                    result = self.run_single_check(config_name, config['type'], config['input'], config.get('hooks', {}), config)
+                    result = self.run_single_check(config_name, config['type'], config['input'],
+                                                   config.get('hooks', {}), config)
 
                 except CheckNotReadyShouldBeSkippedSignal:
                     continue
@@ -138,9 +140,11 @@ class Runner(object):
 
         for config_name in enabled_configs:
             result = self.repository.retrieve_from_cache(config_name)
+            config = self.config_loader.load(config_name)
 
             if not result:
-                result = ExecutedCheckResult.from_not_ready(configured_name=config_name)
+                result = ExecutedCheckResult.from_not_ready(configured_name=config_name,
+                                                            description=config.get('description', ''))
 
             results.add(config_name, result)
 
