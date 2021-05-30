@@ -23,7 +23,7 @@ class ConfiguredCheck(object):
     io: IO
 
     @classmethod
-    def from_config(cls, name: str, config: dict, io: IO):
+    def from_config(cls, name: str, config: dict, io: IO) -> 'ConfiguredCheck':
         quiet_periods = config.get('quiet_periods', [])
 
         if not isinstance(quiet_periods, list):
