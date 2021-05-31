@@ -22,14 +22,16 @@ class ExecutedChecksResultListTest(BasicTestingCase):
                 output='Test',
                 exit_status=False,
                 hooks_output='',
-                description='First in test'
+                description='First in test',
+                is_silenced=False
             ))
             results.add('second', ExecutedCheckResult(
                 configured_name='second',
                 output='Test',
                 exit_status=True,
                 hooks_output='',
-                description='Second in test'
+                description='Second in test',
+                is_silenced=False
             ))
 
             self.assertFalse(results.is_global_status_success())
@@ -41,14 +43,16 @@ class ExecutedChecksResultListTest(BasicTestingCase):
                 output='Test',
                 exit_status=True,
                 hooks_output='',
-                description='First in test'
+                description='First in test',
+                is_silenced=False
             ))
             results.add('second', ExecutedCheckResult(
                 configured_name='second',
                 output='Test',
                 exit_status=True,
                 hooks_output='',
-                description='Second in test'
+                description='Second in test',
+                is_silenced=False
             ))
 
             self.assertTrue(results.is_global_status_success())
@@ -60,14 +64,16 @@ class ExecutedChecksResultListTest(BasicTestingCase):
                 output='Test',
                 exit_status=False,
                 hooks_output='',
-                description='First in test'
+                description='First in test',
+                is_silenced=False
             ))
             results.add('second', ExecutedCheckResult(
                 configured_name='second',
                 output='Test',
                 exit_status=False,
                 hooks_output='',
-                description='Second in test'
+                description='Second in test',
+                is_silenced=False
             ))
 
             self.assertFalse(results.is_global_status_success())

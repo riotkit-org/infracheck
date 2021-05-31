@@ -8,6 +8,7 @@ Exposes simple HTTP endpoint with JSON response
 
 import tornado.ioloop
 import tornado.web
+import sys
 import json
 from .controller import Controller
 from .model import ExecutedChecksResultList
@@ -63,4 +64,8 @@ class HttpServer(object):
         ])
 
         srv.listen(self.port)
-        tornado.ioloop.IOLoop.current().start()
+
+        try:
+            tornado.ioloop.IOLoop.current().start()
+        except KeyboardInterrupt:
+            sys.exit(0)

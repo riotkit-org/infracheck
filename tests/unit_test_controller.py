@@ -4,7 +4,11 @@ import sys
 import os
 import inspect
 from unittest import mock
+
+from rkd.api.inputoutput import IO
 from unittest_data_provider import data_provider
+
+from infracheck.infracheck.model import ConfiguredCheck
 
 path = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe()))) + '/../'
 sys.path.append(path)
@@ -38,7 +42,7 @@ class ControllerTest(unittest.TestCase):
                 # expected result
                 True,
                 # expected ident
-                'example-check=True',
+                'example-check=True, silenced=False',
                 # expected hooks output
                 'Yeeeah, is up'
             ],
@@ -64,7 +68,7 @@ class ControllerTest(unittest.TestCase):
                 # expected result
                 False,
                 # expected ident
-                'example-check=False',
+                'example-check=False, silenced=False',
                 # expected hooks output
                 'Oops!'
             ],
@@ -81,7 +85,7 @@ class ControllerTest(unittest.TestCase):
                 # expected result
                 True,
                 # expected ident
-                'example-check=True',
+                'example-check=True, silenced=False',
                 # expected hooks output
                 ''
             ],
@@ -100,7 +104,7 @@ class ControllerTest(unittest.TestCase):
                 # expected result
                 True,
                 # expected ident
-                'example-check=True',
+                'example-check=True, silenced=False',
                 # expected hooks output
                 ''
             ],
@@ -117,7 +121,7 @@ class ControllerTest(unittest.TestCase):
                 # expected result
                 False,
                 # expected ident
-                'example-check=False',
+                'example-check=False, silenced=False',
                 # expected hooks output
                 ''
             ],
@@ -134,7 +138,26 @@ class ControllerTest(unittest.TestCase):
                 # expected result
                 False,
                 # expected ident
-                'example-check=False',
+                'example-check=False, silenced=False',
+                # expected hooks output
+                ''
+            ],
+
+            # Failing check, but silenced due to quiet time
+            [
+                # config
+                {
+                    "type": "false",
+                    "input": {},
+                    "quiet_periods": [
+                        # always
+                        {"starts": "* * * * *", "duration": 60}
+                    ]
+                },
+                # expected result
+                True,
+                # expected ident
+                'example-check=True, silenced=True',
                 # expected hooks output
                 ''
             ]
@@ -159,7 +182,8 @@ class ControllerTest(unittest.TestCase):
             controller.list_enabled_configs = get_enabled_configs_mock
             controller.config_loader.load = mock.Mock()
 
-            with mock.patch.object(controller.config_loader, 'load', return_value=config):
+            with mock.patch.object(controller.config_loader, 'load',
+                                   return_value=ConfiguredCheck.from_config('example-check', config, IO())):
                 performed = controller.perform_checks()
 
         self.assertEqual(expected_result, performed.to_hash()['checks']['example-check']['status'])

@@ -6,6 +6,7 @@ Check configuration reference
     {
         "type": "http",
         "description": "IWA-AIT check",
+        "results_cache_time": 300,
         "input": {
             "url": "http://iwa-ait.org",
             "expect_keyword": "iwa",
@@ -18,7 +19,10 @@ Check configuration reference
             "on_each_down": [
                 "echo \"Site under maintenance\" > /var/www/maintenance.html"
             ]
-        }
+        },
+        "quiet_periods": [
+            {"starts": "30 00 * * *", "duration": 60}
+        ]
     }
 
 
@@ -43,6 +47,12 @@ Optional text field, there can be left a note for other administrators to exchan
 of a failure.
 
 
+results_cache_time
+******************
+
+How long the check result should be kept in cache (in seconds)
+
+
 input
 *****
 
@@ -54,8 +64,14 @@ to UPPERCASE and passed as environment variables.
 hooks
 *****
 
-Execute shell commands on given events.
+(Optional) Execute shell commands on given events.
 
 - on_each_up: Everytime the check is OK
 - on_each_down: Everytime the check is FAILING
 
+
+quiet_periods
+*************
+
+(Optional) Defines time, when the check results should be ignored. For example setting "30 00 * * *" and 60m duration will
+result in ignoring check failure at 00:30 everyday for 60 minutes - till 01:30
