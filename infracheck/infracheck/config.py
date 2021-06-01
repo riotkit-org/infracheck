@@ -1,18 +1,28 @@
 
+"""
+Config
+======
+
+Configuration locator and loader, loads JSON objects from disk and returns ConfigurationCheck models.
+Searches through hierarchy of paths defined in controller.Controller._combine_project_dirs()
+"""
+
 import os
 import json
-
+from dataclasses import dataclass
+from typing import List
+from rkd.api.inputoutput import IO
 from .exceptions import ConfigurationException
+from .model import ConfiguredCheck
 from .rkd_support import is_rkd_check, rkd_module_exists
 
 
-class ConfigLoader:
-    paths = []
+@dataclass
+class ConfigLoader(object):
+    paths: List[str]
+    io: IO
 
-    def __init__(self, paths):
-        self.paths = paths
-
-    def load(self, config_name: str) -> dict:
+    def load(self, config_name: str) -> ConfiguredCheck:
         file_path = self._find_file_path('/configured/', config_name, '.json')
 
         if not file_path:
@@ -27,7 +37,7 @@ class ConfigLoader:
         self._assert_valid_format(config_name, data)
         self._assert_has_valid_type(str(data['type']))
 
-        return data
+        return ConfiguredCheck.from_config(config_name, data, self.io)
 
     @staticmethod
     def _assert_valid_format(config_name: str, data):

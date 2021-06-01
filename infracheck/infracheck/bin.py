@@ -57,11 +57,6 @@ def main():
         default=''
     )
     parser.add_argument(
-        '--server-port', '-p',
-        help='Server port, default is 7422',
-        default=7422
-    )
-    parser.add_argument(
         '--db-path', '-b',
         help='Database path',
         default='~/.infracheck.sqlite3'
@@ -85,6 +80,11 @@ def main():
         '--no-server', '-n',
         help='Do not run the server, just run all the checks from CLI',
         action='store_true'
+    )
+    parser.add_argument(
+        '--server-port', '-p',
+        help='Server port, default is 7422',
+        default=7422
     )
     parser.add_argument(
         '--server-path-prefix',

@@ -1,6 +1,7 @@
 import os
 import sys
 import inspect
+from rkd.api.inputoutput import IO
 from rkd.api.testing import BasicTestingCase
 
 
@@ -16,13 +17,14 @@ class ConfigTest(BasicTestingCase):
         Loads a check configuration with a success
         """
 
-        loader = ConfigLoader([TESTS_PATH + '/example/healthchecks', TESTS_PATH + '/infracheck'])
+        loader = ConfigLoader([TESTS_PATH + '/example/healthchecks', TESTS_PATH + '/infracheck'], IO())
         check = loader.load('ram')
 
-        self.assertEqual({'type': 'free-ram', 'input': {'max_ram_percentage': '85'}}, check)
+        self.assertEqual('ram', check.name)
+        self.assertEqual('85', check.input_variables.get('max_ram_percentage'))
 
     def test_load_does_not_find_file(self):
-        loader = ConfigLoader([TESTS_PATH + '/example/healthchecks', TESTS_PATH + '/infracheck'])
+        loader = ConfigLoader([TESTS_PATH + '/example/healthchecks', TESTS_PATH + '/infracheck'], IO())
 
         self.assertRaises(FileNotFoundError, lambda: loader.load('not-existing'))
 

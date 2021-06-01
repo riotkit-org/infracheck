@@ -5,6 +5,7 @@ import inspect
 from unittest_data_provider import data_provider
 
 from infracheck.infracheck.exceptions import CheckNotReadyShouldBeSkippedSignal
+from infracheck.infracheck.model import ConfiguredCheck
 
 TESTS_PATH = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe()))) + '/../'
 sys.path.insert(0, TESTS_PATH)
@@ -50,19 +51,34 @@ class RunnerTest(unittest.TestCase):
         ]
 
     @data_provider(provide_data)
-    def test_run_with_hooks(self, check_type: str, input_data: dict, hooks: dict, expected_result: bool, expected_text: str) -> None:
-        result = self._create_runner().run_single_check('some-check-name', check_type, input_data, hooks, config={})
+    def test_run_with_hooks(self, check_type: str, input_data: dict, hooks: dict,
+                            expected_result: bool, expected_text: str) -> None:
+
+        result = self._create_runner().run_single_check(
+            ConfiguredCheck.from_config(
+                'some-check-name',
+                {
+                    'type': check_type,
+                    "input": input_data,
+                    'hooks': hooks
+                },
+                IO()
+            )
+        )
 
         self.assertEqual(expected_result, result.exit_status)
         self.assertEqual(expected_text, result.hooks_output)
 
     def test_injects_variables(self) -> None:
         out = self._create_runner().run_single_check(
-            configured_name='some-check-name',
-            check_name='printr',
-            input_data={'message': 'Current user is ${ENV.USER}, running a ${checkName}'},
-            hooks={},
-            config={}
+            ConfiguredCheck.from_config(
+                'some-check-name',
+                {
+                    'type': 'printr',
+                    "input": {'message': 'Current user is ${ENV.USER}, running a ${checkName}'},
+                },
+                IO()
+            )
         )
 
         self.assertEqual('Current user is ' + os.environ['USER'] + ', running a printr', out.output.strip())
@@ -71,31 +87,43 @@ class RunnerTest(unittest.TestCase):
         runner = self._create_runner()
 
         out_first = runner.run_single_check(
-            configured_name='cache-check',
-            check_name='printr',
-            input_data={'message': 'First message'},
-            hooks={},
-            config={'results_cache_time': 1}
+            ConfiguredCheck.from_config(
+                'cache-check',
+                {
+                    'type': 'printr',
+                    "input": {'message': 'First message'},
+                    'results_cache_time': 1
+                },
+                IO()
+            )
         )
         runner.repository.push_to_cache('cache-check', out_first)
 
         with self.assertRaises(CheckNotReadyShouldBeSkippedSignal):
             runner.run_single_check(
-                configured_name='cache-check',
-                check_name='printr',
-                input_data={'message': 'Second message'},
-                hooks={},
-                config={'results_cache_time': 1}
+                ConfiguredCheck.from_config(
+                    'cache-check',
+                    {
+                        'type': 'printr',
+                        "input": {'message': 'Second message'},
+                        'results_cache_time': 1
+                    },
+                    IO()
+                )
             )
 
         # second attempt: after 2 seconds (where results_cache_time=1s)
         sleep(2)
         out_third = runner.run_single_check(
-            configured_name='cache-check',
-            check_name='printr',
-            input_data={'message': 'Third message'},
-            hooks={},
-            config={'results_cache_time': 1}
+            ConfiguredCheck.from_config(
+                'cache-check',
+                {
+                    'type': 'printr',
+                    "input": {'message': 'Third message'},
+                    'results_cache_time': 1
+                },
+                IO()
+            )
         )
         runner.repository.push_to_cache('cache-check', out_third)
 
@@ -107,6 +135,6 @@ class RunnerTest(unittest.TestCase):
         dirs = [TESTS_PATH + '/../example/healthchecks', TESTS_PATH + '/infracheck/']
 
         return Runner(dirs,
-                      config_loader=ConfigLoader(dirs),
+                      config_loader=ConfigLoader(dirs, IO()),
                       repository=Repository(dirs),
                       io=IO())

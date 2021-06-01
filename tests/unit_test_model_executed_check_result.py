@@ -24,7 +24,8 @@ class ExecutedCheckResultTest(BasicTestingCase):
             output='Viva la revolution!',
             exit_status=True,
             hooks_output='A las barricadas!',
-            description='For the triumph of the libertarian confederation!'
+            description='For the triumph of the libertarian confederation!',
+            is_silenced=False
         )
 
         check.refresh_time = datetime(2020, 11, 27, 23, 40, 18)  # mock the time
@@ -33,7 +34,7 @@ class ExecutedCheckResultTest(BasicTestingCase):
         self.assertEqual({
             'checked_at': '2020-11-27 23-40-18',
             'hooks_output': 'A las barricadas!',
-            'ident': 'Durruti=True',
+            'ident': 'Durruti=True, silenced=False',
             'output': 'Viva la revolution!',
             'status': True,
             'description': 'For the triumph of the libertarian confederation!'
