@@ -6,7 +6,7 @@ ADD . /infracheck
 ADD .git /infracheck/
 ADD .infrastructure /infracheck/
 
-RUN chmod +x /infracheck/checks/*
+RUN chmod +x /infracheck/infracheck/checks/*
 
 ENV REFRESH_TIME="120" \
     WAIT_TIME="0" \
