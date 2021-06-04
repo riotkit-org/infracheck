@@ -6,6 +6,8 @@ ADD . /infracheck
 ADD .git /infracheck/
 ADD .infrastructure /infracheck/
 
+RUN chmod +x /infracheck/checks/*
+
 ENV REFRESH_TIME="120" \
     WAIT_TIME="0" \
     CHECK_TIMEOUT="10"
@@ -17,7 +19,7 @@ RUN cd /infracheck \
     && git remote add origin https://github.com/riotkit-org/infracheck.git \
     \
     && apk add --no-cache --update py3-pip \
-    && apk add --no-cache --update --virtual BUILD_DEPS gcc python3-dev musl-dev linux-headers postgresql-dev libffi-dev \
+    && apk add --no-cache --update --virtual BUILD_DEPS gcc python3-dev musl-dev linux-headers postgresql-dev libffi-dev openssl \
     && pip3 install pbr==5.4.5 \
     && pip3 install -r /infracheck/requirements.txt \
     && rkd :install \
