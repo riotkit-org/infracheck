@@ -98,12 +98,24 @@ class TlsDockerNetworkCheck(object):
                             domain_sep = sep[1].split(',')
 
                             for domain in domain_sep:
+                                domain = self.purify_domain_name(domain)
+
+                                if not domain:
+                                    print(f' Warning: Empty domain in {container} ')
+                                    continue
+
                                 domains.append((domain, 443))
 
                 elif self.param_type == ParamTypes.LABEL.value:
                     domain_sep = container.attrs['Config']['Labels'][self.param_name].split(',')
 
                     for domain in domain_sep:
+                        domain = self.purify_domain_name(domain)
+
+                        if not domain:
+                            print(f' Warning: Empty domain in {container} ')
+                            continue
+
                         domains.append((domain, 443))
 
             except KeyError as err:
@@ -117,6 +129,14 @@ class TlsDockerNetworkCheck(object):
     @staticmethod
     def is_debug_mode() -> bool:
         return os.getenv('DEBUG', 'false').lower() == 'true'
+
+    @staticmethod
+    def purify_domain_name(domain: str) -> str:
+        """
+        Strip quotes and blank characters - who knows what docker daemon returns, and what were defined in containers
+        """
+
+        return domain.strip('"\'').strip()
 
 
 if __name__ == '__main__':
