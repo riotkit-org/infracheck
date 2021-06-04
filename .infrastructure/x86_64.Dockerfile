@@ -18,8 +18,8 @@ RUN cd /infracheck \
     && git remote remove origin || true \
     && git remote add origin https://github.com/riotkit-org/infracheck.git \
     \
-    && apk add --no-cache --update py3-pip \
-    && apk add --no-cache --update --virtual BUILD_DEPS gcc python3-dev musl-dev linux-headers postgresql-dev libffi-dev openssl \
+    && apk add --no-cache --update py3-pip openssl \
+    && apk add --no-cache --update --virtual BUILD_DEPS gcc python3-dev musl-dev linux-headers postgresql-dev libffi-dev \
     && pip3 install pbr==5.4.5 \
     && pip3 install -r /infracheck/requirements.txt \
     && rkd :install \
