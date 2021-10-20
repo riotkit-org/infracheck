@@ -16,6 +16,6 @@ spec:
         spec:
             containers:
                 - name: app
-                  image: quay.io/riotkit/infracheck:v2.1.2
+                  image: quay.io/riotkit/infracheck:v2.1.2-x86_64
                   ports:
                       - containerPort: 8000
