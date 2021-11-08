@@ -1,0 +1,35 @@
+# todo: support annotations and other things required for Vault, support taints and node selector
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: {{ .Release.Name }}
+spec:
+    replicas: 1
+    selector:
+        matchLabels:
+            app: {{ .Release.Name }}
+    template:
+        metadata:
+            labels:
+                app: {{ .Release.Name }}
+        spec:
+            volumes:
+                - name: scripts
+                  configMap:
+                      name: {{ .Release.Name }}-scripts
+                - name: configs
+                  configMap:
+                      name: {{ .Release.Name }}-configs
+
+            containers:
+                - name: app
+                  image: {{ .Values.deployment.image }}:{{ .Values.deployment.version }}
+                  ports:
+                      - containerPort: 8000
+                  volumeMounts:
+                      - name: scripts
+                        mountPath: /data/checks
+                      - name: configs
+                        mountPath: /data/configured

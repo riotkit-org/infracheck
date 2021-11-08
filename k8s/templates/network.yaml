@@ -2,32 +2,32 @@
 apiVersion: v1
 kind: Service
 metadata:
-    name: infracheck-http
-    namespace: infracheck
+    name: {{ .Release.Name }}-http
 spec:
     selector:
-        app: infracheck
+        app: {{ .Release.Name }}
     ports:
         - protocol: TCP
           port: 80
           targetPort: 8000
 
+{{ if .Values.ingress.enabled }}
 ---
 apiVersion: traefik.containo.us/v1alpha1
 kind: IngressRoute
 metadata:
-    name: infracheck
-    namespace: infracheck
+    name: {{ .Release.Name }}
 spec:
     entryPoints:
         - websecure
     routes:
         - kind: Rule
-          match: Host(`health.wolnosciowiec.org`)
+          match: Host(`{{ .Values.ingress.host }}`)
           priority: 10
           services:
-              - name: infracheck-http
+              - name: {{ .Release.Name }}-http
                 port: 80
     tls:
         certResolver: default
         options: {}
+{{ end }}

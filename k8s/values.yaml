@@ -1,0 +1,28 @@
+deployment:
+    image: quay.io/riotkit/infracheck
+    version: v2.1.2-x86_64
+
+ingress:
+    enabled: true
+    host: health.example.org
+
+checks:
+    scripts:
+        hello.sh: |
+            #!/bin/bash
+
+            echo "Hello! This is an example check, you can write your own 'check' scripts that takes parameters from JSON and environment variables"
+            echo "The word is: ${WORD}"
+            env
+
+            exit 0
+
+    configured:
+        disk-space: |
+              {
+                  "type": "disk-space",
+                  "input": {
+                      "dir": "/",
+                      "min_req_space": "6"
+                  }
+              }

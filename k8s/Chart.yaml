@@ -1,0 +1,12 @@
+apiVersion: v2
+type: application
+name: infracheck
+version: 0.0.1
+appVersion: 2.1.2
+description: Incredibly elastic and lightweight health check endpoint to cover ANY CASE, including infrastructure as well as applications
+home: https://github.com/riotkit-org/infracheck
+sources:
+    - https://github.com/riotkit-org/infracheck
+maintainers:
+    - name: Riotkit
+      email: riotkit@riseup.net
