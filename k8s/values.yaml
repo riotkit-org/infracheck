@@ -10,6 +10,15 @@ deployment:
     nodeSelector: {}
     affinity: {}
     tolerations: []
+    annotations: {}
+    resources:
+        requests:
+            memory: "128Mi"
+            cpu: "0"
+        limits:
+            memory: "512Mi"
+            cpu: "4"
+
 
 ingress:
     enabled: true

@@ -21,11 +21,19 @@ spec:
     replicas: {{ .Values.deployment.replicas }}
     selector:
         matchLabels:
-            app: {{ .Release.Name }}
+            app.kubernetes.io/name: {{ .Release.Name }}
     template:
         metadata:
             labels:
-                app: {{ .Release.Name }}
+                app.kubernetes.io/name: {{ .Release.Name }}
+                {{- if .Values.deployment.labels }}
+                {{ toYaml .Values.deployment.labels | indent 16 }}
+                {{- end }}
+
+            {{- with .Values.deployment.annotations }}
+            annotations:
+                {{ toYaml . | indent 20 }}
+            {{ end }}
         spec:
             {{- with .Values.deployment.imagePullSecrets }}
             imagePullSecrets:
@@ -74,3 +82,5 @@ spec:
                         value: {{ $val | quote }}
                       {{- end }}
                   {{ end }}
+                  resources:
+                      {{- toYaml .Values.deployment.resources | nindent 22 }}
