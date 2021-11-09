@@ -1,6 +1,15 @@
 deployment:
     image: quay.io/riotkit/infracheck
     version: v2.1.2-x86_64
+    replicas: 1
+    imagePullSecrets: []
+    podSecurityContext: {}
+    environment:
+        AUTHORS: https://github.com/riotkit-org
+    labels: {}
+    nodeSelector: {}
+    affinity: {}
+    tolerations: []
 
 ingress:
     enabled: true

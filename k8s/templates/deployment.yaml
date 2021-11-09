@@ -1,12 +1,24 @@
 # todo: support annotations and other things required for Vault, support taints and node selector
+# todo: sqlite3 database (cache) volume
 
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
     name: {{ .Release.Name }}
+    labels:
+        helm.sh/chart: {{ include "infracheck.chartName" . }}
+        app.kubernetes.io/name: {{ include "infracheck.appName" . }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
+        app.kubernetes.io/managed-by: {{ .Release.Service }}
+        {{- if .Chart.AppVersion }}
+        app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
+        {{- end }}
+        {{- if .Values.deployment.labels }}
+    {{ toYaml .Values.deployment.labels | indent 4 }}
+        {{- end }}
 spec:
-    replicas: 1
+    replicas: {{ .Values.deployment.replicas }}
     selector:
         matchLabels:
             app: {{ .Release.Name }}
@@ -15,6 +27,15 @@ spec:
             labels:
                 app: {{ .Release.Name }}
         spec:
+            {{- with .Values.deployment.imagePullSecrets }}
+            imagePullSecrets:
+                {{- toYaml . | nindent 16 }}
+            {{- end }}
+
+            {{- with .Values.deployment.podSecurityContext }}
+            securityContext:
+                {{- toYaml . | nindent 16 }}
+            {{- end }}
             volumes:
                 - name: scripts
                   configMap:
@@ -23,9 +44,22 @@ spec:
                   configMap:
                       name: {{ .Release.Name }}-configs
 
+            {{- with .Values.deployment.nodeSelector }}
+            nodeSelector:
+                {{- toYaml . | nindent 16 }}
+            {{- end }}
+            {{- with .Values.deployment.affinity }}
+            affinity:
+                {{- toYaml . | nindent 16 }}
+             {{- end }}
+            {{- with .Values.deployment.tolerations }}
+            tolerations:
+                {{- toYaml . | nindent 16 }}
+            {{- end }}
+
             containers:
                 - name: app
-                  image: {{ .Values.deployment.image }}:{{ .Values.deployment.version }}
+                  image: {{ .Values.deployment.image }}:v{{ .Chart.AppVersion }}-x86_64
                   ports:
                       - containerPort: 8000
                   volumeMounts:
@@ -33,3 +67,10 @@ spec:
                         mountPath: /data/checks
                       - name: configs
                         mountPath: /data/configured
+                  {{- with .Values.deployment.environment }}
+                  env:
+                      {{- range $key, $val := . }}
+                      - name: {{ $key }}
+                        value: {{ $val | quote }}
+                      {{- end }}
+                  {{ end }}
