@@ -17,6 +17,6 @@ metadata:
     name: {{ .Release.Name }}-configs
 data:
     {{- range $k, $v := .Values.checks.configured }}
-    {{ $k }}: |
+    {{ $k }}.json: |
 {{ $v | indent 8 }}
     {{ end }}
