@@ -4,8 +4,9 @@ kind: Service
 metadata:
     name: {{ .Release.Name }}-http
 spec:
+    type: ClusterIP
     selector:
-        app: {{ .Release.Name }}
+        app.kubernetes.io/name: {{ .Release.Name }}
     ports:
         - protocol: TCP
           port: 80
