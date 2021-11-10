@@ -1,4 +1,3 @@
-# todo: support annotations and other things required for Vault, support taints and node selector
 # todo: sqlite3 database (cache) volume
 
 ---
@@ -32,8 +31,9 @@ spec:
                 {{ toYaml .Values.deployment.labels | indent 16 }}
                 {{- end }}
 
-            {{- with .Values.deployment.annotations }}
             annotations:
+                checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
+            {{- with .Values.deployment.annotations }}
                 {{ toYaml . | indent 20 }}
             {{ end }}
         spec:
