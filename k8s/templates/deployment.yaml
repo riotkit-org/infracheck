@@ -77,8 +77,14 @@ spec:
                         mountPath: /data/checks
                       - name: configs
                         mountPath: /data/configured
-                  {{- with .Values.deployment.environment }}
                   env:
+                      - name: REFRESH_TIME
+                        value: "{{ .Values.settings.refresh_time }}"
+                      - name: WAIT_TIME
+                        value: "{{ .Values.settings.wait_time }}"
+                      - name: CHECK_TIMEOUT
+                        value: "{{ .Values.settings.check_timeout }}"
+                  {{- with .Values.deployment.environment }}
                       {{- range $key, $val := . }}
                       - name: {{ $key }}
                         value: {{ $val | quote }}

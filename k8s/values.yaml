@@ -19,6 +19,10 @@ deployment:
             memory: "512Mi"
             cpu: "4"
 
+settings:
+    refresh_time: "300"  # interval between refreshing all checks
+    wait_time: "0"       # time in seconds between two checks are running
+    check_timeout: "120" # timeout on every check
 
 ingress:
     enabled: true
