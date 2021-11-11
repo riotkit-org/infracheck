@@ -16,6 +16,16 @@ jobs:
             - name: Install dependencies
               run: "pip install -r ./requirements.txt && pip install -r ./requirements-dev.txt && sudo apt-get install whois sshpass"
 
+            - name: Lint Helm
+              uses: WyriHaximus/github-action-helm3@v2
+              with:
+                  exec: helm lint ./k8s
+
+            - name: Render Helm
+              uses: WyriHaximus/github-action-helm3@v2
+              with:
+                  exec: "cd k8s && helm template ./ --debug"
+
             - name: Install project via setuptools
               run: "rkd :install"
 
