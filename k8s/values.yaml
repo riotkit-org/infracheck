@@ -26,6 +26,14 @@ ingress:
 
 checks:
     scripts:
+        # example - later use it in field "type".
+        #
+        # {
+        #     "type": "hello.sh",
+        #     "input": {
+        #         "word": "Cheese"
+        #     }
+        # }
         hello.sh: |
             #!/bin/bash
 
@@ -35,12 +43,12 @@ checks:
 
             exit 0
 
-    configured:
-        disk-space: |
-              {
-                  "type": "disk-space",
-                  "input": {
-                      "dir": "/",
-                      "min_req_space": "6"
-                  }
-              }
+    configured: {}
+#        disk-space: |
+#              {
+#                  "type": "disk-space",
+#                  "input": {
+#                      "dir": "/",
+#                      "min_req_space": "6"
+#                  }
+#              }
