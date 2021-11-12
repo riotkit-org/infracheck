@@ -53,6 +53,20 @@ spec:
                 - name: configs
                   configMap:
                       name: {{ .Release.Name }}-configs
+            {{- if .Values.deployment.allowHostSystemPaths }}
+                - name: sysfs
+                  hostPath:
+                      path: /sys
+                      type: Directory
+                - name: dev
+                  hostPath:
+                      path: /dev
+                      type: Directory
+                - name: proc
+                  hostPath:
+                      path: /proc
+                      type: Directory
+            {{- end }}
 
             {{- with .Values.deployment.nodeSelector }}
             nodeSelector:
@@ -77,6 +91,14 @@ spec:
                         mountPath: /data/checks
                       - name: configs
                         mountPath: /data/configured
+                      {{- if .Values.deployment.allowHostSystemPaths }}
+                      - name: sysfs
+                        mountPath: /sys
+                      - name: dev
+                        mountPath: /dev
+                      - name: proc
+                        mountPath: /proc-host
+                      {{- end }}
                   env:
                       - name: REFRESH_TIME
                         value: "{{ .Values.settings.refresh_time }}"
@@ -92,3 +114,7 @@ spec:
                   {{ end }}
                   resources:
                       {{- toYaml .Values.deployment.resources | nindent 22 }}
+                  securityContext:
+                    {{- if .Values.deployment.isPrivileged }}
+                      privileged: true
+                    {{- end }}

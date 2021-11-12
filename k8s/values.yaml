@@ -19,6 +19,11 @@ deployment:
             memory: "512Mi"
             cpu: "4"
 
+    # You can turn off any of those for security reasons. This gives at least read-only access to host devices, kernel
+    # and host process data for monitoring purposes.
+    allowHostSystemPaths: true
+    isPrivileged: true
+
 settings:
     refresh_time: "300"  # interval between refreshing all checks
     wait_time: "0"       # time in seconds between two checks are running
