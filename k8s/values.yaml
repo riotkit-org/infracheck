@@ -28,6 +28,8 @@ settings:
     refresh_time: "300"  # interval between refreshing all checks
     wait_time: "0"       # time in seconds between two checks are running
     check_timeout: "120" # timeout on every check
+    secret_code: "change-me-please"
+    log_level: "info"
 
 ingress:
     enabled: true
