@@ -25,11 +25,18 @@ deployment:
     isPrivileged: true
 
 settings:
-    refresh_time: "300"  # interval between refreshing all checks
-    wait_time: "0"       # time in seconds between two checks are running
-    check_timeout: "120" # timeout on every check
-    secret_code: "change-me-please"
-    log_level: "info"
+    refresh_time: "300"              # interval between refreshing all checks
+    wait_time: "0"                   # time in seconds between two checks are running
+    check_timeout: "120"             # timeout on every check
+    secret_code: "change-me-please"  # --server-path-prefix
+    log_level: "info"                # --log-level
+
+dbVolume:
+    enabled: true
+    storageClassName: ""
+    #volumeName: ""
+    requests: 15Mi
+    accessMode: ReadWriteOncePod
 
 ingress:
     enabled: true

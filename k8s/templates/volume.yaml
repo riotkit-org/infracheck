@@ -1,0 +1,17 @@
+{{- if .Values.dbVolume.enabled }}
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+    name: {{ .Release.Name }}-database
+spec:
+    storageClassName: "{{ .Values.dbVolume.storageClassName }}"
+    {{- with .Values.dbVolume.volumeName }}
+    volumeName: "{{ . }}"
+    {{- end }}
+    accessModes:
+        - {{ .Values.dbVolume.accessMode}}
+    resources:
+        requests:
+            storage: {{ .Values.dbVolume.requests }}
+{{ end }}

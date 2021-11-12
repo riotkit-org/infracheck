@@ -66,6 +66,11 @@ spec:
                   hostPath:
                       path: /proc
                       type: Directory
+                {{- if .Values.dbVolume.enabled }}
+                - name: database
+                  persistentVolumeClaim:
+                      claimName: {{ .Release.Name }}-database
+                {{- end }}
             {{- end }}
 
             {{- with .Values.deployment.nodeSelector }}
@@ -99,6 +104,10 @@ spec:
                         mountPath: /dev
                       - name: proc
                         mountPath: /proc-host
+                      {{- end }}
+                      {{- if .Values.dbVolume.enabled }}
+                      - name: database
+                        mountPath: /database
                       {{- end }}
                   env:
                       - name: REFRESH_TIME
