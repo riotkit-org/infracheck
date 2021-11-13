@@ -36,7 +36,7 @@ dbVolume:
     storageClassName: ""
     #volumeName: ""
     requests: 15Mi
-    accessMode: ReadWriteOncePod
+    accessMode: ReadWriteOnce
 
 ingress:
     enabled: true
