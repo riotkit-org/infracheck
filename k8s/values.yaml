@@ -70,3 +70,5 @@ checks:
 #                      "min_req_space": "6"
 #                  }
 #              }
+    # raw string to be pasted into ConfigMap
+    configuredStr: ""

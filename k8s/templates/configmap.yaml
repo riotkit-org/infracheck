@@ -20,3 +20,4 @@ data:
     {{ $k }}.json: |
 {{ $v | indent 8 }}
     {{ end }}
+{{ .Values.checks.configuredStr | indent 8 }}
