@@ -89,7 +89,7 @@ spec:
                   image: {{ .Values.deployment.image }}:v{{ .Chart.AppVersion }}-x86_64
                   ports:
                       - containerPort: 8000
-                  command: ["--server-path-prefix", "{{ .Values.settings.secret_code }}", "--log-level", "{{ .Values.settings.log_level }}"]
+                  args: ["--server-path-prefix", "{{ .Values.settings.secret_code }}", "--log-level", "{{ .Values.settings.log_level }}"]
                   volumeMounts:
                       - name: scripts
                         mountPath: /data/checks
