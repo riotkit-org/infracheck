@@ -11,4 +11,4 @@ msgpack >= 1.0, < 2
 rkd>=2.3.3, <3
 rkd-python>=2.3.3, <3
 docker >= 5
-croniter >= 1.0.13, < 1.4
+croniter >= 1.0.13, < 1.5
