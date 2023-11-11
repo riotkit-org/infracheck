@@ -23,6 +23,11 @@ tasks:
             - pip install -r ./requirements.txt
             - python3 ./setup.py install
 
+    :compile:helm:
+        description: Checks if Helm Chart compiles
+        steps:
+            - cd k8s && helm template ./  --debug
+
     :image:
         description: Build a docker image
         arguments:

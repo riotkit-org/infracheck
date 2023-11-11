@@ -1,0 +1,128 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: {{ .Release.Name }}
+    labels:
+        helm.sh/chart: {{ include "infracheck.chartName" . }}
+        app.kubernetes.io/name: {{ include "infracheck.appName" . }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
+        app.kubernetes.io/managed-by: {{ .Release.Service }}
+        {{- if .Chart.AppVersion }}
+        app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
+        {{- end }}
+        {{- if .Values.deployment.labels }}
+    {{ toYaml .Values.deployment.labels | indent 4 }}
+        {{- end }}
+spec:
+    replicas: {{ .Values.deployment.replicas }}
+    selector:
+        matchLabels:
+            app.kubernetes.io/instance: {{ .Release.Name }}
+            app.kubernetes.io/name: {{ include "infracheck.appName" . }}
+    template:
+        metadata:
+            labels:
+                app.kubernetes.io/instance: {{ .Release.Name }}
+                app.kubernetes.io/name: {{ include "infracheck.appName" . }}
+                {{- if .Values.deployment.labels }}
+                {{ toYaml .Values.deployment.labels | indent 16 }}
+                {{- end }}
+
+            annotations:
+                checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
+            {{- with .Values.deployment.annotations }}
+                {{ toYaml . | indent 20 }}
+            {{ end }}
+        spec:
+            {{- with .Values.deployment.imagePullSecrets }}
+            imagePullSecrets:
+                {{- toYaml . | nindent 16 }}
+            {{- end }}
+
+            {{- with .Values.deployment.podSecurityContext }}
+            securityContext:
+                {{- toYaml . | nindent 16 }}
+            {{- end }}
+            volumes:
+                - name: scripts
+                  configMap:
+                      name: {{ .Release.Name }}-scripts
+                - name: configs
+                  configMap:
+                      name: {{ .Release.Name }}-configs
+            {{- if .Values.deployment.allowHostSystemPaths }}
+                - name: sysfs
+                  hostPath:
+                      path: /sys
+                      type: Directory
+                - name: dev
+                  hostPath:
+                      path: /dev
+                      type: Directory
+                - name: proc
+                  hostPath:
+                      path: /proc
+                      type: Directory
+                {{- if .Values.dbVolume.enabled }}
+                - name: database
+                  persistentVolumeClaim:
+                      claimName: {{ .Release.Name }}-database
+                {{- end }}
+            {{- end }}
+
+            {{- with .Values.deployment.nodeSelector }}
+            nodeSelector:
+                {{- toYaml . | nindent 16 }}
+            {{- end }}
+            {{- with .Values.deployment.affinity }}
+            affinity:
+                {{- toYaml . | nindent 16 }}
+             {{- end }}
+            {{- with .Values.deployment.tolerations }}
+            tolerations:
+                {{- toYaml . | nindent 16 }}
+            {{- end }}
+
+            containers:
+                - name: app
+                  image: {{ .Values.deployment.image }}:v{{ .Chart.AppVersion }}-x86_64
+                  ports:
+                      - containerPort: 8000
+                  args: ["--server-path-prefix", "/{{ .Values.settings.secret_code }}", "--log-level", "{{ .Values.settings.log_level }}"]
+                  volumeMounts:
+                      - name: scripts
+                        mountPath: /data/checks
+                      - name: configs
+                        mountPath: /data/configured
+                      {{- if .Values.deployment.allowHostSystemPaths }}
+                      - name: sysfs
+                        mountPath: /sys
+                      - name: dev
+                        mountPath: /dev
+                      - name: proc
+                        mountPath: /proc-host
+                      {{- end }}
+                      {{- if .Values.dbVolume.enabled }}
+                      - name: database
+                        mountPath: /database
+                      {{- end }}
+                  env:
+                      - name: REFRESH_TIME
+                        value: "{{ .Values.settings.refresh_time }}"
+                      - name: WAIT_TIME
+                        value: "{{ .Values.settings.wait_time }}"
+                      - name: CHECK_TIMEOUT
+                        value: "{{ .Values.settings.check_timeout }}"
+                  {{- with .Values.deployment.environment }}
+                      {{- range $key, $val := . }}
+                      - name: {{ $key }}
+                        value: {{ $val | quote }}
+                      {{- end }}
+                  {{ end }}
+                  resources:
+                      {{- toYaml .Values.deployment.resources | nindent 22 }}
+                  securityContext:
+                    {{- if .Values.deployment.isPrivileged }}
+                      privileged: true
+                    {{- end }}
